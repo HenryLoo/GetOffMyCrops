@@ -1,4 +1,6 @@
-﻿// Hold data for all tiles on a tile map
+﻿using UnityEngine;
+
+// Hold data for all tiles on a tile map
 public class TileData
 {
     public enum TileType
@@ -6,6 +8,9 @@ public class TileData
         Ground,
         Plantable,
         PlantableCooldown,
+        CropSeed,
+        CropGrowing,
+        CropMature,
         NumTileTypes
     }
 
@@ -17,6 +22,9 @@ public class TileData
     
     // The duration in seconds for a plantable tile to become usable again
     private const float PLANTABLE_COOLDOWN_DURATION = 3.0f;
+
+    // The duration in seconds for a crop to grow into its next state
+    private const float CROP_GROWING_DURATION = 5.0f;
 
     // Hold a reference to the tile map
     private TileMap _tileMap;
@@ -53,7 +61,10 @@ public class TileData
         SetTile( x, z, type );
 
         if( type == TileType.Plantable || 
-            type == TileType.PlantableCooldown )
+            type == TileType.PlantableCooldown ||
+            type == TileType.CropSeed ||
+            type == TileType.CropGrowing ||
+            type == TileType.CropMature )
         {
             _timers[ z * _sizeX + x ] = new GameTimer();
         }
@@ -80,20 +91,36 @@ public class TileData
                 switch( _tiles[ index ] )
                 {
                     case TileType.PlantableCooldown:
-                        if( !_timers[ index ].IsStarted() )
-                        {
-                            _timers[ index ].StartTimer();
-                        }
-                        else if( _timers[ index ].GetTicks() >= 
-                            PLANTABLE_COOLDOWN_DURATION )
-                        {
-                            _timers[ index ].StopTimer();
-                            _tileMap.SetTile( x, z, TileType.Plantable );
-                        }
-
+                        ChangeTileTypeFromTimer( x, z, TileType.Plantable,
+                            PLANTABLE_COOLDOWN_DURATION );
+                        break;
+                    case TileType.CropSeed:
+                        ChangeTileTypeFromTimer( x, z, TileType.CropGrowing,
+                            CROP_GROWING_DURATION );
+                        break;
+                    case TileType.CropGrowing:
+                        ChangeTileTypeFromTimer( x, z, TileType.CropMature,
+                            CROP_GROWING_DURATION );
                         break;
                 }
             }
+        }
+    }
+
+    // Change the type of the tile at (x, z) tile coordinates, if the 
+    // that tile's timer has exceeded the given duration
+    private void ChangeTileTypeFromTimer( int x, int z, TileType type,
+        float duration )
+    {
+        int index = z * _sizeX + x;
+        if( !_timers[ index ].IsStarted() )
+        {
+            _timers[ index ].StartTimer();
+        }
+        else if( _timers[ index ].GetTicks() >= duration )
+        {
+            _timers[ index ].StopTimer();
+            _tileMap.SetTile( x, z, type );
         }
     }
 }

@@ -123,6 +123,12 @@ MonoBehaviour:
     TileType: 1
   - Colour: {r: 1, g: 0, b: 0, a: 1}
     TileType: 2
+  - Colour: {r: 0, g: 1, b: 0, a: 1}
+    TileType: 3
+  - Colour: {r: 0, g: 1, b: 1, a: 1}
+    TileType: 4
+  - Colour: {r: 0, g: 0, b: 1, a: 1}
+    TileType: 5
   EntityMappings:
   - Colour: {r: 1, g: 1, b: 0, a: 1}
     Prefab: {fileID: 1922995280422762, guid: f0e91620fe07d0347b7ba9fb9453ac1e, type: 2}
