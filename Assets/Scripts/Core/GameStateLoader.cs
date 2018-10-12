@@ -64,6 +64,7 @@ public static class GameStateLoader
 
 			case GAME_STATES.GAMEPLAY:
 				// TODO: load main gameplay levels here
+				sceneLoader.loadScene( GameSceneSwitcher.SCENE_POSITION.GAMEPLAY );
 			break;
 
 			case GAME_STATES.PAUSE_MENU:

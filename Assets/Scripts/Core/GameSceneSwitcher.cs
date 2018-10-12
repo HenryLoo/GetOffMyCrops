@@ -7,7 +7,7 @@ public class GameSceneSwitcher
 {
 	public enum SCENE_POSITION { MAIN_MENU = 0, GAMEPLAY, END_GAME, PAUSE_MENU, DUMMY_SCENE };
 	public static string[] SCENE_LIST = {	"Assets/Scenes/Other/MainMenu/Menu.unity",
-											"Assets/Scenes/Gameplay.unity"
+											"Assets/Scenes/Levels/GameScene.unity"
 										};
 
 	private SCENE_POSITION currentScene;
