@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>(); ;
+        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
         _tilePos = _tileMap.GetTileAtPosition( transform.position );
     }
 

@@ -4,6 +4,9 @@
 [System.Serializable]
 public class LevelData
 {
+    // The name of the level
+    public string LevelName;
+
     // The money goal for winning the level
     public int MoneyGoal;
 
