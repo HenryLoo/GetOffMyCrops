@@ -48,17 +48,17 @@ public class TileData
     }
 
     // Get the tile at a given (x, z) tile location
-    public TileType GetTile( int x, int z )
+    public TileType GetTile( TileCoordinate tilePos )
     {
-        return _tiles[ z * _sizeX + x ];
+        return _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ];
     }
 
     // Set the tile's type at a given (x, z) tile location
     // Also create a timer for the tile if appropriate
     // This should only be called during the tile map's setup
-    public void InitTile( int x, int z, TileType type )
+    public void InitTile( TileCoordinate tilePos, TileType type )
     {
-        SetTile( x, z, type );
+        SetTile( tilePos, type );
 
         if( type == TileType.Plantable || 
             type == TileType.PlantableCooldown ||
@@ -66,13 +66,13 @@ public class TileData
             type == TileType.CropGrowing ||
             type == TileType.CropMature )
         {
-            _timers[ z * _sizeX + x ] = new GameTimer();
+            _timers[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = new GameTimer();
         }
     }
 
-    public void SetTile( int x, int z, TileType type )
+    public void SetTile( TileCoordinate tilePos, TileType type )
     {
-        _tiles[ z * _sizeX + x ] = type;
+        _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = type;
     }
 
     // Call this once per frame
@@ -91,16 +91,16 @@ public class TileData
                 switch( _tiles[ index ] )
                 {
                     case TileType.PlantableCooldown:
-                        ChangeTileTypeFromTimer( x, z, TileType.Plantable,
-                            PLANTABLE_COOLDOWN_DURATION );
+                        ChangeTileTypeFromTimer( new TileCoordinate( x, z ), 
+                            TileType.Plantable, PLANTABLE_COOLDOWN_DURATION );
                         break;
                     case TileType.CropSeed:
-                        ChangeTileTypeFromTimer( x, z, TileType.CropGrowing,
-                            CROP_GROWING_DURATION );
+                        ChangeTileTypeFromTimer( new TileCoordinate( x, z ), 
+                            TileType.CropGrowing, CROP_GROWING_DURATION );
                         break;
                     case TileType.CropGrowing:
-                        ChangeTileTypeFromTimer( x, z, TileType.CropMature,
-                            CROP_GROWING_DURATION );
+                        ChangeTileTypeFromTimer( new TileCoordinate( x, z ), 
+                            TileType.CropMature, CROP_GROWING_DURATION );
                         break;
                 }
             }
@@ -109,10 +109,10 @@ public class TileData
 
     // Change the type of the tile at (x, z) tile coordinates, if the 
     // that tile's timer has exceeded the given duration
-    private void ChangeTileTypeFromTimer( int x, int z, TileType type,
-        float duration )
+    private void ChangeTileTypeFromTimer( TileCoordinate tilePos, 
+        TileType type, float duration )
     {
-        int index = z * _sizeX + x;
+        int index = tilePos.CoordZ * _sizeX + tilePos.CoordX;
         if( !_timers[ index ].IsStarted() )
         {
             _timers[ index ].StartTimer();
@@ -120,7 +120,7 @@ public class TileData
         else if( _timers[ index ].GetTicks() >= duration )
         {
             _timers[ index ].StopTimer();
-            _tileMap.SetTile( x, z, type );
+            _tileMap.SetTile( tilePos, type );
         }
     }
 }

@@ -78,22 +78,24 @@ public class TileMap : MonoBehaviour
         {
             for( int z = 0; z < Level.TileLayout.height; ++z )
             {
-                CreateTile( x, z );
-                CreateEntity( x, z );
+                TileCoordinate tilePos = new TileCoordinate( x, z );
+                CreateTile( tilePos );
+                CreateEntity( tilePos );
             }
         }
     }
 
     // Parse the tile map's tile layout image and create the appropriate tile
-    private void CreateTile( int x, int z )
+    private void CreateTile( TileCoordinate tilePos )
     {
-        Color pixel = Level.TileLayout.GetPixel( x, z );
+        Color pixel = Level.TileLayout.GetPixel( tilePos.CoordX, 
+            tilePos.CoordZ );
 
         foreach( ColourToTile mapping in TileMappings )
         {
             if( mapping.Colour == pixel )
             {
-                _mapData.InitTile( x, z, mapping.TileType );
+                _mapData.InitTile( tilePos, mapping.TileType );
                 return;
             }
         }
@@ -101,25 +103,26 @@ public class TileMap : MonoBehaviour
 
     // Parse the tile map's entity layout image and create the appropriate 
     // entity
-    private void CreateEntity( int x, int z )
+    private void CreateEntity( TileCoordinate tilePos )
     {
-        Color pixel = Level.EntityLayout.GetPixel( x, z );
+        Color pixel = Level.EntityLayout.GetPixel( tilePos.CoordX,
+            tilePos.CoordZ );
 
         foreach( ColourToPrefab mapping in EntityMappings )
         {
             if( mapping.Colour == pixel )
             {
-                CreateEntity( x, z, mapping.Prefab );
+                CreateEntity( tilePos, mapping.Prefab );
                 return;
             }
         }
     }
 
     // Instantiate a prefab at a given (x, z) tile position
-    public void CreateEntity( int x, int z, GameObject prefab )
+    public void CreateEntity( TileCoordinate tilePos, GameObject prefab )
     {
-        Instantiate( prefab, GetPositionAtTile( x, z ), Quaternion.identity, 
-            transform );
+        Instantiate( prefab, GetPositionAtTile( tilePos ), 
+            Quaternion.identity, transform );
     }
 
     // Initialize the tile map's mesh for graphical purposes
@@ -150,7 +153,8 @@ public class TileMap : MonoBehaviour
             {
                 int tileIndex = z * sizeX * NUM_VERTICES_PER_TILE + x * 
                     NUM_VERTICES_PER_TILE;
-                int tileType = ( int ) _mapData.GetTile( x, z );
+                int tileType = ( int ) _mapData.GetTile( 
+                    new TileCoordinate( x, z ) );
 
                 // Bottom-left vertex
                 vertices[ tileIndex ] = new Vector3( x * _tileSize, 0,
@@ -236,16 +240,16 @@ public class TileMap : MonoBehaviour
     }
 
     // Get the type of the tile at the given (x, z) tile coordinate
-    public TileData.TileType GetTile( int x, int z )
+    public TileData.TileType GetTile( TileCoordinate tilePos )
     {
-        return _mapData.GetTile( x, z );
+        return _mapData.GetTile( tilePos );
     }
 
     // Set the type of the tile at the given (x, z) tile coordinate
     // and recreate the mesh to reflect the changes
-    public void SetTile( int x, int z, TileData.TileType type )
+    public void SetTile( TileCoordinate tilePos, TileData.TileType type )
     {
-        _mapData.SetTile( x, z, type );
+        _mapData.SetTile( tilePos, type );
         CreateMesh();
     }
 
@@ -268,16 +272,18 @@ public class TileMap : MonoBehaviour
     }
 
     // Return the vector corresponding to the tile coordinate (x, z)
-    public Vector3 GetPositionAtTile( int x, int z )
+    public Vector3 GetPositionAtTile( TileCoordinate tilePos )
     {
-        return new Vector3( x * _tileSize + _tileSize / 2, 0,
-            z * _tileSize + _tileSize / 2 );
+        return new Vector3( tilePos.CoordX * _tileSize + _tileSize / 2, 0,
+            tilePos.CoordZ * _tileSize + _tileSize / 2 );
     }
 
-    public Vector2 GetTileAtPosition(Vector3 position)
+    // Return the tile coordinate (x, z) corresponding to a vector position
+    public TileCoordinate GetTileAtPosition( Vector3 position )
     {
-        int x = (int)((position.x - (_tileSize / 2)) / _tileSize);
-        int z = (int)((position.z - (_tileSize / 2)) / _tileSize);
-        return new Vector2(x, z);
+        TileCoordinate tilePos;
+        tilePos.CoordX = ( int ) ( ( position.x - _tileSize / 2 ) / _tileSize );
+        tilePos.CoordZ = ( int ) ( ( position.z - _tileSize / 2 ) / _tileSize );
+        return tilePos;
     }
 }
