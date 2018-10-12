@@ -8,12 +8,6 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class TileMap : MonoBehaviour
 {
-    // The current level's data
-    public LevelData Level;
-
-    // The timer for this level's win/lose condition
-    private GameTimer _levelTimer;
-
     // The tileset and the size of each tile on it
     public Texture2D Tileset;
     public int TileClipSize;
@@ -25,6 +19,9 @@ public class TileMap : MonoBehaviour
     // Hold the data for each tile on the map
     private TileData _mapData;
 
+    // The current level's data
+    private LevelData _levelData;
+
     // The tile's size scale factor
     private float _tileSize = 1.0f;
 
@@ -33,28 +30,24 @@ public class TileMap : MonoBehaviour
     private const int NUM_TRIANGLES_PER_TILE = 2;
     private const int NUM_VERTICES_PER_TRIANGLE = 3;
 
+
     // Use this for initialization
     void Start()
     {
-        // TODO: test level loading, remove this later
-        LoadLevel( "level1" );
 
-        _levelTimer = new GameTimer();
-        InitTileMap();
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    // Call this once every frame to update the tile data
+    public void UpdateTileData()
     {
-        _levelTimer.Update();
         _mapData.Update();
     }
 
     // Call this to recreate the tile map
-    public void InitTileMap()
+    public void InitTileMap( LevelData data )
     {
-        // Reset the timer
-        _levelTimer.StartTimer();
+        // Set the level data
+        _levelData = data;
 
         // Create the tile map
         CreateLevel();
@@ -64,8 +57,8 @@ public class TileMap : MonoBehaviour
     // Initialize the tile map's data (all the tiles)
     private void CreateLevel()
     {
-        _mapData = new TileData( this, Level.TileLayout.width, 
-            Level.TileLayout.height );
+        _mapData = new TileData( this, _levelData.TileLayout.width,
+            _levelData.TileLayout.height );
 
         // Clear existing entities
         foreach( Transform child in transform )
@@ -74,9 +67,9 @@ public class TileMap : MonoBehaviour
         }
 
         // Create the map's tiles and entities
-        for( int x = 0; x < Level.TileLayout.width; ++x )
+        for( int x = 0; x < _levelData.TileLayout.width; ++x )
         {
-            for( int z = 0; z < Level.TileLayout.height; ++z )
+            for( int z = 0; z < _levelData.TileLayout.height; ++z )
             {
                 TileCoordinate tilePos = new TileCoordinate( x, z );
                 CreateTile( tilePos );
@@ -88,7 +81,7 @@ public class TileMap : MonoBehaviour
     // Parse the tile map's tile layout image and create the appropriate tile
     private void CreateTile( TileCoordinate tilePos )
     {
-        Color pixel = Level.TileLayout.GetPixel( tilePos.CoordX, 
+        Color pixel = _levelData.TileLayout.GetPixel( tilePos.CoordX, 
             tilePos.CoordZ );
 
         foreach( ColourToTile mapping in TileMappings )
@@ -105,7 +98,7 @@ public class TileMap : MonoBehaviour
     // entity
     private void CreateEntity( TileCoordinate tilePos )
     {
-        Color pixel = Level.EntityLayout.GetPixel( tilePos.CoordX,
+        Color pixel = _levelData.EntityLayout.GetPixel( tilePos.CoordX,
             tilePos.CoordZ );
 
         foreach( ColourToPrefab mapping in EntityMappings )
@@ -133,8 +126,8 @@ public class TileMap : MonoBehaviour
         int tilesetHeight = Tileset.height / TileClipSize;
 
         // The mesh vertices
-        int sizeX = Level.TileLayout.width;
-        int sizeZ = Level.TileLayout.height;
+        int sizeX = _levelData.TileLayout.width;
+        int sizeZ = _levelData.TileLayout.height;
         int numTiles = sizeX * sizeZ;
         int numVertices = numTiles * NUM_VERTICES_PER_TILE;
         Vector3[] vertices = new Vector3[ numVertices ];
@@ -231,14 +224,6 @@ public class TileMap : MonoBehaviour
         meshRenderer.sharedMaterials[ 0 ].mainTexture = Tileset;
     }
 
-    public void LoadLevel( string levelName )
-    {
-        TextAsset levelJson = ( TextAsset ) Resources.Load( "Levels/" 
-            + levelName );
-        Debug.Log( levelJson.text );
-        Level = LevelData.CreateFromJson( levelJson.text );
-    }
-
     // Get the type of the tile at the given (x, z) tile coordinate
     public TileData.TileType GetTile( TileCoordinate tilePos )
     {
@@ -253,22 +238,16 @@ public class TileMap : MonoBehaviour
         CreateMesh();
     }
 
-    // Get the level's timer
-    public GameTimer GetTimer()
-    {
-        return _levelTimer;
-    }
-
     // Get the size of the map's x-axis in tiles
     public int GetSizeX()
     {
-        return Level.TileLayout.width;
+        return _levelData.TileLayout.width;
     }
 
     // Get the size of the map's z-axis in tiles
     public int GetSizeZ()
     {
-        return Level.TileLayout.height;
+        return _levelData.TileLayout.height;
     }
 
     // Return the vector corresponding to the tile coordinate (x, z)

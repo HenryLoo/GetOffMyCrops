@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Reference to the GameController
+    private GameController _gameController;
+
     // Current position on the TileMap
     private TileCoordinate _tilePos;
 
-    // Reference to the TileMap instance;
+    // Reference to the TileMap instance
     private TileMap _tileMap;
 
     // Don't read key input while player is moving
@@ -18,9 +21,15 @@ public class Player : MonoBehaviour
 
     public int Speed = 2;
 
+    // Fixed money investment/return constants
+    private const int SEED_BUY_PRICE = 5;
+    private const int CROP_SELL_PRICE = 20;
+
     // Use this for initialization
     void Start()
     {
+        _gameController = GameObject.Find( "GameController" )
+            .GetComponent<GameController>();
         _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
         _tilePos = _tileMap.GetTileAtPosition( transform.position );
     }
@@ -64,9 +73,9 @@ public class Player : MonoBehaviour
             if( to >= 0 && to < _tileMap.GetSizeX() )
             {
                 _tilePos.CoordX = to;
-                this._moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
-                this._moveTargetPos.y = transform.position.y;
-                this._movingLock = true;
+                _moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
+                _moveTargetPos.y = transform.position.y;
+                _movingLock = true;
             }
 
         }
@@ -77,9 +86,9 @@ public class Player : MonoBehaviour
             if( to >= 0 && to < _tileMap.GetSizeZ() )
             {
                 _tilePos.CoordZ = to;
-                this._moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
-                this._moveTargetPos.y = transform.position.y;
-                this._movingLock = true;
+                _moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
+                _moveTargetPos.y = transform.position.y;
+                _movingLock = true;
             }
         }
     }
@@ -97,7 +106,7 @@ public class Player : MonoBehaviour
         else
         {
             // Unlock input reading after reaching target position
-            this._movingLock = false;
+            _movingLock = false;
 
             // Snap to the proper position
             transform.position = _moveTargetPos;
@@ -110,7 +119,7 @@ public class Player : MonoBehaviour
     void Plant()
     {
         // If not enough money
-        if( Money.Get() < Money.SEED_BUY_PRICE )
+        if( _gameController.GetCurrentMoney() < SEED_BUY_PRICE )
         {
             // TODO: show tips
             Debug.Log( "Not enough money" );
@@ -128,7 +137,7 @@ public class Player : MonoBehaviour
 
         // Plant the seed and deduct money by investment cost
         _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
-        Money.Add( -Money.SEED_BUY_PRICE );
+        _gameController.AddMoney( -SEED_BUY_PRICE );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -149,7 +158,7 @@ public class Player : MonoBehaviour
 
         // Harvest the mature crop and increment money
         _tileMap.SetTile( _tilePos, TileData.TileType.PlantableCooldown );
-        Money.Add( Money.CROP_SELL_PRICE );
+        _gameController.AddMoney( CROP_SELL_PRICE );
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop

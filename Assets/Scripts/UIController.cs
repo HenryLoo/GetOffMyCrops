@@ -10,23 +10,22 @@ public class UIController : MonoBehaviour
     private UITimeMeter _timeMeter;
     public Text LevelText;
 
-    // Reference to the TileMap instance;
-    private TileMap _tileMap;
+    // Reference to the GameController
+    private GameController _gameController;
 
     // Use this for initialization
     void Start()
     {
-        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
+        _gameController = GameObject.Find( "GameController" )
+            .GetComponent<GameController>();
 
         _moneyMeter = GetComponent<UIMoneyMeter>();
         _pauseMenu = GetComponent<UIPauseMenu>();
         _timeMeter = GetComponent<UITimeMeter>();
         
-        SetLevelText( _tileMap.Level.LevelName );
-        InitMoneyMeter( 20, _tileMap.Level.MoneyGoal );
-        AddMoney( 0 );
-        InitTimeMeter( 30f );
-        UpdateCurrentTime( 0f );
+        SetLevelText( _gameController.Level.LevelName );
+        UpdateMoneyMeter();
+        UpdateTimeMeter();
     }
 
     // Update is called once per frame
@@ -35,6 +34,9 @@ public class UIController : MonoBehaviour
         PauseGameCheck();
         RestartGameCheck();
         QuitGameCheck();
+
+        UpdateMoneyMeter();
+        UpdateTimeMeter();
     }
 
     // Sets the Level number display
@@ -43,29 +45,18 @@ public class UIController : MonoBehaviour
         LevelText.text = levelText;
     }
 
-    // Sets the initial money and money goal for the level
-    public void InitMoneyMeter( int startingMoney, int moneyGoal )
+    // Update the money meter to display the player's current money
+    public void UpdateMoneyMeter()
     {
-        _moneyMeter.CurrentMoney = startingMoney;
-        _moneyMeter.MaxMoney = moneyGoal;
+        _moneyMeter.UpdateMoneyMeter( _gameController.GetCurrentMoney(),
+            _gameController.Level.MoneyGoal );
     }
 
-    // Increment the money meter by a given amount
-    // Use a negative value to decrement it
-    public void AddMoney( int amount )
+    // Update the time meter to display the current level's remaining time
+    public void UpdateTimeMeter()
     {
-        _moneyMeter.AddMoney( amount );
-    }
-
-    // Sets the initial time limit for the level
-    public void InitTimeMeter( float maxTimeInSeconds )
-    {
-        _timeMeter.MaxTime = maxTimeInSeconds;
-    }
-
-    private void UpdateCurrentTime( float timePassedInSeconds )
-    {
-        _timeMeter.UpdateTimeMeter( timePassedInSeconds );
+        _timeMeter.UpdateTimeMeter( _gameController.GetTimer().GetTicks(),
+            _gameController.Level.RemainingTime );
     }
 
     // Pause Menu Game Status functions
@@ -73,10 +64,12 @@ public class UIController : MonoBehaviour
     {
         if( _pauseMenu.GamePaused )
         {
-            //perform action or method call
             Debug.Log( "PAUSED GAME" );
+            _gameController.SetIsPaused( true );
             return true;
         }
+
+        _gameController.SetIsPaused( false );
         return false;
     }
 

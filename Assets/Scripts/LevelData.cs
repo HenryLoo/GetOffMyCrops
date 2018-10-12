@@ -11,7 +11,7 @@ public class LevelData
     public int MoneyGoal;
 
     // The level's timer in seconds
-    public int RemainingTime;
+    public float RemainingTime;
 
     // Hold the map's tile layout
     public Texture2D TileLayout;

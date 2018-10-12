@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class UIPauseMenu : MonoBehaviour
 {
-    public Button PauseButton;
     public bool GamePaused { get; set; }
     public Image PausePanel;
 
@@ -20,9 +19,6 @@ public class UIPauseMenu : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Button pause = PauseButton.GetComponent<Button>();
-        pause.onClick.AddListener( OpenPauseMenu );
-
         Button resume = ResumeButton.GetComponent<Button>();
         resume.onClick.AddListener( ResumeGame );
 
