@@ -273,4 +273,11 @@ public class TileMap : MonoBehaviour
         return new Vector3( x * _tileSize + _tileSize / 2, 0,
             z * _tileSize + _tileSize / 2 );
     }
+
+    public Vector2 GetTileAtPosition(Vector3 position)
+    {
+        int x = (int)((position.x - (_tileSize / 2)) / _tileSize);
+        int z = (int)((position.z - (_tileSize / 2)) / _tileSize);
+        return new Vector2(x, z);
+    }
 }
