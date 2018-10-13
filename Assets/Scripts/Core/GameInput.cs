@@ -2,105 +2,107 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/***
- * This file is responsible for defining and handling the control scheme for the game.
- * Every scene that needs user input should extend iButtonAction and register with this class.
- * Registered classes should call updateInput function within their update function.
- * 
- * */
+
+// This file is responsible for defining and handling the control scheme for the game.
+// Every scene that needs user input should extend IButtonAction and register with this class.
+// Registered classes should call UpdateInput function within their update function.
 public static class GameInput
 {
-	// these delegates must be set by objects/scenes expecting user input
-	public delegate void ActionButtonClick_Handler();
-	public delegate void BackButtonClick_Handler();
-	public delegate void RightButtonClick_Handler();
-	public delegate void LeftButtonClick_Handler();
-	public delegate void UpButtonClick_Handler();
-	public delegate void DownButtonClick_Handler();
+    // These delegates must be set by objects/scenes expecting user input
+    public delegate void ActionButtonClickHandler();
+    public delegate void BackButtonClickHandler();
+    public delegate void RightButtonClickHandler();
+    public delegate void LeftButtonClickHandler();
+    public delegate void UpButtonClickHandler();
+    public delegate void DownButtonClickHandler();
 
-	private static ActionButtonClick_Handler onActionClick = null;
-	private static BackButtonClick_Handler onBackClick = null;
-	private static RightButtonClick_Handler onRightClick = null;
-	private static LeftButtonClick_Handler onLeftClick = null;
-	private static UpButtonClick_Handler onUpClick = null;
-	private static DownButtonClick_Handler onDownClick = null;
+    private static ActionButtonClickHandler _onActionClick = null;
+    private static BackButtonClickHandler _onBackClick = null;
+    private static RightButtonClickHandler _onRightClick = null;
+    private static LeftButtonClickHandler _onLeftClick = null;
+    private static UpButtonClickHandler _onUpClick = null;
+    private static DownButtonClickHandler _onDownClick = null;
 
-	private static float axisH_Value = 0;
-	private static float axisV_Value = 0;
-	
-	private static bool axisH_reset = true;
-	private static bool axisV_reset = true;
-	
-	// Update should be called once per frame if you are trying to capture input in your scene.
-	public static void updateInput()
-	{
-		axisH_Value = Input.GetAxis( "Horizontal" );
-		axisV_Value = Input.GetAxis( "Vertical" );
+    private static float _valueAxisH = 0;
+    private static float _valueAxisV = 0;
 
-		axisH_reset = axisH_Value == 0 ? true : false;
-		axisV_reset = axisV_Value == 0 ? true : false;
+    private static bool _isResetAxisH = true;
+    private static bool _isResetAxisV = true;
 
-		bool actionButtonDown = Input.GetButtonDown( "Fire1" ) || Input.GetKeyDown( KeyCode.Space );
-		bool rightButtonDown = ( axisH_Value > 0 && axisH_reset ) || Input.GetKeyDown( KeyCode.RightArrow );
-		bool leftButtonDown = ( axisH_Value < 0 && axisH_reset ) || Input.GetKeyDown( KeyCode.LeftArrow );
-		bool backButtonDown = Input.GetButtonDown( "Fire2" ) || Input.GetKeyDown( KeyCode.Escape );
-		bool upButtonDown = ( axisV_Value > 0 && axisV_reset ) || Input.GetKeyDown( KeyCode.UpArrow );
-		bool downButtonDown = ( axisV_Value < 0 && axisV_reset ) || Input.GetKeyDown( KeyCode.DownArrow );
-		
-		if ( actionButtonDown && onActionClick != null )
-		{
-			Debug.Log("Button clicked = Action");
-			onActionClick();
-		}
-		if ( rightButtonDown && onRightClick != null )
-		{
-			Debug.Log("Button clicked = Right");
+    // Update should be called once per frame if you are trying to capture input in your scene.
+    public static void UpdateInput()
+    {
+        _valueAxisH = Input.GetAxis( "Horizontal" );
+        _valueAxisV = Input.GetAxis( "Vertical" );
 
-			onRightClick();
-		}
-		if ( leftButtonDown && onLeftClick != null )
-		{
-			Debug.Log("Button clicked = Left");
-			onLeftClick();
-		}
-		if ( backButtonDown && onBackClick != null )
-		{
-			Debug.Log("Button clicked = Back");
-			onBackClick();
-		}
-		if ( upButtonDown && onUpClick != null )
-		{
-			Debug.Log("Button clicked = Up");
-			onUpClick();
-		}
-		if ( downButtonDown && onDownClick != null )
-		{
-			Debug.Log("Button clicked = Down");
-			onDownClick();
-		}
-	}
+        _isResetAxisH = _valueAxisH == 0 ? true : false;
+        _isResetAxisV = _valueAxisV == 0 ? true : false;
 
-	// binds the input to a scene
-	public static void attachInput( ActionButtonClick_Handler actionClick = null, BackButtonClick_Handler backClick = null,
-									RightButtonClick_Handler rightClick = null, LeftButtonClick_Handler leftClick = null,
-									UpButtonClick_Handler upClick = null, DownButtonClick_Handler downClick = null )
-	{
-		onActionClick = actionClick;
-		onBackClick = backClick;
-		onRightClick = rightClick;
-		onLeftClick = leftClick;
-		onUpClick = upClick;
-		onDownClick = downClick;
-	}
+        bool isActionButtonDown = Input.GetButtonDown( "Fire1" ) || Input.GetKeyDown( KeyCode.Space );
+        bool isRightButtonDown = ( _valueAxisH > 0 && _isResetAxisH ) || Input.GetKeyDown( KeyCode.RightArrow );
+        bool isLeftButtonDown = ( _valueAxisH < 0 && _isResetAxisH ) || Input.GetKeyDown( KeyCode.LeftArrow );
+        bool isBackButtonDown = Input.GetButtonDown( "Fire2" ) || Input.GetKeyDown( KeyCode.Escape );
+        bool isUpButtonDown = ( _valueAxisV > 0 && _isResetAxisV ) || Input.GetKeyDown( KeyCode.UpArrow );
+        bool isDownButtonDown = ( _valueAxisV < 0 && _isResetAxisV ) || Input.GetKeyDown( KeyCode.DownArrow );
 
-	// removes the input binding
-	public static void detachInput()
-	{
-		onActionClick = null;
-		onBackClick = null;
-		onRightClick = null;
-		onLeftClick = null;
-		onUpClick = null;
-		onDownClick = null;
-	}
+        if( isActionButtonDown && _onActionClick != null )
+        {
+            Debug.Log( "Button clicked = Action" );
+            _onActionClick();
+        }
+        if( isRightButtonDown && _onRightClick != null )
+        {
+            Debug.Log( "Button clicked = Right" );
+
+            _onRightClick();
+        }
+        if( isLeftButtonDown && _onLeftClick != null )
+        {
+            Debug.Log( "Button clicked = Left" );
+            _onLeftClick();
+        }
+        if( isBackButtonDown && _onBackClick != null )
+        {
+            Debug.Log( "Button clicked = Back" );
+            _onBackClick();
+        }
+        if( isUpButtonDown && _onUpClick != null )
+        {
+            Debug.Log( "Button clicked = Up" );
+            _onUpClick();
+        }
+        if( isDownButtonDown && _onDownClick != null )
+        {
+            Debug.Log( "Button clicked = Down" );
+            _onDownClick();
+        }
+    }
+
+    // Binds the input to a scene
+    public static void AttachInput( 
+        ActionButtonClickHandler actionClick = null, 
+        BackButtonClickHandler backClick = null, 
+        RightButtonClickHandler rightClick = null, 
+        LeftButtonClickHandler leftClick = null,
+        UpButtonClickHandler upClick = null, 
+        DownButtonClickHandler downClick = null )
+    {
+        _onActionClick = actionClick;
+        _onBackClick = backClick;
+        _onRightClick = rightClick;
+        _onLeftClick = leftClick;
+        _onUpClick = upClick;
+        _onDownClick = downClick;
+    }
+
+    // Removes the input binding
+    public static void DetachInput()
+    {
+        _onActionClick = null;
+        _onBackClick = null;
+        _onRightClick = null;
+        _onLeftClick = null;
+        _onUpClick = null;
+        _onDownClick = null;
+    }
 }

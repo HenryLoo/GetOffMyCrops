@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public interface iButtonAction
+
+public interface IButtonAction
 {
 	// triggers once until pressed again
-	void onButtonClickLeft();
-	void onButtonClickRight();
-	void onButtonClickAction();
-	void onButtonClickBack();
-	void onButtonClickUp();
-	void onButtonClickDown();
+	void OnButtonClickLeft();
+	void OnButtonClickRight();
+	void OnButtonClickAction();
+	void OnButtonClickBack();
+	void OnButtonClickUp();
+	void OnButtonClickDown();
 }

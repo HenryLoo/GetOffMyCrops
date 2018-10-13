@@ -5,42 +5,51 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneSwitcher
 {
-	public enum SCENE_POSITION { MAIN_MENU = 0, GAMEPLAY, END_GAME, PAUSE_MENU, DUMMY_SCENE };
-	public static string[] SCENE_LIST = {	"Assets/Scenes/Other/MainMenu/Menu.unity",
-											"Assets/Scenes/Levels/GameScene.unity"
-										};
+    public enum SCENE_POSITION
+    {
+        MAIN_MENU,
+        GAMEPLAY,
+        END_GAME,
+        PAUSE_MENU,
+        DUMMY_SCENE
+    };
 
-	private SCENE_POSITION currentScene;
-		
-	public GameSceneSwitcher()
-	{
-		Debug.Log( "GameSceneSwitcher.cs" );
-		currentScene = SCENE_POSITION.DUMMY_SCENE;
-	}
-	
-	// loads a new scene
-	public void loadScene( SCENE_POSITION scene )
-	{
-		// our current design doesn't allow having two scenes loaded at the same time.
-		if ( currentScene != SCENE_POSITION.DUMMY_SCENE )
-		{
-			unloadScene();
-		}
+    public static string[] SCENE_LIST = {
+        "Assets/Scenes/Other/MenuScene.unity",
+        "Assets/Scenes/Levels/GameScene.unity"
+    };
 
-		currentScene = scene;
-		GameInput.detachInput();
+    private SCENE_POSITION _currentScene;
 
-		if ( currentScene != SCENE_POSITION.DUMMY_SCENE )
-		{
-			Debug.Log( "GameSceneSwitcher.cs loading " + SCENE_LIST[(int) currentScene] + " scene" );
-		}
+    public GameSceneSwitcher()
+    {
+        Debug.Log( "GameSceneSwitcher.cs" );
+        _currentScene = SCENE_POSITION.DUMMY_SCENE;
+    }
 
-		SceneManager.LoadSceneAsync( SCENE_LIST[(int) currentScene] );
-	}
+    // Loads a new scene
+    public void LoadScene( SCENE_POSITION scene )
+    {
+        // Our current design doesn't allow having two scenes loaded at the same time.
+        if( _currentScene != SCENE_POSITION.DUMMY_SCENE )
+        {
+            UnloadScene();
+        }
 
-	public void unloadScene()
-	{
-		SceneManager.UnloadSceneAsync( SCENE_LIST[(int) currentScene] );
-		currentScene = SCENE_POSITION.DUMMY_SCENE;
-	}
+        _currentScene = scene;
+        GameInput.DetachInput();
+
+        if( _currentScene != SCENE_POSITION.DUMMY_SCENE )
+        {
+            Debug.Log( "GameSceneSwitcher.cs loading " + SCENE_LIST[ ( int ) _currentScene ] + " scene" );
+        }
+
+        SceneManager.LoadSceneAsync( SCENE_LIST[ ( int ) _currentScene ] );
+    }
+
+    public void UnloadScene()
+    {
+        SceneManager.UnloadSceneAsync( SCENE_LIST[ ( int ) _currentScene ] );
+        _currentScene = SCENE_POSITION.DUMMY_SCENE;
+    }
 }

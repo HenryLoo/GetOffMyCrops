@@ -3,116 +3,130 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/***
- * This script should be attached to the main menu.
- * */
-public class MainMenu : MonoBehaviour, iButtonAction
+// This script should be attached to the main menu.
+public class MainMenu : MonoBehaviour, IButtonAction
 {
-	private static readonly int BUTTON_INDEX_UP = -1;
-	private static readonly int BUTTON_INDEX_DOWN = 1;
+    private static readonly int BUTTON_INDEX_UP = -1;
+    private static readonly int BUTTON_INDEX_DOWN = 1;
 
-	private GameObject currentlySelectedButton;
-	private int currentButtonIndex;
-	private enum BUTTONS { PLAY_BUTTON = 0, INSTRUCTIONS_BUTTON, EXIT_BUTTON };
-	private readonly string[] BUTTON_LIST = { "PlayButton", "InstructionsButton", "ExitButton" };
+    private GameObject _currentlySelectedButton;
+    private int _currentButtonIndex;
+    private enum BUTTONS
+    {
+        PLAY_BUTTON,
+        INSTRUCTIONS_BUTTON,
+        EXIT_BUTTON
+    };
+    private readonly string[] BUTTON_LIST = { "PlayButton", "InstructionsButton", "ExitButton" };
 
-	// Use this for initialization
-	void Start()
-	{
-		Debug.Log( "MainMenu.cs" );
-			
-		GameInput.attachInput( actionClick: onButtonClickAction, backClick: onButtonClickBack,
-										leftClick: onButtonClickLeft, rightClick: onButtonClickRight,
-										downClick: onButtonClickDown, upClick: onButtonClickUp );
-			
-		selectDefaultButton();
-	}
-	
-	// Update is called once per frame
-	void Update()
-	{
-		GameInput.updateInput();
-	}
-	
-	public void onButtonClickLeft()
-	{
-		// no functionality
-	}
-	public void onButtonClickRight()
-	{
-		// no functionality
-	}
-	public void onButtonClickAction()
-	{
-		// select
-		if ( currentButtonIndex == (int) BUTTONS.PLAY_BUTTON )
-		{
-			onPlayButtonSelect();
-		}
-		else if ( currentButtonIndex == (int) BUTTONS.EXIT_BUTTON )
-		{
-			onExitButtonSelect();
-		}
-		else if ( currentButtonIndex == (int) BUTTONS.INSTRUCTIONS_BUTTON )
-		{
-			// TODO: implement instruction screen and link it.
-		}
-	}
-	public void onButtonClickBack()
-	{
-		// no functionality
-	}
-	public void onButtonClickUp()
-	{
-		// move upwards
-		updateButtonIndex( BUTTON_INDEX_UP );
-	}
-	public void onButtonClickDown()
-	{
-		// move downwards
-		updateButtonIndex( BUTTON_INDEX_DOWN );
-	}
+    // Use this for initialization
+    void Start()
+    {
+        Debug.Log( "MainMenu.cs" );
 
-	private void updateButtonIndex( int indexChange )
-	{		
-		currentButtonIndex += indexChange;
+        GameInput.AttachInput(
+            actionClick: OnButtonClickAction,
+            backClick: OnButtonClickBack,
+            leftClick: OnButtonClickLeft, 
+            rightClick: OnButtonClickRight,
+            downClick: OnButtonClickDown,
+            upClick: OnButtonClickUp );
 
-		currentButtonIndex = HelperFunctions.mathModulus( currentButtonIndex, BUTTON_LIST.Length );
-		Debug.Log( "MainMenu.cs:Button index = " + currentButtonIndex );
-		currentlySelectedButton = GameObject.Find( BUTTON_LIST[currentButtonIndex] );
-		currentlySelectedButton.GetComponent<Button>().Select();
-	}
+        SelectDefaultButton();
+    }
 
-	private void selectDefaultButton()
-	{
-		currentButtonIndex = ( int ) BUTTONS.PLAY_BUTTON;
-		currentlySelectedButton = GameObject.Find( BUTTON_LIST[currentButtonIndex] );
-		currentlySelectedButton.GetComponent<Button>().Select();
-	}
+    // Update is called once per frame
+    void Update()
+    {
+        GameInput.UpdateInput();
+    }
 
-	private void onPlayButtonSelect()
-	{
-		// load the game
-		Debug.Log( "play button is selected" );
-		changeState( GameStateLoader.GAME_STATES.GAMEPLAY );
-	}
+    public void OnButtonClickLeft()
+    {
+        // no functionality
+    }
 
-	private void onInstructionsButtonSelect()
-	{
-		// load instructions
-		Debug.Log( "instructions button is selected" );
-	}
+    public void OnButtonClickRight()
+    {
+        // no functionality
+    }
 
-	private void onExitButtonSelect()
-	{
-		// exit the game
-		Debug.Log( "exit button is selected" );
+    public void OnButtonClickAction()
+    {
+        // Select the button
+        if( _currentButtonIndex == ( int ) BUTTONS.PLAY_BUTTON )
+        {
+            OnPlayButtonSelect();
+        }
+        else if( _currentButtonIndex == ( int ) BUTTONS.EXIT_BUTTON )
+        {
+            OnExitButtonSelect();
+        }
+        else if( _currentButtonIndex == ( int ) BUTTONS.INSTRUCTIONS_BUTTON )
+        {
+            OnInstructionsButtonSelect();
+        }
+    }
 
-		Application.Quit();
-	}
+    public void OnButtonClickBack()
+    {
+        // no functionality
+    }
 
-	private void changeState( GameStateLoader.GAME_STATES state )
-	{
-		GameStateLoader.switchState( state );
-	}
+    public void OnButtonClickUp()
+    {
+        // Move selected button upwards
+        UpdateButtonIndex( BUTTON_INDEX_UP );
+    }
+
+    public void OnButtonClickDown()
+    {
+        // Move selected button downwards
+        UpdateButtonIndex( BUTTON_INDEX_DOWN );
+    }
+
+    private void UpdateButtonIndex( int indexChange )
+    {
+        _currentButtonIndex += indexChange;
+
+        _currentButtonIndex = HelperFunctions.MathModulus( _currentButtonIndex, BUTTON_LIST.Length );
+        Debug.Log( "MainMenu.cs: Button index = " + _currentButtonIndex );
+        _currentlySelectedButton = GameObject.Find( BUTTON_LIST[ _currentButtonIndex ] );
+        _currentlySelectedButton.GetComponent<Button>().Select();
+    }
+
+    private void SelectDefaultButton()
+    {
+        _currentButtonIndex = ( int ) BUTTONS.PLAY_BUTTON;
+        _currentlySelectedButton = GameObject.Find( BUTTON_LIST[ _currentButtonIndex ] );
+        _currentlySelectedButton.GetComponent<Button>().Select();
+    }
+
+    private void OnPlayButtonSelect()
+    {
+        // Load the game
+        Debug.Log( "Play button is selected" );
+        ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
+    }
+
+    private void OnInstructionsButtonSelect()
+    {
+        // Load instructions
+        Debug.Log( "Instructions button is selected" );
+
+        // TODO: implement instruction screen and link it.
+    }
+
+    private void OnExitButtonSelect()
+    {
+        // Exit the game
+        Debug.Log( "Exit button is selected" );
+
+        Application.Quit();
+    }
+
+    private void ChangeState( GameStateLoader.GAME_STATES state )
+    {
+        GameStateLoader.SwitchState( state );
+    }
 }

@@ -3,77 +3,81 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-/***
- * This class defines the game flow. It will be responsible for loading unloading all the scene within the game
- * 
- * */
-
+// This class defines the game flow.
+// It will be responsible for loading/unloading all scenes within the game.
 public static class GameStateLoader
 {
-	public enum GAME_STATES { MAIN_MENU = 1, GAMEPLAY, PAUSE_MENU, INIT_STATE }
+    public enum GAME_STATES
+    {
+        MAIN_MENU = 1,
+        GAMEPLAY,
+        PAUSE_MENU,
+        INIT_STATE
+    }
 
-	private static GAME_STATES currentGameState = GAME_STATES.INIT_STATE;
-	private static GameSceneSwitcher sceneLoader = new GameSceneSwitcher();
-	
-	// Update is called once per frame
-	public static void Update ()
-	{
-		checkGameState();
-	}
+    private static GAME_STATES _currentGameState = GAME_STATES.INIT_STATE;
+    private static GameSceneSwitcher _sceneLoader = new GameSceneSwitcher();
 
-	public static GAME_STATES checkGameState( bool printState = false )
-	{
-		if ( printState )
-		{
-			switch (currentGameState)
-			{
-				case GAME_STATES.MAIN_MENU:
-						Debug.Log("Game is currently on main menu");
-					break;
+    // Update is called once per frame
+    public static void Update()
+    {
+        CheckGameState();
+    }
 
-				case GAME_STATES.GAMEPLAY:
-						Debug.Log("Game is currently on Gameplay");
-					break;
+    public static GAME_STATES CheckGameState( bool printState = false )
+    {
+        if( printState )
+        {
+            switch( _currentGameState )
+            {
+                case GAME_STATES.MAIN_MENU:
+                    Debug.Log( "Game is currently on main menu." );
+                    break;
 
-				case GAME_STATES.PAUSE_MENU:
-						Debug.Log("Game is currently on pause menu");
-					break;
+                case GAME_STATES.GAMEPLAY:
+                    Debug.Log( "Game is currently on Gameplay." );
+                    break;
 
-				default:
-					Debug.Log("State cannot be undefined.");
-					break;
-			}
-            
-		}
-		return currentGameState;
-	}
+                case GAME_STATES.PAUSE_MENU:
+                    Debug.Log( "Game is currently on pause menu." );
+                    break;
 
-	public static void switchState( GAME_STATES newState )
-	{
-		if (currentGameState == newState)
-		{
-			Debug.Log( "cannot switch the state to " + newState + " because it is already in this state." );
-			return;
-		}
-		Debug.Log( "GameStateLoader.cs Attempting to load new scene" );
-		switch (newState)
-		{
-			case GAME_STATES.MAIN_MENU:
-				sceneLoader.loadScene( GameSceneSwitcher.SCENE_POSITION.MAIN_MENU );
-			break;
+                default:
+                    Debug.Log( "State is undefined." );
+                    break;
+            }
 
-			case GAME_STATES.GAMEPLAY:
-				// TODO: load main gameplay levels here
-				sceneLoader.loadScene( GameSceneSwitcher.SCENE_POSITION.GAMEPLAY );
-			break;
+        }
+        return _currentGameState;
+    }
 
-			case GAME_STATES.PAUSE_MENU:
-				// TODO: load in game pause menu here
-			break;
+    public static void SwitchState( GAME_STATES newState )
+    {
+        if( _currentGameState == newState )
+        {
+            Debug.Log( "Cannot switch the state to " + newState + " because it is already in this state." );
+            return;
+        }
 
-			default:
-				Debug.Log("State cannot be undefined.");
-			break;
-		}
-	}
+        Debug.Log( "GameStateLoader.cs Attempting to load new scene." );
+        switch( newState )
+        {
+            case GAME_STATES.MAIN_MENU:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.MAIN_MENU );
+                break;
+
+            case GAME_STATES.GAMEPLAY:
+                // TODO: load main gameplay levels here
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.GAMEPLAY );
+                break;
+
+            case GAME_STATES.PAUSE_MENU:
+                // TODO: load in game pause menu here
+                break;
+
+            default:
+                Debug.Log( "State cannot be undefined." );
+                break;
+        }
+    }
 }
