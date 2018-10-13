@@ -24,36 +24,56 @@ public static class GameInput
 	private static LeftButtonClick_Handler onLeftClick = null;
 	private static UpButtonClick_Handler onUpClick = null;
 	private static DownButtonClick_Handler onDownClick = null;
+
+	private static float axisH_Value = 0;
+	private static float axisV_Value = 0;
+	
+	private static bool axisH_reset = true;
+	private static bool axisV_reset = true;
 	
 	// Update should be called once per frame if you are trying to capture input in your scene.
 	public static void updateInput()
 	{
-		if ( ( Input.GetButton( "Fire1" ) || Input.GetKeyDown( KeyCode.Space ) ) && onActionClick != null )
+		axisH_Value = Input.GetAxis( "Horizontal" );
+		axisV_Value = Input.GetAxis( "Vertical" );
+
+		axisH_reset = axisH_Value == 0 ? true : false;
+		axisV_reset = axisV_Value == 0 ? true : false;
+
+		bool actionButtonDown = Input.GetButtonDown( "Fire1" ) || Input.GetKeyDown( KeyCode.Space );
+		bool rightButtonDown = ( axisH_Value > 0 && axisH_reset ) || Input.GetKeyDown( KeyCode.RightArrow );
+		bool leftButtonDown = ( axisH_Value < 0 && axisH_reset ) || Input.GetKeyDown( KeyCode.LeftArrow );
+		bool backButtonDown = Input.GetButtonDown( "Fire2" ) || Input.GetKeyDown( KeyCode.Escape );
+		bool upButtonDown = ( axisV_Value > 0 && axisV_reset ) || Input.GetKeyDown( KeyCode.UpArrow );
+		bool downButtonDown = ( axisV_Value < 0 && axisV_reset ) || Input.GetKeyDown( KeyCode.DownArrow );
+		
+		if ( actionButtonDown && onActionClick != null )
 		{
 			Debug.Log("Button clicked = Action");
 			onActionClick();
 		}
-		if ( ( Input.GetAxis( "Horizontal" ) > 0 || Input.GetKeyDown( KeyCode.RightArrow ) ) && onRightClick != null )
+		if ( rightButtonDown && onRightClick != null )
 		{
 			Debug.Log("Button clicked = Right");
+
 			onRightClick();
 		}
-		if ( ( Input.GetAxis( "Horizontal" ) < 0 || Input.GetKeyDown( KeyCode.LeftArrow ) ) && onLeftClick != null )
+		if ( leftButtonDown && onLeftClick != null )
 		{
 			Debug.Log("Button clicked = Left");
 			onLeftClick();
 		}
-		if ( ( Input.GetButton( "Fire1" ) || Input.GetKeyDown( KeyCode.Escape ) ) && onBackClick != null )
+		if ( backButtonDown && onBackClick != null )
 		{
 			Debug.Log("Button clicked = Back");
 			onBackClick();
 		}
-		if ( ( Input.GetAxis( "Vertical" ) > 0 || Input.GetKeyDown( KeyCode.UpArrow ) ) && onUpClick != null )
+		if ( upButtonDown && onUpClick != null )
 		{
 			Debug.Log("Button clicked = Up");
 			onUpClick();
 		}
-		if ( ( Input.GetAxis( "Vertical" ) < 0 || Input.GetKeyDown( KeyCode.DownArrow ) ) && onDownClick != null )
+		if ( downButtonDown && onDownClick != null )
 		{
 			Debug.Log("Button clicked = Down");
 			onDownClick();

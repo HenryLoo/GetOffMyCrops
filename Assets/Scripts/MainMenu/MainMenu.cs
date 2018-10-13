@@ -8,6 +8,9 @@ using UnityEngine.UI;
  * */
 public class MainMenu : MonoBehaviour, iButtonAction
 {
+	private static readonly int BUTTON_INDEX_UP = -1;
+	private static readonly int BUTTON_INDEX_DOWN = 1;
+
 	private GameObject currentlySelectedButton;
 	private int currentButtonIndex;
 	private enum BUTTONS { PLAY_BUTTON = 0, INSTRUCTIONS_BUTTON, EXIT_BUTTON };
@@ -22,7 +25,7 @@ public class MainMenu : MonoBehaviour, iButtonAction
 										leftClick: onButtonClickLeft, rightClick: onButtonClickRight,
 										downClick: onButtonClickDown, upClick: onButtonClickUp );
 			
-		selectDefaultButtonInList();
+		selectDefaultButton();
 	}
 	
 	// Update is called once per frame
@@ -62,31 +65,25 @@ public class MainMenu : MonoBehaviour, iButtonAction
 	public void onButtonClickUp()
 	{
 		// move upwards
-		updateButtonIndex( true );
+		updateButtonIndex( BUTTON_INDEX_UP );
 	}
 	public void onButtonClickDown()
 	{
 		// move downwards
-		updateButtonIndex( false );
+		updateButtonIndex( BUTTON_INDEX_DOWN );
 	}
 
-	private void updateButtonIndex( bool isUpwards )
-	{
-		if ( isUpwards )
-		{
-			currentButtonIndex--;
-		}
-		else
-		{
-			currentButtonIndex++;
-		}
+	private void updateButtonIndex( int indexChange )
+	{		
+		currentButtonIndex += indexChange;
+
 		currentButtonIndex = HelperFunctions.mathModulus( currentButtonIndex, BUTTON_LIST.Length );
 		Debug.Log( "MainMenu.cs:Button index = " + currentButtonIndex );
 		currentlySelectedButton = GameObject.Find( BUTTON_LIST[currentButtonIndex] );
 		currentlySelectedButton.GetComponent<Button>().Select();
 	}
 
-	private void selectDefaultButtonInList()
+	private void selectDefaultButton()
 	{
 		currentButtonIndex = ( int ) BUTTONS.PLAY_BUTTON;
 		currentlySelectedButton = GameObject.Find( BUTTON_LIST[currentButtonIndex] );
