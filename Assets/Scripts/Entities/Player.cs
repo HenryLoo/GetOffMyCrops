@@ -252,4 +252,10 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
 		_updateEveryFrame = null;
 		
 	}
+
+    // Get the player's position on the tile map
+    public TileCoordinate GetTilePosition()
+    {
+        return _tilePos;
+    }
 }
