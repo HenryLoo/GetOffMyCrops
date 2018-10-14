@@ -148,38 +148,42 @@ public class TileMap : MonoBehaviour
                     NUM_VERTICES_PER_TILE;
                 int tileType = ( int ) _mapData.GetTile( 
                     new TileCoordinate( x, z ) );
+                
+                // The position of the tile type on the tileset
+                int tileTypeX = tileType % tilesetWidth;
+                int tileTypeY = ( tileType - tileTypeX ) / tilesetHeight ;
 
                 // Bottom-left vertex
                 vertices[ tileIndex ] = new Vector3( x * _tileSize, 0,
                     z * _tileSize );
                 normals[ tileIndex ] = Vector3.up;
                 uv[ tileIndex ] = new Vector2( 
-                    ( float ) tileType / tilesetWidth,
-                    ( float ) tileType / tilesetHeight );
+                    ( float ) tileTypeX / tilesetWidth,
+                    ( float ) tileTypeY / tilesetHeight );
 
                 // Top-right vertex
                 vertices[ tileIndex + 1 ] = new Vector3( 
                     ( x + 1 ) * _tileSize, 0, ( z + 1 ) * _tileSize );
                 normals[ tileIndex + 1 ] = Vector3.up;
                 uv[ tileIndex + 1 ] = new Vector2( 
-                    ( float ) ( tileType + 1 ) / tilesetWidth,
-                    ( float ) ( tileType + 1 ) / tilesetHeight );
+                    ( float ) ( tileTypeX + 1 ) / tilesetWidth,
+                    ( float ) ( tileTypeY + 1 ) / tilesetHeight );
 
                 // Bottom-right vertex
                 vertices[ tileIndex + 2 ] = new Vector3( 
                     ( x + 1 ) * _tileSize, 0, z * _tileSize );
                 normals[ tileIndex + 2 ] = Vector3.up;
                 uv[ tileIndex + 2 ] = new Vector2( 
-                    ( float ) ( tileType + 1 ) / tilesetWidth,
-                    ( float ) tileType / tilesetHeight );
+                    ( float ) ( tileTypeX + 1 ) / tilesetWidth,
+                    ( float ) tileTypeY / tilesetHeight );
 
                 // Top-left vertex
                 vertices[ tileIndex + 3 ] = new Vector3( 
                     x * _tileSize, 0, ( z + 1 ) * _tileSize );
                 normals[ tileIndex + 3 ] = Vector3.up;
                 uv[ tileIndex + 3 ] = new Vector2( 
-                    ( float ) tileType / tilesetWidth,
-                    ( float ) ( tileType + 1 ) / tilesetHeight );
+                    ( float ) tileTypeX / tilesetWidth,
+                    ( float ) ( tileTypeY + 1 ) / tilesetHeight );
             }
         }
 
