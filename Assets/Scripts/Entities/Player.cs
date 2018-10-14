@@ -234,4 +234,10 @@ public class Player : MonoBehaviour, IButtonAction
     {
         // TODO: implement this
     }
+
+    // Get the player's position on the tile map
+    public TileCoordinate GetTilePosition()
+    {
+        return _tilePos;
+    }
 }
