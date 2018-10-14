@@ -53,10 +53,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TileMap: {fileID: 0}
   Level:
-    LevelName: Test Level
-    MoneyGoal: 100
-    RemainingTime: 60
-    TileLayout: {fileID: 2800000, guid: a41b308692b86ba44ab35048a9538cc1, type: 3}
-    TileLayoutFile: level1_tiles
-    EntityLayout: {fileID: 2800000, guid: e266a60d25ca41246b14743b375dedca, type: 3}
-    EntityLayoutFile: level1_entities
+    LevelName: 
+    MoneyGoal: 0
+    RemainingTime: 0
+    TileLayout: {fileID: 0}
+    TileLayoutFile: 
+    EntityLayout: {fileID: 0}
+    EntityLayoutFile: 

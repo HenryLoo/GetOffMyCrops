@@ -32,18 +32,19 @@ public class UIPauseMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if( Input.GetKeyDown( KeyCode.Escape ) )
-        {
-            OpenPauseMenu();
-        }
-        if( Input.GetKeyDown( KeyCode.Alpha9 ) )
-        {
-            RestartGame();
-        }
-        if( Input.GetKeyDown( KeyCode.Alpha0 ) )
-        {
-            QuitGame();
-        }
+        // TODO: Menu disabled for alpha, since it is not functional
+        //if( Input.GetKeyDown( KeyCode.Escape ) )
+        //{
+        //    OpenPauseMenu();
+        //}
+        //if( Input.GetKeyDown( KeyCode.Alpha9 ) )
+        //{
+        //    RestartGame();
+        //}
+        //if( Input.GetKeyDown( KeyCode.Alpha0 ) )
+        //{
+        //    QuitGame();
+        //}
     }
 
     void OpenPauseMenu()

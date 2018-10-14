@@ -12,6 +12,11 @@ public class MainScript : MonoBehaviour
     {
         // This script will load everything for the game
         Debug.Log( "MainScript.cs" );
+
+        // Disable mouse controls
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         // Input responder, should be loaded before scene loader
         GameInput.DetachInput();
 

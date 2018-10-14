@@ -24,22 +24,21 @@ public class UIController : MonoBehaviour
         _timeMeter = GetComponent<UITimeMeter>();
         
         SetLevelText( _gameController.Level.LevelName );
-        UpdateMoneyMeter();
-        UpdateTimeMeter();
     }
 
     // Update is called once per frame
     void Update()
     {
-        PauseGameCheck();
-        RestartGameCheck();
-        QuitGameCheck();
+        // TODO: Menu is disabled for alpha, since it isn't functional
+        //PauseGameCheck();
+        //RestartGameCheck();
+        //QuitGameCheck();
 
         UpdateMoneyMeter();
         UpdateTimeMeter();
     }
 
-    // Sets the Level number display
+    // Sets the level's name
     public void SetLevelText( string levelText )
     {
         LevelText.text = levelText;

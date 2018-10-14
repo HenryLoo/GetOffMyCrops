@@ -25,6 +25,9 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         _levelTimer = new GameTimer();
+
+        // TODO: test level loading, remove this later
+        LoadLevel( "level1" );
     }
 
     // Use this for initialization
@@ -34,9 +37,6 @@ public class GameController : MonoBehaviour
 
         // Reset the timer
         _levelTimer.StartTimer();
-
-        // TODO: test level loading, remove this later
-        LoadLevel( "level1" );
     }
 
     // Update is called once per frame
