@@ -28,17 +28,24 @@ public class TileMap : MonoBehaviour
     // Constants
     private const int NUM_VERTICES_PER_TILE = 4;
     private const int NUM_TRIANGLES_PER_TILE = 2;
-    private const int NUM_VERTICES_PER_TRIANGLE = 3;
+	private const int NUM_VERTICES_PER_TRIANGLE = 3;
 
+	private delegate void TileMapDelegate();
+	private TileMapDelegate _tileMapUpdate;
 
     // Use this for initialization
     void Start()
     {
-
+		_tileMapUpdate = UpdateTileData;
     }
 
-    // Call this once every frame to update the tile data
-    public void UpdateTileData()
+	// Call this once every frame to update the tile data
+	public void UpdateEveryFrame()
+	{
+		if ( _tileMapUpdate != null ) _tileMapUpdate();
+	}
+
+	public void UpdateTileData()
     {
         _mapData.Update();
     }
@@ -269,4 +276,14 @@ public class TileMap : MonoBehaviour
         tilePos.CoordZ = ( int ) ( ( position.z - _tileSize / 2 ) / _tileSize );
         return tilePos;
     }
+
+	public void CleanUp()
+	{
+		_tileMapUpdate = null;
+		foreach( Transform child in transform )
+        {
+            //GameObject.DestroyImmediate( child.gameObject );
+            GameObject.Destroy( child.gameObject );
+        }
+	}
 }

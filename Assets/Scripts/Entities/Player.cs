@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IButtonAction
+public class Player : MonoBehaviour, IButtonAction, IEntity
 {
     // Reference to the GameController
     private GameController _gameController;
@@ -35,6 +35,9 @@ public class Player : MonoBehaviour, IButtonAction
     private const int SEED_BUY_PRICE = 5;
     private const int CROP_SELL_PRICE = 20;
 
+	private delegate void PlayerUpdate();
+	private PlayerUpdate _updateEveryFrame;
+
     // Use this for initialization
     void Start()
     {
@@ -50,16 +53,23 @@ public class Player : MonoBehaviour, IButtonAction
            rightClick: OnButtonClickRight,
            downClick: OnButtonClickDown,
            upClick: OnButtonClickUp );
+
+		_updateEveryFrame = UpdateEveryFrame;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if( _movingLock )
+		if ( _updateEveryFrame != null ) _updateEveryFrame();
+    }
+
+	void UpdateEveryFrame()
+	{
+		if( _movingLock )
         {
             KeepMoving();
         }
-    }
+	}
 
     public void OnButtonClickLeft()
     {
@@ -234,4 +244,12 @@ public class Player : MonoBehaviour, IButtonAction
     {
         // TODO: implement this
     }
+
+	// all the data that is being updated should be cleaned up here.
+	public void CleanUp()
+	{
+		_movingLock = true;
+		_updateEveryFrame = null;
+		
+	}
 }

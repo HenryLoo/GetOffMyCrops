@@ -14,3 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/GameScene.unity
     guid: 2201c8863674f724f8a00960e3c3f280
+  - enabled: 1
+    path: Assets/Scenes/Other/GameplayScreens/EndGame_Win.unity
+    guid: 9086072e2c7e4704d8124596d88910aa
+  - enabled: 1
+    path: Assets/Scenes/Other/GameplayScreens/EndGame_Lose.unity
+    guid: 3e161ace98d74624e82909082dc056ac

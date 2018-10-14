@@ -12,7 +12,9 @@ public static class GameStateLoader
         MAIN_MENU = 1,
         GAMEPLAY,
         PAUSE_MENU,
-        INIT_STATE
+        INIT_STATE,
+		END_GAME_WIN,
+		END_GAME_LOSE
     }
 
     private static GAME_STATES _currentGameState = GAME_STATES.INIT_STATE;
@@ -42,6 +44,18 @@ public static class GameStateLoader
                     Debug.Log( "Game is currently on pause menu." );
                     break;
 
+				case GAME_STATES.END_GAME_WIN:
+                    Debug.Log( "Game is currently on game win state." );
+                    break;
+
+				case GAME_STATES.END_GAME_LOSE:
+                    Debug.Log( "Game is currently on game lose state." );
+                    break;
+				
+				case GAME_STATES.INIT_STATE:
+                    Debug.Log( "Game is currently on init state." );
+                    break;
+				
                 default:
                     Debug.Log( "State is undefined." );
                     break;
@@ -67,12 +81,19 @@ public static class GameStateLoader
                 break;
 
             case GAME_STATES.GAMEPLAY:
-                // TODO: load main gameplay levels here
                 _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.GAMEPLAY );
                 break;
 
             case GAME_STATES.PAUSE_MENU:
                 // TODO: load in game pause menu here
+                break;
+			
+			case GAME_STATES.END_GAME_WIN:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.END_GAME_WIN );
+                break;
+			
+			case GAME_STATES.END_GAME_LOSE:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.END_GAME_LOSE );
                 break;
 
             default:
