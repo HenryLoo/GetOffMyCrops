@@ -32,46 +32,40 @@ public static class GameInput
     // Update should be called once per frame if you are trying to capture input in your scene.
     public static void UpdateInput()
     {
-        _valueAxisH = Input.GetAxis( "Horizontal" );
-        _valueAxisV = Input.GetAxis( "Vertical" );
-
-        _isResetAxisH = _valueAxisH == 0 ? true : false;
-        _isResetAxisV = _valueAxisV == 0 ? true : false;
-
-        bool isActionButtonDown = Input.GetButtonDown( "Fire1" ) || Input.GetKeyDown( KeyCode.Space );
-        bool isRightButtonDown = ( _valueAxisH > 0 && _isResetAxisH ) || Input.GetKeyDown( KeyCode.RightArrow );
-        bool isLeftButtonDown = ( _valueAxisH < 0 && _isResetAxisH ) || Input.GetKeyDown( KeyCode.LeftArrow );
-        bool isBackButtonDown = Input.GetButtonDown( "Fire2" ) || Input.GetKeyDown( KeyCode.Escape );
-        bool isUpButtonDown = ( _valueAxisV > 0 && _isResetAxisV ) || Input.GetKeyDown( KeyCode.UpArrow );
-        bool isDownButtonDown = ( _valueAxisV < 0 && _isResetAxisV ) || Input.GetKeyDown( KeyCode.DownArrow );
+        bool isActionButtonDown = Input.GetButtonDown( "Action" );
+        bool isBackButtonDown = Input.GetButtonDown( "Cancel" );
+        bool isRightButtonDown = Input.GetAxis( "Horizontal" ) > 0 && Input.GetButtonDown( "Horizontal" );
+        bool isLeftButtonDown = Input.GetAxis( "Horizontal" ) < 0 && Input.GetButtonDown( "Horizontal" );
+        bool isUpButtonDown = Input.GetAxis( "Vertical" ) > 0 && Input.GetButtonDown( "Vertical" );
+        bool isDownButtonDown = Input.GetAxis( "Vertical" ) < 0 && Input.GetButtonDown( "Vertical" );
 
         if( isActionButtonDown && _onActionClick != null )
         {
             Debug.Log( "Button clicked = Action" );
             _onActionClick();
         }
-        if( isRightButtonDown && _onRightClick != null )
+        else if( isRightButtonDown && _onRightClick != null )
         {
             Debug.Log( "Button clicked = Right" );
 
             _onRightClick();
         }
-        if( isLeftButtonDown && _onLeftClick != null )
+        else if( isLeftButtonDown && _onLeftClick != null )
         {
             Debug.Log( "Button clicked = Left" );
             _onLeftClick();
         }
-        if( isBackButtonDown && _onBackClick != null )
+        else if( isBackButtonDown && _onBackClick != null )
         {
             Debug.Log( "Button clicked = Back" );
             _onBackClick();
         }
-        if( isUpButtonDown && _onUpClick != null )
+        else if( isUpButtonDown && _onUpClick != null )
         {
             Debug.Log( "Button clicked = Up" );
             _onUpClick();
         }
-        if( isDownButtonDown && _onDownClick != null )
+        else if( isDownButtonDown && _onDownClick != null )
         {
             Debug.Log( "Button clicked = Down" );
             _onDownClick();
