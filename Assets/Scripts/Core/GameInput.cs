@@ -23,12 +23,6 @@ public static class GameInput
     private static UpButtonClickHandler _onUpClick = null;
     private static DownButtonClickHandler _onDownClick = null;
 
-    private static float _valueAxisH = 0;
-    private static float _valueAxisV = 0;
-
-    private static bool _isResetAxisH = true;
-    private static bool _isResetAxisV = true;
-
     // Update should be called once per frame if you are trying to capture input in your scene.
     public static void UpdateInput()
     {
