@@ -35,16 +35,16 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
     private const int SEED_BUY_PRICE = 5;
     private const int CROP_SELL_PRICE = 20;
 
-	private delegate void PlayerUpdate();
-	private PlayerUpdate _updateEveryFrame;
+    private delegate void PlayerUpdate();
+    private PlayerUpdate _updateEveryFrame;
 
     // Use this for initialization
     void Start()
     {
-        _gameController = GameObject.Find("GameController")
+        _gameController = GameObject.Find( "GameController" )
             .GetComponent<GameController>();
-        _tileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
-        _tilePos = _tileMap.GetTileAtPosition(transform.position);
+        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
+        _tilePos = _tileMap.GetTileAtPosition( transform.position );
 
         GameInput.AttachInput(
            actionClick: OnButtonClickAction,
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
            leftClick: OnButtonClickLeft,
            rightClick: OnButtonClickRight,
            downClick: OnButtonClickDown,
-           upClick: OnButtonClickUp);
+           upClick: OnButtonClickUp );
 
         _updateEveryFrame = UpdateEveryFrame;
     }
@@ -60,12 +60,12 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
     // Update is called once per frame
     void Update()
     {
-        if (_updateEveryFrame != null) _updateEveryFrame();
+        if( _updateEveryFrame != null ) _updateEveryFrame();
     }
 
     void UpdateEveryFrame()
     {
-        if (_movingLock)
+        if( _movingLock )
         {
             KeepMoving();
         }
@@ -73,41 +73,41 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
 
     public void OnButtonClickLeft()
     {
-        if (!_movingLock)
+        if( !_movingLock )
         {
-            MoveH(-1);
+            MoveH( -1 );
         }
     }
 
     public void OnButtonClickRight()
     {
-        if (!_movingLock)
+        if( !_movingLock )
         {
-            MoveH(1);
+            MoveH( 1 );
         }
     }
 
     public void OnButtonClickUp()
     {
-        if (!_movingLock)
+        if( !_movingLock )
         {
-            MoveV(1);
+            MoveV( 1 );
         }
     }
 
     public void OnButtonClickDown()
     {
-        if (!_movingLock)
+        if( !_movingLock )
         {
-            MoveV(-1);
+            MoveV( -1 );
         }
     }
 
     public void OnButtonClickAction()
     {
         // If tile is plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        switch (type)
+        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        switch( type )
         {
             case TileData.TileType.Plantable:
                 Plant();
@@ -123,22 +123,20 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
         // no functionality
     }
 
-    void MoveH(int dir)
+    void MoveH( int dir )
     {
-        float moveX = Input.GetAxis("Horizontal");
         int to = _tilePos.CoordX + dir;
-        if (to >= 0 && to < _tileMap.GetSizeX())
+        if( to >= 0 && to < _tileMap.GetSizeX() )
         {
             _tilePos.CoordX = to;
             Move();
         }
     }
 
-    void MoveV(int dir)
+    void MoveV( int dir )
     {
-        float moveZ = Input.GetAxis("Vertical");
         int to = _tilePos.CoordZ + dir;
-        if (to >= 0 && to < _tileMap.GetSizeZ())
+        if( to >= 0 && to < _tileMap.GetSizeZ() )
         {
             _tilePos.CoordZ = to;
             Move();
@@ -149,32 +147,32 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
     // has started
     void Move()
     {
-        _moveTargetPos = _tileMap.GetPositionAtTile(_tilePos);
+        _moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
         _moveTargetPos.y = transform.position.y;
         _movingLock = true;
 
         // rotation player to moveing direction
-        transform.LookAt(_moveTargetPos);
+        transform.LookAt( _moveTargetPos );
 
         // Move along a Bezier curve
         _moveStartPos = transform.position;
-        _moveMidPos = _moveStartPos + (_moveTargetPos - _moveStartPos) / 2 + Vector3.up * 1.5f;
+        _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * 1.5f;
     }
 
     // Movement transition between tiles
     // Call this to update once per frame
     void KeepMoving()
     {
-        if (Vector3.Distance(transform.position, _moveTargetPos) > 0.1f)
+        if( Vector3.Distance( transform.position, _moveTargetPos ) > 0.1f )
         {
             // Gradually move toward the target position
-            if (_movementTime < 1.0f)
+            if( _movementTime < 1.0f )
             {
                 _movementTime += 1.0f * MovementSpeed * Time.deltaTime;
 
-                Vector3 m1 = Vector3.Lerp(_moveStartPos, _moveMidPos, _movementTime);
-                Vector3 m2 = Vector3.Lerp(_moveMidPos, _moveTargetPos, _movementTime);
-                transform.position = Vector3.Lerp(m1, m2, _movementTime);
+                Vector3 m1 = Vector3.Lerp( _moveStartPos, _moveMidPos, _movementTime );
+                Vector3 m2 = Vector3.Lerp( _moveMidPos, _moveTargetPos, _movementTime );
+                transform.position = Vector3.Lerp( m1, m2, _movementTime );
             }
         }
         else
@@ -196,25 +194,25 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
     void Plant()
     {
         // If not enough money
-        if (_gameController.GetCurrentMoney() < SEED_BUY_PRICE)
+        if( _gameController.GetCurrentMoney() < SEED_BUY_PRICE )
         {
             // TODO: show tips
-            Debug.Log("Not enough money");
+            Debug.Log( "Not enough money" );
             return;
         }
 
         // If tile is not plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        if (type != TileData.TileType.Plantable)
+        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        if( type != TileData.TileType.Plantable )
         {
             // TODO: show tips
-            Debug.Log("Tile is not Plantable");
+            Debug.Log( "Tile is not Plantable" );
             return;
         }
 
         // Plant the seed and deduct money by investment cost
-        _tileMap.SetTile(_tilePos, TileData.TileType.CropSeed);
-        _gameController.AddMoney(-SEED_BUY_PRICE);
+        _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
+        _gameController.AddMoney( -SEED_BUY_PRICE );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -225,17 +223,17 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
     void Harvest()
     {
         // If tile is not plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        if (type != TileData.TileType.CropMature)
+        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        if( type != TileData.TileType.CropMature )
         {
             // TODO: show tips
-            Debug.Log("Crop is not yet Mature");
+            Debug.Log( "Crop is not yet Mature" );
             return;
         }
 
         // Harvest the mature crop and increment money
-        _tileMap.SetTile(_tilePos, TileData.TileType.PlantableCooldown);
-        _gameController.AddMoney(CROP_SELL_PRICE);
+        _tileMap.SetTile( _tilePos, TileData.TileType.PlantableCooldown );
+        _gameController.AddMoney( CROP_SELL_PRICE );
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
@@ -245,13 +243,13 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
         // TODO: implement this
     }
 
-	// all the data that is being updated should be cleaned up here.
-	public void CleanUp()
-	{
-		_movingLock = true;
-		_updateEveryFrame = null;
-		
-	}
+    // all the data that is being updated should be cleaned up here.
+    public void CleanUp()
+    {
+        _movingLock = true;
+        _updateEveryFrame = null;
+
+    }
 
     // Get the player's position on the tile map
     public TileCoordinate GetTilePosition()
