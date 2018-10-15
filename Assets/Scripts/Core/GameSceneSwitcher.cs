@@ -9,14 +9,17 @@ public class GameSceneSwitcher
     {
         MAIN_MENU,
         GAMEPLAY,
-        END_GAME,
+        END_GAME_WIN,
+        END_GAME_LOSE,
         PAUSE_MENU,
         DUMMY_SCENE
     };
 
     public static string[] SCENE_LIST = {
         "Assets/Scenes/Other/MenuScene.unity",
-        "Assets/Scenes/Levels/GameScene.unity"
+        "Assets/Scenes/Levels/GameScene.unity",
+        "Assets/Scenes/Other/GameplayScreens/EndGame_Win.unity",
+        "Assets/Scenes/Other/GameplayScreens/EndGame_Lose.unity"
     };
 
     private SCENE_POSITION _currentScene;

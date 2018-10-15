@@ -22,6 +22,10 @@ public class GameController : MonoBehaviour
     // Flag for if the game is paused
     private bool _isPaused;
 
+	// delegate to handle cleanup on scene destroy
+	private delegate void GameControllerUpdate();
+	private GameControllerUpdate _updateEveryFrame;
+
     void Awake()
     {
         _levelTimer = new GameTimer();
@@ -33,23 +37,31 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		Debug.Log( "GameController.cs" );
         _isPaused = false;
 
         // Reset the timer
         _levelTimer.StartTimer();
+		_updateEveryFrame = UpdateEveryFrame;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if( !_isPaused )
+		if ( _updateEveryFrame != null ) _updateEveryFrame();
+    }
+
+	void UpdateEveryFrame()
+	{
+		if( !_isPaused )
         {
             _levelTimer.Update();
-            TileMap.UpdateTileData();
+            TileMap.UpdateEveryFrame();
+			_PollEndGame();
         }
 
         GameInput.UpdateInput();
-    }
+	}
 
     public void LoadLevel( string levelName )
     {
@@ -93,4 +105,29 @@ public class GameController : MonoBehaviour
     {
         _isPaused = isPaused;
     }
+
+	private void _PollEndGame()
+	{
+		if ( _levelTimer.GetTicks() >= Level.RemainingTime )
+		{
+			Debug.Log( "GameController.cs: timer expired" );
+			CleanUp();
+
+			if ( _currentMoney < Level.MoneyGoal )
+			{
+				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.END_GAME_LOSE );
+			}
+			else
+			{
+				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.END_GAME_WIN );
+			}
+		}
+	}
+
+	private void CleanUp()
+	{
+		_levelTimer.StopTimer();
+		_updateEveryFrame = null;
+		TileMap.CleanUp();
+	}
 }
