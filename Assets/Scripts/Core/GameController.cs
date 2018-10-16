@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour
     // Flag for if the game is paused
     private bool _isPaused;
 
-	// delegate to handle cleanup on scene destroy
+	// Delegate to handle cleanup on scene destroy
 	private delegate void GameControllerUpdate();
 	private GameControllerUpdate _updateEveryFrame;
 
@@ -61,6 +61,16 @@ public class GameController : MonoBehaviour
         }
 
         GameInput.UpdateInput();
+
+        // TODO: debug controls, remove this later
+        if( Input.GetKeyDown( "a" ) )
+        {
+            _levelTimer.AddTicks( -10 );
+        }
+        else if( Input.GetKeyDown( "s" ) )
+        {
+            _levelTimer.AddTicks( 10 );
+        }
 	}
 
     public void LoadLevel( string levelName )

@@ -60,13 +60,22 @@ public class GameTimer
         _ticks = 0;
     }
 
+    // Check if the timer has started
     public bool IsStarted()
     {
         return _isStarted;
     }
 
+    // Return the recorded duration of time
     public float GetTicks()
     {
         return _ticks;
+    }
+
+    // Manually add a duration of time to the recorded amount
+    // Use a negative value to subtract time instead
+    public void AddTicks( float duration )
+    {
+        _ticks = _ticks + duration < 0 ? 0 : _ticks + duration;
     }
 }
