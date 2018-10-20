@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IButtonAction, IEntity
+public class Player : MonoBehaviour, IEntity
 {
     // Reference to the GameController
     private GameController _gameController;
@@ -46,14 +46,6 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
         _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
         _tilePos = _tileMap.GetTileAtPosition( transform.position );
 
-        GameInput.AttachInput(
-           actionClick: OnButtonClickAction,
-           backClick: OnButtonClickBack,
-           leftClick: OnButtonClickLeft,
-           rightClick: OnButtonClickRight,
-           downClick: OnButtonClickDown,
-           upClick: OnButtonClickUp );
-
         _updateEveryFrame = UpdateEveryFrame;
     }
 
@@ -71,60 +63,10 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
         }
     }
 
-    public void OnButtonClickLeft()
+    public void MoveH( int dir )
     {
-        if( !_movingLock )
-        {
-            MoveH( -1 );
-        }
-    }
+        if( _movingLock ) return;
 
-    public void OnButtonClickRight()
-    {
-        if( !_movingLock )
-        {
-            MoveH( 1 );
-        }
-    }
-
-    public void OnButtonClickUp()
-    {
-        if( !_movingLock )
-        {
-            MoveV( 1 );
-        }
-    }
-
-    public void OnButtonClickDown()
-    {
-        if( !_movingLock )
-        {
-            MoveV( -1 );
-        }
-    }
-
-    public void OnButtonClickAction()
-    {
-        // If tile is plantable 
-        TileData.TileType type = _tileMap.GetTile( _tilePos );
-        switch( type )
-        {
-            case TileData.TileType.Plantable:
-                Plant();
-                break;
-            case TileData.TileType.CropMature:
-                Harvest();
-                break;
-        }
-    }
-
-    public void OnButtonClickBack()
-    {
-        // no functionality
-    }
-
-    void MoveH( int dir )
-    {
         int to = _tilePos.CoordX + dir;
         if( to >= 0 && to < _tileMap.GetSizeX() )
         {
@@ -133,8 +75,10 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
         }
     }
 
-    void MoveV( int dir )
+    public void MoveV( int dir )
     {
+        if( _movingLock ) return;
+
         int to = _tilePos.CoordZ + dir;
         if( to >= 0 && to < _tileMap.GetSizeZ() )
         {
@@ -185,6 +129,21 @@ public class Player : MonoBehaviour, IButtonAction, IEntity
 
             // Reset the movement time
             _movementTime = 0;
+        }
+    }
+
+    public void PerformAction()
+    {
+        // If tile is plantable 
+        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        switch( type )
+        {
+            case TileData.TileType.Plantable:
+                Plant();
+                break;
+            case TileData.TileType.CropMature:
+                Harvest();
+                break;
         }
     }
 

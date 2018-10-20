@@ -1,23 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 // This script should be attached to the main menu.
-public class MainMenu : MonoBehaviour, IButtonAction
+public class MainMenu : Menu, IButtonAction
 {
-    private static readonly int BUTTON_INDEX_UP = -1;
-    private static readonly int BUTTON_INDEX_DOWN = 1;
-
-    private GameObject _currentlySelectedButton;
-    private int _currentButtonIndex;
-    private enum BUTTONS
-    {
-        PLAY_BUTTON,
-        INSTRUCTIONS_BUTTON,
-        EXIT_BUTTON
-    };
-    private readonly string[] BUTTON_LIST = { "PlayButton", "InstructionsButton", "ExitButton" };
+    private readonly string PLAY_BUTTON = "PlayButton";
+    private readonly string INSTRUCTIONS_BUTTON = "InstructionsButton";
+    private readonly string EXIT_BUTTON = "ExitButton";
 
     // Use this for initialization
     void Start()
@@ -31,6 +19,11 @@ public class MainMenu : MonoBehaviour, IButtonAction
             rightClick: OnButtonClickRight,
             downClick: OnButtonClickDown,
             upClick: OnButtonClickUp );
+
+        // Initialize menu options
+        AddMenuOption( PLAY_BUTTON, OnPlayButtonSelect );
+        AddMenuOption( INSTRUCTIONS_BUTTON, OnInstructionsButtonSelect );
+        AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
 
         SelectDefaultButton();
     }
@@ -53,19 +46,7 @@ public class MainMenu : MonoBehaviour, IButtonAction
 
     public void OnButtonClickAction()
     {
-        // Select the button
-        if( _currentButtonIndex == ( int ) BUTTONS.PLAY_BUTTON )
-        {
-            OnPlayButtonSelect();
-        }
-        else if( _currentButtonIndex == ( int ) BUTTONS.EXIT_BUTTON )
-        {
-            OnExitButtonSelect();
-        }
-        else if( _currentButtonIndex == ( int ) BUTTONS.INSTRUCTIONS_BUTTON )
-        {
-            OnInstructionsButtonSelect();
-        }
+        SelectButton();
     }
 
     public void OnButtonClickBack()
@@ -84,24 +65,7 @@ public class MainMenu : MonoBehaviour, IButtonAction
         // Move selected button downwards
         UpdateButtonIndex( BUTTON_INDEX_DOWN );
     }
-
-    private void UpdateButtonIndex( int indexChange )
-    {
-        _currentButtonIndex += indexChange;
-
-        _currentButtonIndex = HelperFunctions.MathModulus( _currentButtonIndex, BUTTON_LIST.Length );
-        Debug.Log( "MainMenu.cs: Button index = " + _currentButtonIndex );
-        _currentlySelectedButton = GameObject.Find( BUTTON_LIST[ _currentButtonIndex ] );
-        _currentlySelectedButton.GetComponent<Button>().Select();
-    }
-
-    private void SelectDefaultButton()
-    {
-        _currentButtonIndex = ( int ) BUTTONS.PLAY_BUTTON;
-        _currentlySelectedButton = GameObject.Find( BUTTON_LIST[ _currentButtonIndex ] );
-        _currentlySelectedButton.GetComponent<Button>().Select();
-    }
-
+    
     private void OnPlayButtonSelect()
     {
         // Load the game

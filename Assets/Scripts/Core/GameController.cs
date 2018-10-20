@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class GameController : MonoBehaviour, IButtonAction
 {
     // Reference to the TileMap instance
     public TileMap TileMap;
+
+    // Reference to the UIController instance
+    public PauseMenu PauseMenu;
 
     // The player's current money
     private int _currentMoney;
@@ -43,6 +46,14 @@ public class GameController : MonoBehaviour
         // Reset the timer
         _levelTimer.StartTimer();
 		_updateEveryFrame = UpdateEveryFrame;
+
+        GameInput.AttachInput(
+           actionClick: OnButtonClickAction,
+           backClick: OnButtonClickBack,
+           leftClick: OnButtonClickLeft,
+           rightClick: OnButtonClickRight,
+           downClick: OnButtonClickDown,
+           upClick: OnButtonClickUp );
     }
 
     // Update is called once per frame
@@ -140,4 +151,62 @@ public class GameController : MonoBehaviour
 		_updateEveryFrame = null;
 		TileMap.CleanUp();
 	}
+
+    public void OnButtonClickUp()
+    {
+        if( !_isPaused )
+        {
+            TileMap.GetPlayer().MoveV( 1 );
+        }
+        else
+        {
+            PauseMenu.MoveSelectedUp();
+        }
+    }
+
+    public void OnButtonClickDown()
+    {
+        if( !_isPaused )
+        {
+            TileMap.GetPlayer().MoveV( -1 );
+        }
+        else
+        {
+            PauseMenu.MoveSelectedDown();
+        }
+    }
+
+    public void OnButtonClickLeft()
+    {
+        if( !_isPaused )
+        {
+            TileMap.GetPlayer().MoveH( -1 );
+        }
+    }
+
+    public void OnButtonClickRight()
+    {
+        if( !_isPaused )
+        {
+            TileMap.GetPlayer().MoveH( 1 );
+        }
+    }
+
+    public void OnButtonClickAction()
+    {
+        if( !_isPaused )
+        {
+            TileMap.GetPlayer().PerformAction();
+        }
+        else
+        {
+            PauseMenu.SelectOption();
+        }
+    }
+
+    public void OnButtonClickBack()
+    {
+        _isPaused = !_isPaused;
+        PauseMenu.TogglePauseMenu( _isPaused );
+    }
 }

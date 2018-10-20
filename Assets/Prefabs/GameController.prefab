@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TileMap: {fileID: 0}
+  PauseMenu: {fileID: 0}
   Level:
     LevelName: 
     MoneyGoal: 0

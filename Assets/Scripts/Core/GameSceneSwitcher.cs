@@ -16,10 +16,10 @@ public class GameSceneSwitcher
     };
 
     public static string[] SCENE_LIST = {
-        "Assets/Scenes/Other/MenuScene.unity",
-        "Assets/Scenes/Levels/GameScene.unity",
-        "Assets/Scenes/Other/GameplayScreens/EndGame_Win.unity",
-        "Assets/Scenes/Other/GameplayScreens/EndGame_Lose.unity"
+        "Assets/Scenes/MenuScene.unity",
+        "Assets/Scenes/GameScene.unity",
+        "Assets/Scenes/GameplayScreens/EndGame_Win.unity",
+        "Assets/Scenes/GameplayScreens/EndGame_Lose.unity"
     };
 
     private SCENE_POSITION _currentScene;

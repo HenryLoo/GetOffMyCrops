@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.4964127, b: 0.57481724, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -214,10 +214,21 @@ Prefab:
       propertyPath: TileMap
       value: 
       objectReference: {fileID: 1981563078}
+    - target: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
+        type: 2}
+      propertyPath: PauseMenu
+      value: 
+      objectReference: {fileID: 1371900826}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 82ef8cf4b02e81742a54235dfdc0edb9, type: 2}
   m_IsPrefabParent: 0
---- !u!1001 &1558844139
+--- !u!114 &361496366 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
+    type: 2}
+  m_PrefabInternal: {fileID: 361496365}
+  m_Script: {fileID: 11500000, guid: 06339a27dd41eeb4aa6d812f25da3d5e, type: 3}
+--- !u!1001 &766201792
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -314,6 +325,21 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114910752403819910, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: GameController
+      value: 
+      objectReference: {fileID: 361496366}
+    - target: {fileID: 114203203313283032, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: GameController
+      value: 
+      objectReference: {fileID: 361496366}
+    - target: {fileID: 224811365594068236, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224385456350005266, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
       propertyPath: m_AnchorMax.y
@@ -324,10 +350,24 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224811365594068236, guid: 05be9328f77d33747b4c5050aa395ba0,
+    - target: {fileID: 224270683072055726, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224270683072055726, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1762049254215712, guid: 05be9328f77d33747b4c5050aa395ba0, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224155473358937944, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224088948176229362, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
@@ -389,24 +429,19 @@ Prefab:
       propertyPath: m_SizeDelta.y
       value: 48
       objectReference: {fileID: 0}
-    - target: {fileID: 114224007090727416, guid: 05be9328f77d33747b4c5050aa395ba0,
-        type: 2}
-      propertyPath: m_Color.r
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 114224007090727416, guid: 05be9328f77d33747b4c5050aa395ba0,
-        type: 2}
-      propertyPath: m_Color.g
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 114224007090727416, guid: 05be9328f77d33747b4c5050aa395ba0,
-        type: 2}
-      propertyPath: m_Color.b
-      value: 0.19607843
+    - target: {fileID: 1713001111044012, guid: 05be9328f77d33747b4c5050aa395ba0, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 05be9328f77d33747b4c5050aa395ba0, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1371900826 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114910752403819910, guid: 05be9328f77d33747b4c5050aa395ba0,
+    type: 2}
+  m_PrefabInternal: {fileID: 766201792}
+  m_Script: {fileID: 11500000, guid: 0c84c0f13ea424140bc98147b6e280da, type: 3}
 --- !u!1 &1645595759
 GameObject:
   m_ObjectHideFlags: 0

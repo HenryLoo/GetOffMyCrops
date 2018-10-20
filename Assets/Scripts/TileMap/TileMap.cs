@@ -19,6 +19,9 @@ public class TileMap : MonoBehaviour
     // Hold the data for each tile on the map
     private TileData _mapData;
 
+    // Reference to the Player instance
+    private Player _player;
+
     // The current level's data
     private LevelData _levelData;
 
@@ -121,8 +124,10 @@ public class TileMap : MonoBehaviour
     // Instantiate a prefab at a given (x, z) tile position
     public void CreateEntity( TileCoordinate tilePos, GameObject prefab )
     {
-        Instantiate( prefab, GetPositionAtTile( tilePos ), 
+        GameObject entity = Instantiate( prefab, GetPositionAtTile( tilePos ), 
             Quaternion.identity, transform );
+
+        if( prefab.CompareTag( "Player" ) ) _player = entity.GetComponent<Player>();
     }
 
     // Initialize the tile map's mesh for graphical purposes
@@ -286,4 +291,9 @@ public class TileMap : MonoBehaviour
             GameObject.Destroy( child.gameObject );
         }
 	}
+
+    public Player GetPlayer()
+    {
+        return _player;
+    }
 }
