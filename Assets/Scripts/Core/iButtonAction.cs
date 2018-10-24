@@ -6,5 +6,6 @@
     void OnButtonClickLeft();
 	void OnButtonClickRight();
 	void OnButtonClickAction();
+	void OnButtonClickSkill();
 	void OnButtonClickBack();
 }

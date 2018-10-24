@@ -14,6 +14,7 @@ public class MainMenu : Menu, IButtonAction
 
         GameInput.AttachInput(
             actionClick: OnButtonClickAction,
+            skillClick: OnButtonClickSkill,
             backClick: OnButtonClickBack,
             leftClick: OnButtonClickLeft, 
             rightClick: OnButtonClickRight,
@@ -47,6 +48,11 @@ public class MainMenu : Menu, IButtonAction
     public void OnButtonClickAction()
     {
         SelectButton();
+    }
+
+	public void OnButtonClickSkill()
+    {
+        // no functionality
     }
 
     public void OnButtonClickBack()
