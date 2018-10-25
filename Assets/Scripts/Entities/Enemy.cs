@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 
 public abstract class Enemy
+=======
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public abstract class Enemy : MonoBehaviour, IEntity
+>>>>>>> 896bb3e0984787bca60a57a1b8b59ba4744ccabe
 {
     public enum EnemyState
     {
@@ -152,4 +160,7 @@ public abstract class Enemy
 
     // Escape off the map
     public abstract void RunAway();
+
+    public abstract void CleanUp();
+
 }

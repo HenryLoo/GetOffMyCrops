@@ -49,6 +49,7 @@ public class GameController : MonoBehaviour, IButtonAction
 
         GameInput.AttachInput(
            actionClick: OnButtonClickAction,
+           skillClick: OnButtonClickSkill,
            backClick: OnButtonClickBack,
            leftClick: OnButtonClickLeft,
            rightClick: OnButtonClickRight,
@@ -212,6 +213,6 @@ public class GameController : MonoBehaviour, IButtonAction
 
 	public void OnButtonClickSkill()
     {
-        // no functionality
+        TileMap.GetPlayer().Scare();
     }
 }
