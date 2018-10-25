@@ -209,4 +209,9 @@ public class GameController : MonoBehaviour, IButtonAction
         _isPaused = !_isPaused;
         PauseMenu.TogglePauseMenu( _isPaused );
     }
+
+	public void OnButtonClickSkill()
+    {
+        // no functionality
+    }
 }

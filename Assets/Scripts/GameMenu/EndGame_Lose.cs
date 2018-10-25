@@ -53,6 +53,11 @@ public class EndGame_Lose : MonoBehaviour, IButtonAction
 
 	}
 
+	public void OnButtonClickSkill()
+    {
+        // no functionality
+    }
+
 	private void CleanUp()
 	{
 		// put all the clean up code here
