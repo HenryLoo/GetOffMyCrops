@@ -1,4 +1,7 @@
-﻿public abstract class Enemy
+﻿using System;
+using System.Collections.Generic;
+
+public abstract class Enemy
 {
     public enum EnemyState
     {
@@ -22,6 +25,9 @@
 
     // Reference to the tile map instance
     public TileMap TileMap;
+
+
+    static Random randomNo = new Random();
 
     // The enemy's current position on the tile map
     private TileCoordinate _tilePos;
@@ -87,10 +93,34 @@
         }
     }
 
+    public void getRandomTargetCrop(List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops)
+    {
+        if (currentPlantedCrops.Count != 0)
+        {
+            int randomTilePicked = randomNo.Next(currentPlantedCrops.Count);
+            SetTargetCrop(currentPlantedCrops[randomTilePicked].Key);
+        }
+    }
     // Set the crop at this tile to be the enemy's target
     public void SetTargetCrop( TileCoordinate crop )
     {
         _targetCrop = crop;
+    }
+
+    public TileCoordinate SetRandomSpawnLocation(int _sizeX, int _sizeZ)
+    {
+        int randomPicked = randomNo.Next(4);
+        switch (randomPicked)
+        {
+            case 3:
+                return new TileCoordinate(_targetCrop.CoordX, _sizeZ);
+            case 2:
+                return new TileCoordinate(_targetCrop.CoordX, 0);
+            case 1:
+                return new TileCoordinate(_sizeX, _targetCrop.CoordZ);
+            default:
+                return new TileCoordinate(0, _targetCrop.CoordZ);
+        }
     }
 
     // Get the relative distance in tiles from a given tile position

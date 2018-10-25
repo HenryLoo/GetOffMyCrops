@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 // Hold data for all tiles on a tile map
 public class TileData
@@ -34,6 +36,9 @@ public class TileData
     private int _sizeX, _sizeZ;
     private TileType[] _tiles;
     private GameTimer[] _timers;
+
+    // TileMap's currently planted crops
+    public List<KeyValuePair<TileCoordinate, TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileType>>();
 
     public TileData( TileMap tileMap, int x, int z )
     {
@@ -73,6 +78,43 @@ public class TileData
     public void SetTile( TileCoordinate tilePos, TileType type )
     {
         _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = type;
+        UpdateCropArray(tilePos, type);
+    }
+    public void UpdateCropArray(TileCoordinate tilePos, TileType type)
+    {
+        if (type == TileType.CropSeed)
+        {
+            currentPlantedCrops.Add(new KeyValuePair<TileCoordinate, TileType>(tilePos, type));
+            Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
+        }
+        else if (type == TileType.PlantableCooldown)
+        {
+            int curIndex = -1;
+            int removeIndex = -1;
+            bool removeCrop = false;
+            foreach (var crop in currentPlantedCrops)
+            {
+                curIndex++;
+                if (crop.Key.Equals(tilePos))
+                {
+                    removeCrop = true;
+                    removeIndex = curIndex;
+                }
+            }
+            if(removeCrop)
+            {
+                currentPlantedCrops.RemoveAt(removeIndex);
+                //Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + TileType.CropSeed);
+            }
+        }
+        //foreach (var crop in currentPlantedCrops)
+        //{
+        //    Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
+        //}
+    }
+    public List<KeyValuePair<TileCoordinate, TileType>> GetCropArray()
+    {
+        return currentPlantedCrops;
     }
 
     // Call this once per frame
@@ -111,7 +153,7 @@ public class TileData
     // that tile's timer has exceeded the given duration
     private void ChangeTileTypeFromTimer( TileCoordinate tilePos, 
         TileType type, float duration )
-    {
+    {        
         int index = tilePos.CoordZ * _sizeX + tilePos.CoordX;
         if( !_timers[ index ].IsStarted() )
         {
