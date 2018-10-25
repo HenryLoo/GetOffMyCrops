@@ -1,4 +1,8 @@
-﻿public abstract class Enemy
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public abstract class Enemy : MonoBehaviour, IEntity
 {
     public enum EnemyState
     {
@@ -122,4 +126,7 @@
 
     // Escape off the map
     public abstract void RunAway();
+
+    public abstract void CleanUp();
+
 }
