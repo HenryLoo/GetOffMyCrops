@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-﻿using System;
-using System.Collections.Generic;
 
-public abstract class Enemy
-=======
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour, IEntity
->>>>>>> 896bb3e0984787bca60a57a1b8b59ba4744ccabe
 {
     public enum EnemyState
     {
@@ -35,7 +28,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     public TileMap TileMap;
 
 
-    static Random randomNo = new Random();
+    static System.Random randomNo = new System.Random();
 
     // The enemy's current position on the tile map
     private TileCoordinate _tilePos;
