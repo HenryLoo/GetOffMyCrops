@@ -108,6 +108,12 @@ NavMeshSettings:
     tileSize: 256
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &13990676 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114010851846643900, guid: ac67df10d873ba54faa06aa44fa18444,
+    type: 2}
+  m_PrefabInternal: {fileID: 165927745}
+  m_Script: {fileID: 11500000, guid: 74274e9ac34c3b146b65ace2ea2ee8d5, type: 3}
 --- !u!1 &159443779
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,8 +174,55 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &165927745
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4885730796131762, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114010851846643900, guid: ac67df10d873ba54faa06aa44fa18444,
+        type: 2}
+      propertyPath: GameController
+      value: 
+      objectReference: {fileID: 361496366}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: ac67df10d873ba54faa06aa44fa18444, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &361496365
 Prefab:
   m_ObjectHideFlags: 0
@@ -214,6 +267,11 @@ Prefab:
       propertyPath: TileMap
       value: 
       objectReference: {fileID: 1981563078}
+    - target: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
+        type: 2}
+      propertyPath: EnemyController
+      value: 
+      objectReference: {fileID: 13990676}
     - target: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
         type: 2}
       propertyPath: PauseMenu
@@ -273,7 +331,7 @@ Prefab:
     - target: {fileID: 224434378289502804, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 224434378289502804, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
@@ -633,7 +691,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4266912635187486, guid: 01c3a866a6a624142a4c6eb7838d755d, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114151549910441978, guid: 01c3a866a6a624142a4c6eb7838d755d,
         type: 2}

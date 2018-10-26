@@ -21,6 +21,16 @@ public class LevelData
     public Texture2D EntityLayout;
     public string EntityLayoutFile;
 
+    [System.Serializable]
+    public struct EnemySpawnPattern
+    {
+        public string EnemyType;
+        public int Amount;
+        public int WhenToSpawn;
+    }
+
+    public EnemySpawnPattern[] EnemySpawnPatterns;
+
     public static LevelData CreateFromJson( string json )
     {
         LevelData level = JsonUtility.FromJson<LevelData>( json );

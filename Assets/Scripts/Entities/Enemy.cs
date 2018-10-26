@@ -21,14 +21,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
     public float EatingDuration;
     private GameTimer _eatingTimer;
 
-    // Reference to the player instance
-    public Player Player;
-
     // Reference to the tile map instance
-    public TileMap TileMap;
-
-
-    static System.Random randomNo = new System.Random();
+    private TileMap _tileMap;
 
     // The enemy's current position on the tile map
     private TileCoordinate _tilePos;
@@ -43,11 +37,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // The enemy's current state
     private EnemyState _currentState;
 
-    public Enemy()
+    void Start()
     {
+        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
         _eatingTimer = new GameTimer();
-        getRandomTargetCrop();
-        _tilePos = SetRandomSpawnLocation();
+        _tilePos = _tileMap.GetTileAtPosition( transform.position );
     }
 
     // Update the enemy's behaviour
@@ -70,7 +64,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
                     if( CanBeBlocked )
                     {
                         TileCoordinate dist = GetDistanceFromTile( 
-                            Player.GetTilePosition() );
+                            _tileMap.GetPlayer().GetTilePosition() );
                         if( ( dist.CoordX == 1 && dist.CoordZ == 0 && _isMovingRight ) ||
                             ( dist.CoordX == -1 && dist.CoordZ == 0 && _isMovingLeft ) ||
                             ( dist.CoordX == 0 && dist.CoordZ == 1 && _isMovingUp ) ||
@@ -94,44 +88,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 break;
         }
     }
-
-    public void getRandomTargetCrop()
-    {        
-        if (TileMap.currentPlantedCrops.Count != 0)
-        {
-            int randomTilePicked = randomNo.Next(TileMap.currentPlantedCrops.Count);
-            SetTargetCrop(TileMap.currentPlantedCrops[randomTilePicked].Key);
-        }
-    }
+    
     // Set the crop at this tile to be the enemy's target
     public void SetTargetCrop( TileCoordinate crop )
     {
         _targetCrop = crop;
-    }
-
-    public TileCoordinate SetRandomSpawnLocation()
-    {
-        int randomPicked = randomNo.Next(4);
-        TileCoordinate spawnTile = new TileCoordinate();
-        switch (randomPicked)
-        {
-            case 3:
-                spawnTile = new TileCoordinate(_targetCrop.CoordX, TileMap.GetSizeZ());
-                break;
-            case 2:
-                spawnTile = new TileCoordinate(_targetCrop.CoordX, 0);
-                break;
-            case 1:
-                spawnTile = new TileCoordinate(TileMap.GetSizeX(), _targetCrop.CoordZ);
-                break;
-            default:
-                spawnTile = new TileCoordinate(0, _targetCrop.CoordZ);
-                break;
-        }
-        Debug.Log("Spawn Location [x:" + _targetCrop.CoordX + " z:" + _targetCrop.CoordZ + 
-                "] - for Target Crop: [x:" + spawnTile.CoordX + " z:" + spawnTile.CoordZ + "]");
-
-        return spawnTile;
     }
 
     // Get the relative distance in tiles from a given tile position
@@ -152,7 +113,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
         // After crop is eaten, run away
         if( _eatingTimer.GetTicks() >= EatingDuration )
         {
-            TileMap.SetTile( _targetCrop, TileData.TileType.PlantableCooldown );
+            _tileMap.SetTile( _targetCrop, TileData.TileType.PlantableCooldown );
             _eatingTimer.StopTimer();
             _currentState = EnemyState.Escaping;
         }

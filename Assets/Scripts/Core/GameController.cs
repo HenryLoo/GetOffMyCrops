@@ -7,6 +7,9 @@ public class GameController : MonoBehaviour, IButtonAction
     // Reference to the TileMap instance
     public TileMap TileMap;
 
+    // Reference to the EnemyController instance
+    public EnemyController EnemyController;
+
     // Reference to the UIController instance
     public PauseMenu PauseMenu;
 
@@ -96,6 +99,7 @@ public class GameController : MonoBehaviour, IButtonAction
         Debug.Log( levelJson.text );
         Level = LevelData.CreateFromJson( levelJson.text );
         TileMap.InitTileMap( Level );
+        EnemyController.Init();
     }
 
     // Add to the current money value (or subtract by using negative values)

@@ -126,12 +126,14 @@ public class TileMap : MonoBehaviour
     }
 
     // Instantiate a prefab at a given (x, z) tile position
-    public void CreateEntity( TileCoordinate tilePos, GameObject prefab )
+    public GameObject CreateEntity( TileCoordinate tilePos, GameObject prefab )
     {
         GameObject entity = Instantiate( prefab, GetPositionAtTile( tilePos ), 
             Quaternion.identity, transform );
 
         if( prefab.CompareTag( "Player" ) ) _player = entity.GetComponent<Player>();
+
+        return entity;
     }
 
     // Initialize the tile map's mesh for graphical purposes
