@@ -37,7 +37,7 @@ public class TileMap : MonoBehaviour
 	private TileMapDelegate _tileMapUpdate;
 
     // TileMap's currently planted crops
-    private List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
+    public List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
 
 
     // Use this for initialization
@@ -318,11 +318,6 @@ public class TileMap : MonoBehaviour
         {
             Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
         }
-    }
-    // returns an array list of all currently growing tiles
-    public List<KeyValuePair<TileCoordinate, TileData.TileType>> GetCropArray()
-    {
-        return currentPlantedCrops;
     }
 
     public void CleanUp()

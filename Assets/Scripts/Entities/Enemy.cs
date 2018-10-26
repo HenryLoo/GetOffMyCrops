@@ -43,10 +43,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // The enemy's current state
     private EnemyState _currentState;
 
-    public Enemy( TileCoordinate spawnPos )
+    public Enemy()
     {
         _eatingTimer = new GameTimer();
-        _tilePos = spawnPos;
+        getRandomTargetCrop();
+        _tilePos = SetRandomSpawnLocation();
     }
 
     // Update the enemy's behaviour
@@ -94,12 +95,12 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    public void getRandomTargetCrop(List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops)
-    {
-        if (currentPlantedCrops.Count != 0)
+    public void getRandomTargetCrop()
+    {        
+        if (TileMap.currentPlantedCrops.Count != 0)
         {
-            int randomTilePicked = randomNo.Next(currentPlantedCrops.Count);
-            SetTargetCrop(currentPlantedCrops[randomTilePicked].Key);
+            int randomTilePicked = randomNo.Next(TileMap.currentPlantedCrops.Count);
+            SetTargetCrop(TileMap.currentPlantedCrops[randomTilePicked].Key);
         }
     }
     // Set the crop at this tile to be the enemy's target
@@ -108,20 +109,29 @@ public abstract class Enemy : MonoBehaviour, IEntity
         _targetCrop = crop;
     }
 
-    public TileCoordinate SetRandomSpawnLocation(int _sizeX, int _sizeZ)
+    public TileCoordinate SetRandomSpawnLocation()
     {
         int randomPicked = randomNo.Next(4);
+        TileCoordinate spawnTile = new TileCoordinate();
         switch (randomPicked)
         {
             case 3:
-                return new TileCoordinate(_targetCrop.CoordX, _sizeZ);
+                spawnTile = new TileCoordinate(_targetCrop.CoordX, TileMap.GetSizeZ());
+                break;
             case 2:
-                return new TileCoordinate(_targetCrop.CoordX, 0);
+                spawnTile = new TileCoordinate(_targetCrop.CoordX, 0);
+                break;
             case 1:
-                return new TileCoordinate(_sizeX, _targetCrop.CoordZ);
+                spawnTile = new TileCoordinate(TileMap.GetSizeX(), _targetCrop.CoordZ);
+                break;
             default:
-                return new TileCoordinate(0, _targetCrop.CoordZ);
+                spawnTile = new TileCoordinate(0, _targetCrop.CoordZ);
+                break;
         }
+        Debug.Log("Spawn Location [x:" + _targetCrop.CoordX + " z:" + _targetCrop.CoordZ + 
+                "] - for Target Crop: [x:" + spawnTile.CoordX + " z:" + spawnTile.CoordZ + "]");
+
+        return spawnTile;
     }
 
     // Get the relative distance in tiles from a given tile position
