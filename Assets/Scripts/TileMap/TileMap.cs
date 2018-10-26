@@ -36,6 +36,10 @@ public class TileMap : MonoBehaviour
 	private delegate void TileMapDelegate();
 	private TileMapDelegate _tileMapUpdate;
 
+    // TileMap's currently planted crops
+    private List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
+
+
     // Use this for initialization
     void Start()
     {
@@ -282,7 +286,46 @@ public class TileMap : MonoBehaviour
         return tilePos;
     }
 
-	public void CleanUp()
+    // adds o9r removes crop tiles in an array list of all currently growing tiles
+    public void UpdateCropArray(TileCoordinate tilePos, TileData.TileType type)
+    {
+        if (type == TileData.TileType.CropSeed)
+        {
+            currentPlantedCrops.Add(new KeyValuePair<TileCoordinate, TileData.TileType>(tilePos, type));
+            Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
+        }
+        else if (type == TileData.TileType.PlantableCooldown)
+        {
+            int curIndex = -1;
+            int removeIndex = -1;
+            bool removeCrop = false;
+            foreach (var crop in currentPlantedCrops)
+            {
+                curIndex++;
+                if (crop.Key.Equals(tilePos))
+                {
+                    removeCrop = true;
+                    removeIndex = curIndex;
+                }
+            }
+            if (removeCrop)
+            {
+                currentPlantedCrops.RemoveAt(removeIndex);
+                Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
+            }
+        }
+        foreach (var crop in currentPlantedCrops)
+        {
+            Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
+        }
+    }
+    // returns an array list of all currently growing tiles
+    public List<KeyValuePair<TileCoordinate, TileData.TileType>> GetCropArray()
+    {
+        return currentPlantedCrops;
+    }
+
+    public void CleanUp()
 	{
 		_tileMapUpdate = null;
 		foreach( Transform child in transform )

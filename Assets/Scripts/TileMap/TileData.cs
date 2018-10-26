@@ -78,43 +78,7 @@ public class TileData
     public void SetTile( TileCoordinate tilePos, TileType type )
     {
         _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = type;
-        UpdateCropArray(tilePos, type);
-    }
-    public void UpdateCropArray(TileCoordinate tilePos, TileType type)
-    {
-        if (type == TileType.CropSeed)
-        {
-            currentPlantedCrops.Add(new KeyValuePair<TileCoordinate, TileType>(tilePos, type));
-            Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
-        }
-        else if (type == TileType.PlantableCooldown)
-        {
-            int curIndex = -1;
-            int removeIndex = -1;
-            bool removeCrop = false;
-            foreach (var crop in currentPlantedCrops)
-            {
-                curIndex++;
-                if (crop.Key.Equals(tilePos))
-                {
-                    removeCrop = true;
-                    removeIndex = curIndex;
-                }
-            }
-            if(removeCrop)
-            {
-                currentPlantedCrops.RemoveAt(removeIndex);
-                //Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + TileType.CropSeed);
-            }
-        }
-        //foreach (var crop in currentPlantedCrops)
-        //{
-        //    Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
-        //}
-    }
-    public List<KeyValuePair<TileCoordinate, TileType>> GetCropArray()
-    {
-        return currentPlantedCrops;
+        _tileMap.UpdateCropArray(tilePos, type);
     }
 
     // Call this once per frame
