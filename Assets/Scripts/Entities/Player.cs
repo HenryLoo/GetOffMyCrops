@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IEntity
 {
+    public const string MSG_NO_ENOUGH_MONEY = "No enought money";
+
+    public const string MSG_NOT_PLANTABLE = "Tile is not Plantable";
+
+    public const string MSG_NOT_MATURE = "Crop is not yet Mature";
+
     // Reference to the GameController
     private GameController _gameController;
 
@@ -174,6 +180,14 @@ public class Player : MonoBehaviour, IEntity
             case TileData.TileType.CropMature:
                 Harvest();
                 break;
+            case TileData.TileType.Ground:
+            case TileData.TileType.PlantableCooldown:
+                PopupMsgCreator.PopupTip(MSG_NOT_PLANTABLE, transform);
+                break;
+            case TileData.TileType.CropSeed:
+            case TileData.TileType.CropGrowing:
+                PopupMsgCreator.PopupTip(MSG_NOT_MATURE, transform);
+                break;
         }
     }
 
@@ -185,23 +199,14 @@ public class Player : MonoBehaviour, IEntity
         // If not enough money
         if (_gameController.GetCurrentMoney() < SEED_BUY_PRICE)
         {
-            // TODO: show tips
-            Debug.Log("Not enough money");
-            return;
-        }
-
-        // If tile is not plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        if (type != TileData.TileType.Plantable)
-        {
-            // TODO: show tips
-            Debug.Log("Tile is not Plantable");
+            PopupMsgCreator.PopupTip(MSG_NO_ENOUGH_MONEY, transform);
             return;
         }
 
         // Plant the seed and deduct money by investment cost
         _tileMap.SetTile(_tilePos, TileData.TileType.CropSeed);
         _gameController.AddMoney(-SEED_BUY_PRICE);
+        PopupMsgCreator.PopupMoney("-$" + SEED_BUY_PRICE, transform);
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -211,18 +216,11 @@ public class Player : MonoBehaviour, IEntity
     // away (toward the edge of the map)
     void Harvest()
     {
-        // If tile is not plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        if (type != TileData.TileType.CropMature)
-        {
-            // TODO: show tips
-            Debug.Log("Crop is not yet Mature");
-            return;
-        }
-
         // Harvest the mature crop and increment money
         _tileMap.SetTile(_tilePos, TileData.TileType.PlantableCooldown);
         _gameController.AddMoney(CROP_SELL_PRICE);
+
+        PopupMsgCreator.PopupMoney("+$"+ CROP_SELL_PRICE, transform, new Vector3(0, 2, 0));
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
@@ -234,7 +232,9 @@ public class Player : MonoBehaviour, IEntity
         this._scaring = true;
         this.DriveEnemyAway();
 
-        // TODO: show tips
+        // TODO a cooldown of skill
+
+        PopupMsgCreator.PopupMessge("Get Out Of My Crops!!", transform, new Vector3(0, 2, 0));
     }
 
     // reset data after scare
