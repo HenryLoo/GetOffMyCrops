@@ -79,8 +79,8 @@ public class EnemyController : MonoBehaviour
                 spawnTile = new TileCoordinate( -1, targetCrop.CoordZ );
                 break;
         }
-        Debug.Log( "Spawn Location [x:" + targetCrop.CoordX + " z:" + targetCrop.CoordZ +
-                "] - for Target Crop: [x:" + spawnTile.CoordX + " z:" + spawnTile.CoordZ + "]" );
+        Debug.Log( "Spawn Location [x:" + spawnTile.CoordX + " z:" + spawnTile.CoordZ +
+                "] - for Target Crop: [x:" + targetCrop.CoordX + " z:" + targetCrop.CoordZ + "]" );
 
         return spawnTile;
     }

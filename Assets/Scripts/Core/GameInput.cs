@@ -61,37 +61,37 @@ public static class GameInput
 
         if( isActionButtonDown && _onActionClick != null )
         {
-            Debug.Log( "Button clicked = " + ACTION_BUTTON );
+            //Debug.Log( "Button clicked = " + ACTION_BUTTON );
             _onActionClick();
         }
         else if( isSkillButtonDown && _onSkillClick != null )
         {
-            Debug.Log( "Button clicked = " + SKILL_BUTTON );
+            //Debug.Log( "Button clicked = " + SKILL_BUTTON );
             _onSkillClick();
         }
         else if( isBackButtonDown && _onBackClick != null )
         {
-            Debug.Log( "Button clicked = " + BACK_BUTTON );
+            //Debug.Log( "Button clicked = " + BACK_BUTTON );
             _onBackClick();
         }
         else if( isRightButtonDown && _onRightClick != null )
         {
-            Debug.Log( "Button clicked = Right" );
+            //Debug.Log( "Button clicked = Right" );
             _onRightClick();
         }
         else if( isLeftButtonDown && _onLeftClick != null )
         {
-            Debug.Log( "Button clicked = Left" );
+            //Debug.Log( "Button clicked = Left" );
             _onLeftClick();
         }
         else if( isUpButtonDown && _onUpClick != null )
         {
-            Debug.Log( "Button clicked = Up" );
+            //Debug.Log( "Button clicked = Up" );
             _onUpClick();
         }
         else if( isDownButtonDown && _onDownClick != null )
         {
-            Debug.Log( "Button clicked = Down" );
+            //Debug.Log( "Button clicked = Down" );
             _onDownClick();
         }
     }
