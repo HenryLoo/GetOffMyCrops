@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 134451864}
   - component: {fileID: 134451863}
   m_Layer: 5
-  m_Name: You Lose!
+  m_Name: TB_LoseMessage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 304122192}
   - component: {fileID: 304122191}
   m_Layer: 5
-  m_Name: GainInThisLevel
+  m_Name: TB_LevelMoney
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -544,7 +544,7 @@ GameObject:
   - component: {fileID: 433243925}
   - component: {fileID: 433243924}
   m_Layer: 5
-  m_Name: CurrentLevel
+  m_Name: TB_CurrentLevel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -699,7 +699,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 675320877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a31e99a3f5d4f84eaadb684e3d85a8c, type: 3}
+  m_Script: {fileID: 11500000, guid: 52b5ada7a217ea548b473d9c3df2660a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &675320879
@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 1551101809}
   - component: {fileID: 1551101808}
   m_Layer: 5
-  m_Name: Totol
+  m_Name: TB_TotalMoney
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

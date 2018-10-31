@@ -139,6 +139,8 @@ public class GameController : MonoBehaviour, IButtonAction
 			Debug.Log( "GameController.cs: timer expired" );
 			CleanUp();
 
+			SaveData();
+
 			if ( _currentMoney < Level.MoneyGoal )
 			{
 				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.END_GAME_LOSE );
@@ -219,4 +221,14 @@ public class GameController : MonoBehaviour, IButtonAction
     {
         TileMap.GetPlayer().Scare();
     }
+
+	private void SaveData()
+	{
+		SaveDataController.DataStruct saveData = 0;
+		saveData.levelMoney = _currentMoney;
+		// TODO: compute level number somehow
+		saveData.currenLevel = 0;
+		SaveDataController dataController = SaveDataController.GetInstance(); 
+		dataController.SaveDataSanpshot( saveData );
+	}
 }

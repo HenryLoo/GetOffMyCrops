@@ -1,13 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EndGame_Lose : MonoBehaviour, IButtonAction
 {
+	public static readonly string LOSE_MESSAGE_TEXTBOX = "TB_LoseMessage";
+	public static readonly string LEVEL_MONEY_TEXTBOX = "TB_LevelMoney";
+	public static readonly string TOTAL_MONEY_TEXTBOX = "TB_TotalMoney";
+	public static readonly string LEVEL_NUMBER_TEXTBOX = "TB_CurrentLevel";
+
+	private SaveDataController _dataController;
+	SaveDataController.DataStruct data;
+
+	private Text _gameLoseMessage;
+	private Text _levelNumber;
+	private Text _currentLevelMoney;
+	private Text _totalMoney;
 
 	// Use this for initialization
 	void Start ()
 	{
+		GetDataFromDB();
+		InitTextBoxes();
+		SetTextBoxData();
+
 		GameInput.AttachInput(
             actionClick: OnButtonClickAction,
             backClick: OnButtonClickBack,
@@ -61,5 +78,27 @@ public class EndGame_Lose : MonoBehaviour, IButtonAction
 	private void CleanUp()
 	{
 		// put all the clean up code here
+	}
+
+	private void InitTextBoxes()
+	{
+		_gameLoseMessage = GameObject.Find( LOSE_MESSAGE_TEXTBOX ).GetComponent<Text>();
+		_levelNumber = GameObject.Find( LEVEL_NUMBER_TEXTBOX ).GetComponent<Text>();
+		_currentLevelMoney = GameObject.Find( LEVEL_MONEY_TEXTBOX ).GetComponent<Text>();
+		_totalMoney = GameObject.Find( TOTAL_MONEY_TEXTBOX ).GetComponent<Text>();
+	}
+
+	private void SetTextBoxData()
+	{
+		_gameLoseMessage.text = "You Lose!";	// TODO: not ideal, try to get it from the DB
+		_levelNumber.text = "Level " + data.currenLevel.ToString();
+		_currentLevelMoney.text = "$" + data.levelMoney.ToString();
+		_totalMoney.text = "$" + data.totalMoney.ToString();
+	}
+
+	private void GetDataFromDB()
+	{
+		_dataController = SaveDataController.GetInstance();
+		data = _dataController.GetDataSnapshot();
 	}
 }
