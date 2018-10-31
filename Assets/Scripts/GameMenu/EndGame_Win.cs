@@ -91,7 +91,7 @@ public class EndGame_Win : MonoBehaviour, IButtonAction
 	private void SetTextBoxData()
 	{
 		_gameWinMessage.text = "You Win!";	// TODO: not ideal, try to get it from the DB
-		_levelNumber.text = data.currenLevel.ToString();
+		_levelNumber.text = data.currentLevel.ToString();
 		_currentLevelMoney.text = "$" + data.levelMoney.ToString();
 		_totalMoney.text = "$" + data.totalMoney.ToString();
 	}

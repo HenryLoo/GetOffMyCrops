@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IEntity
 {
-    public const string MSG_NO_ENOUGH_MONEY = "No enought money";
+    public const string MSG_NOT_ENOUGH_MONEY = "Not enough money!";
 
-    public const string MSG_NOT_PLANTABLE = "Tile is not Plantable";
+    public const string MSG_NOT_PLANTABLE = "You can't plant here!";
 
-    public const string MSG_NOT_MATURE = "Crop is not yet Mature";
+    public const string MSG_NOT_MATURE = "This crop isn't mature yet!";
 
     // Reference to the GameController
     private GameController _gameController;
@@ -26,11 +26,15 @@ public class Player : MonoBehaviour, IEntity
     // Lock interaction when doing the scaring animation
     private bool _scaring = false;
 
-    // Frame cost of the scaring animation
-    public const float animationCostTime = 1;
+    // Duration of the scaring animation
+    public const float ScaringAnimationDuration = 1;
 
     // Log how many frames past since last animation
-    private float _animPassedTime = 0;
+    private float _scaringAnimationTicks = 0;
+
+    // Hold the number of times the player has jumped during the 
+    // scaring animation
+    private int _scaringJumpCount = 0;
 
     // Start position of a movement
     private Vector3 _moveStartPos;
@@ -57,10 +61,10 @@ public class Player : MonoBehaviour, IEntity
     // Use this for initialization
     void Start()
     {
-        _gameController = GameObject.Find("GameController")
+        _gameController = GameObject.Find( "GameController" )
             .GetComponent<GameController>();
-        _tileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
-        _tilePos = _tileMap.GetTileAtPosition(transform.position);
+        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
+        _tilePos = _tileMap.GetTileAtPosition( transform.position );
 
         _updateEveryFrame = UpdateEveryFrame;
     }
@@ -68,16 +72,16 @@ public class Player : MonoBehaviour, IEntity
     // Update is called once per frame
     void Update()
     {
-        if (_updateEveryFrame != null) _updateEveryFrame();
+        if( _updateEveryFrame != null ) _updateEveryFrame();
     }
 
     void UpdateEveryFrame()
     {
-        if (_movingLock)
+        if( _movingLock )
         {
             KeepMoving();
         }
-        else if (_scaring)
+        else if( _scaring )
         {
             // when use animation, lock scaring by timer 
             //_animPassedTime += Time.deltaTime;
@@ -87,7 +91,7 @@ public class Player : MonoBehaviour, IEntity
             //    _animPassedTime = 0;
             //}
 
-            // custom scare action
+            // Perform the scaring animation
             DoScaringAnimation();
         }
     }
@@ -97,24 +101,24 @@ public class Player : MonoBehaviour, IEntity
         return _movingLock || _scaring;
     }
 
-    public void MoveH(int dir)
+    public void MoveH( int dir )
     {
-        if (LockingInput()) return;
+        if( LockingInput() ) return;
 
         int to = _tilePos.CoordX + dir;
-        if (to >= 0 && to < _tileMap.GetSizeX())
+        if( to >= 0 && to < _tileMap.GetSizeX() )
         {
             _tilePos.CoordX = to;
             Move();
         }
     }
 
-    public void MoveV(int dir)
+    public void MoveV( int dir )
     {
-        if (LockingInput()) return;
+        if( LockingInput() ) return;
 
         int to = _tilePos.CoordZ + dir;
-        if (to >= 0 && to < _tileMap.GetSizeZ())
+        if( to >= 0 && to < _tileMap.GetSizeZ() )
         {
             _tilePos.CoordZ = to;
             Move();
@@ -125,32 +129,32 @@ public class Player : MonoBehaviour, IEntity
     // has started
     void Move()
     {
-        _moveTargetPos = _tileMap.GetPositionAtTile(_tilePos);
+        _moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
         _moveTargetPos.y = transform.position.y;
         _movingLock = true;
 
         // rotation player to moveing direction
-        transform.LookAt(_moveTargetPos);
+        transform.LookAt( _moveTargetPos );
 
         // Move along a Bezier curve
         _moveStartPos = transform.position;
-        _moveMidPos = _moveStartPos + (_moveTargetPos - _moveStartPos) / 2 + Vector3.up * 1.5f;
+        _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * 1.5f;
     }
 
     // Movement transition between tiles
     // Call this to update once per frame
     void KeepMoving()
     {
-        if (Vector3.Distance(transform.position, _moveTargetPos) > 0.1f)
+        if( Vector3.Distance( transform.position, _moveTargetPos ) > 0.1f )
         {
             // Gradually move toward the target position
-            if (_movementTime < 1.0f)
+            if( _movementTime < 1.0f )
             {
                 _movementTime += 1.0f * MovementSpeed * Time.deltaTime;
 
-                Vector3 m1 = Vector3.Lerp(_moveStartPos, _moveMidPos, _movementTime);
-                Vector3 m2 = Vector3.Lerp(_moveMidPos, _moveTargetPos, _movementTime);
-                transform.position = Vector3.Lerp(m1, m2, _movementTime);
+                Vector3 m1 = Vector3.Lerp( _moveStartPos, _moveMidPos, _movementTime );
+                Vector3 m2 = Vector3.Lerp( _moveMidPos, _moveTargetPos, _movementTime );
+                transform.position = Vector3.Lerp( m1, m2, _movementTime );
             }
         }
         else
@@ -168,11 +172,11 @@ public class Player : MonoBehaviour, IEntity
 
     public void PerformAction()
     {
-        if (LockingInput()) return;
+        if( LockingInput() ) return;
 
         // If tile is plantable 
-        TileData.TileType type = _tileMap.GetTile(_tilePos);
-        switch (type)
+        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        switch( type )
         {
             case TileData.TileType.Plantable:
                 Plant();
@@ -182,11 +186,11 @@ public class Player : MonoBehaviour, IEntity
                 break;
             case TileData.TileType.Ground:
             case TileData.TileType.PlantableCooldown:
-                PopupMsgCreator.PopupTip(MSG_NOT_PLANTABLE, transform);
+                PopupMsgCreator.PopupTip( MSG_NOT_PLANTABLE, transform );
                 break;
             case TileData.TileType.CropSeed:
             case TileData.TileType.CropGrowing:
-                PopupMsgCreator.PopupTip(MSG_NOT_MATURE, transform);
+                PopupMsgCreator.PopupTip( MSG_NOT_MATURE, transform );
                 break;
         }
     }
@@ -197,16 +201,16 @@ public class Player : MonoBehaviour, IEntity
     void Plant()
     {
         // If not enough money
-        if (_gameController.GetCurrentMoney() < SEED_BUY_PRICE)
+        if( _gameController.GetCurrentMoney() < SEED_BUY_PRICE )
         {
-            PopupMsgCreator.PopupTip(MSG_NO_ENOUGH_MONEY, transform);
+            PopupMsgCreator.PopupTip( MSG_NOT_ENOUGH_MONEY, transform );
             return;
         }
 
         // Plant the seed and deduct money by investment cost
-        _tileMap.SetTile(_tilePos, TileData.TileType.CropSeed);
-        _gameController.AddMoney(-SEED_BUY_PRICE);
-        PopupMsgCreator.PopupMoney("-$" + SEED_BUY_PRICE, transform);
+        _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
+        _gameController.AddMoney( -SEED_BUY_PRICE );
+        PopupMsgCreator.PopupMoney( "-$" + SEED_BUY_PRICE, transform );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -217,96 +221,99 @@ public class Player : MonoBehaviour, IEntity
     void Harvest()
     {
         // Harvest the mature crop and increment money
-        _tileMap.SetTile(_tilePos, TileData.TileType.PlantableCooldown);
-        _gameController.AddMoney(CROP_SELL_PRICE);
+        _tileMap.SetTile( _tilePos, TileData.TileType.PlantableCooldown );
+        _gameController.AddMoney( CROP_SELL_PRICE );
 
-        PopupMsgCreator.PopupMoney("+$"+ CROP_SELL_PRICE, transform, new Vector3(0, 2, 0));
+        PopupMsgCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
     // That enemy will run away(toward the edge of the map)
     public void Scare()
     {
-        if (LockingInput()) return;
+        if( LockingInput() ) return;
 
         this._scaring = true;
-        this.DriveEnemyAway();
+        this.ScareAdjacentEnemies();
 
         // TODO a cooldown of skill
 
-        PopupMsgCreator.PopupMessge("Get Out Of My Crops!!", transform, new Vector3(0, 2, 0));
+        PopupMsgCreator.PopupMessge( "Get Out Of My Crops!!", transform, new Vector3( 0, 2, 0 ) );
     }
 
-    // reset data after scare
+    // Reset scaring variables after the scare animation has completed
     void ScareFinished()
     {
         this._scaring = false;
-        this._animPassedTime = 0;
-        this.jumpCount = 0;
+        this._scaringAnimationTicks = 0;
+        this._scaringJumpCount = 0;
     }
 
-    // call RunAway of enemies near the player
-    void DriveEnemyAway()
+    // Scare all enemies adjacent to the player
+    void ScareAdjacentEnemies()
     {
-        Enemy[] enemies = FindObjectsOfType<Enemy>(); // get all enemy by script attached, 
-        foreach (Enemy e in enemies)
+        // Get all enemies
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        foreach( Enemy e in enemies )
         {
-            TileCoordinate dist = e.GetDistanceFromTile(this.GetTilePosition()); // distance
-            if (Math.Abs(dist.CoordX) <= 1 && Math.Abs(dist.CoordZ) <= 1)
+            // The enemy is on an adjacent tile to the player, then call 
+            // its RunAway method
+            TileCoordinate dist = e.GetDistanceFromTile( this.GetTilePosition() );
+            if( Math.Abs( dist.CoordX ) <= 1 && Math.Abs( dist.CoordZ ) <= 1 )
             {
                 e.RunAway();
             }
         }
     }
 
-    private int jumpCount = 0;
-    void DoScaringAnimation() // scaring animation. use double jump (provisionally)
+    // Perform the scaring animation
+    void DoScaringAnimation()
     {
 
-        _animPassedTime += Time.deltaTime;
+        _scaringAnimationTicks += Time.deltaTime;
 
         float firstJumpHeight = 0.5f;
         float secondJumpHeight = 0.3f;
 
-        Vector3 ground = new Vector3(transform.position.x, 0, transform.position.z);
-        Vector3 firstJumpPos = new Vector3(transform.position.x, firstJumpHeight, transform.position.z);
-        Vector3 secondJumpPos = new Vector3(transform.position.x, secondJumpHeight, transform.position.z);
+        Vector3 ground = new Vector3( transform.position.x, 0, transform.position.z );
+        Vector3 firstJumpPos = new Vector3( transform.position.x, firstJumpHeight, transform.position.z );
+        Vector3 secondJumpPos = new Vector3( transform.position.x, secondJumpHeight, transform.position.z );
 
         float y = transform.position.y;
-        float moveTime = animationCostTime / 4;
+        float moveTime = ScaringAnimationDuration / 4;
 
-        if (jumpCount == 0)  // jump up
+        if( _scaringJumpCount == 0 )  // jump up
         {
 
-            transform.position = Vector3.Lerp(ground, firstJumpPos, _animPassedTime / moveTime);
-            if (firstJumpHeight - y < 0.05)
+            transform.position = Vector3.Lerp( ground, firstJumpPos, _scaringAnimationTicks / moveTime );
+            if( firstJumpHeight - y < 0.05 )
             {
-                jumpCount = 1;
-                _animPassedTime = 0;
+                _scaringJumpCount = 1;
+                _scaringAnimationTicks = 0;
             }
         }
-        if (jumpCount == 1) // back
+        if( _scaringJumpCount == 1 ) // back
         {
-            transform.position = Vector3.Lerp(firstJumpPos, ground, _animPassedTime / (moveTime));
-            if (y < 0.05)
+            transform.position = Vector3.Lerp( firstJumpPos, ground, _scaringAnimationTicks / moveTime );
+            if( y < 0.05 )
             {
-                jumpCount = 2;
-                _animPassedTime = 0;
+                _scaringJumpCount = 2;
+                _scaringAnimationTicks = 0;
             }
         }
-        if (jumpCount == 2)  // jump up
+        if( _scaringJumpCount == 2 )  // jump up
         {
-            transform.position = Vector3.Lerp(ground, secondJumpPos, _animPassedTime / moveTime);
-            if (secondJumpHeight - y < 0.05)
+            transform.position = Vector3.Lerp( ground, secondJumpPos, _scaringAnimationTicks / moveTime );
+            if( secondJumpHeight - y < 0.05 )
             {
-                jumpCount = 3;
-                _animPassedTime = 0;
+                _scaringJumpCount = 3;
+                _scaringAnimationTicks = 0;
             }
         }
-        if (jumpCount == 3) // back
+        if( _scaringJumpCount == 3 ) // back
         {
-            transform.position = Vector3.Lerp(secondJumpPos, ground, _animPassedTime / moveTime);
-            if (y < 0.05)
+            transform.position = Vector3.Lerp( secondJumpPos, ground, _scaringAnimationTicks / moveTime );
+            if( y < 0.05 )
             {
                 this.ScareFinished();
             }
@@ -318,12 +325,11 @@ public class Player : MonoBehaviour, IEntity
         //}
     }
 
-    // all the data that is being updated should be cleaned up here.
+    // All the data that is being updated should be cleaned up here
     public void CleanUp()
     {
         _movingLock = true;
         _updateEveryFrame = null;
-
     }
 
     // Get the player's position on the tile map

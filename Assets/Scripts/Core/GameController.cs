@@ -224,11 +224,12 @@ public class GameController : MonoBehaviour, IButtonAction
 
 	private void SaveData()
 	{
-		SaveDataController.DataStruct saveData = 0;
-		saveData.levelMoney = _currentMoney;
+		SaveDataController.DataStruct saveData;
+        saveData.totalMoney = 0;
+        saveData.levelMoney = _currentMoney;
 		// TODO: compute level number somehow
-		saveData.currenLevel = 0;
+		saveData.currentLevel = 0;
 		SaveDataController dataController = SaveDataController.GetInstance(); 
-		dataController.SaveDataSanpshot( saveData );
+		dataController.SaveDataSnapshot( saveData );
 	}
 }

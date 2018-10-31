@@ -7,7 +7,7 @@ using UnityEngine;
 // This should not be controlled via user input.
 public class MainScript : MonoBehaviour
 {
-	private SaveDataController _saveController;
+    private SaveDataController _saveController;
 
     // Use this for initialization
     void Start()
@@ -22,8 +22,8 @@ public class MainScript : MonoBehaviour
         // Input responder, should be loaded before scene loader
         GameInput.DetachInput();
 
-		// Init game save data. It's initilized here, but used everywhere else.
-		_saveController = SaveDataController.GetInstance();
+        // Init game save data. It's initilized here, but used everywhere else.
+        _saveController = SaveDataController.GetInstance();
 
         // State machine
         RequestStateChange( GameStateLoader.GAME_STATES.MAIN_MENU );
