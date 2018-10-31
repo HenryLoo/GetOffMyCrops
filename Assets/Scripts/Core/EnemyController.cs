@@ -67,7 +67,7 @@ public class EnemyController : MonoBehaviour
         switch( randomPicked )
         {
             case 3:
-                spawnTile = new TileCoordinate( targetCrop.CoordX, GameController.TileMap.GetSizeZ() );
+                spawnTile = new TileCoordinate( targetCrop.CoordX, GameController.TileMap.GetSizeZ());
                 break;
             case 2:
                 spawnTile = new TileCoordinate( targetCrop.CoordX, -1 );
@@ -97,5 +97,7 @@ public class EnemyController : MonoBehaviour
         // Instantiate the enemy and set its target crop
         GameObject enemy = GameController.TileMap.CreateEntity( GetRandomSpawnLocation( targetCrop ), prefab);
         enemy.GetComponent<Enemy>().SetTargetCrop( targetCrop );
+        TileCoordinate mapBoundary = new TileCoordinate(GameController.TileMap.GetSizeX(), GameController.TileMap.GetSizeZ());
+        enemy.GetComponent<Enemy>().SetMapBoundary(mapBoundary);
     }
 }
