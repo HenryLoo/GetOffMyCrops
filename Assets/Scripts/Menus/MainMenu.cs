@@ -94,9 +94,4 @@ public class MainMenu : Menu, IButtonAction
 
         Application.Quit();
     }
-
-    private void ChangeState( GameStateLoader.GAME_STATES state )
-    {
-        GameStateLoader.SwitchState( state );
-    }
 }

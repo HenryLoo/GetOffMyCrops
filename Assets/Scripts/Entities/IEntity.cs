@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/***
- * This define the interface for all the entities.
- * 
- * */
-
+// Defines the interface for all entities.
 public interface IEntity
 {
 	void CleanUp();

@@ -11,10 +11,10 @@ public static class GameStateLoader
     {
         MAIN_MENU = 1,
         GAMEPLAY,
-        PAUSE_MENU,
         INIT_STATE,
-		END_GAME_WIN,
-		END_GAME_LOSE
+		WIN_MENU,
+		LOSE_MENU,
+        SCOREBOARD
     }
 
     private static GAME_STATES _currentGameState = GAME_STATES.INIT_STATE;
@@ -40,19 +40,19 @@ public static class GameStateLoader
                     Debug.Log( "Game is currently on Gameplay." );
                     break;
 
-                case GAME_STATES.PAUSE_MENU:
-                    Debug.Log( "Game is currently on pause menu." );
-                    break;
-
-				case GAME_STATES.END_GAME_WIN:
+				case GAME_STATES.WIN_MENU:
                     Debug.Log( "Game is currently on game win state." );
                     break;
 
-				case GAME_STATES.END_GAME_LOSE:
+				case GAME_STATES.LOSE_MENU:
                     Debug.Log( "Game is currently on game lose state." );
                     break;
-				
-				case GAME_STATES.INIT_STATE:
+
+                case GAME_STATES.SCOREBOARD:
+                    Debug.Log( "Game is currently on scoreboard state." );
+                    break;
+
+                case GAME_STATES.INIT_STATE:
                     Debug.Log( "Game is currently on init state." );
                     break;
 				
@@ -83,17 +83,17 @@ public static class GameStateLoader
             case GAME_STATES.GAMEPLAY:
                 _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.GAMEPLAY );
                 break;
+                
+			case GAME_STATES.WIN_MENU:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.WIN_MENU );
+                break;
+			
+			case GAME_STATES.LOSE_MENU:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.LOSE_MENU );
+                break;
 
-            case GAME_STATES.PAUSE_MENU:
-                // TODO: load in game pause menu here
-                break;
-			
-			case GAME_STATES.END_GAME_WIN:
-                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.END_GAME_WIN );
-                break;
-			
-			case GAME_STATES.END_GAME_LOSE:
-                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.END_GAME_LOSE );
+            case GAME_STATES.SCOREBOARD:
+                _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.SCOREBOARD );
                 break;
 
             default:

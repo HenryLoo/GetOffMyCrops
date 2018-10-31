@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98e21120b2793f4bbf9b8ee54a04b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 95671287840973064}
+  Animator: {fileID: 95671287840973064}
 --- !u!114 &114531844530296724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -121,7 +121,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: DialogText
 --- !u!222 &222988246800332568
 CanvasRenderer:
   m_ObjectHideFlags: 1

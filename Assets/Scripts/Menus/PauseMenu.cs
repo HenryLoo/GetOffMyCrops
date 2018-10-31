@@ -52,12 +52,12 @@ public class PauseMenu : Menu
 
     void RestartGame()
     {
-        GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.GAMEPLAY );
+        ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
     }
 
     void QuitGame()
     {
-        GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.MAIN_MENU );
+        ChangeState( GameStateLoader.GAME_STATES.MAIN_MENU );
     }
 
 }

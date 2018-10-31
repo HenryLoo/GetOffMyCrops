@@ -143,11 +143,11 @@ public class GameController : MonoBehaviour, IButtonAction
 
 			if ( _currentMoney < Level.MoneyGoal )
 			{
-				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.END_GAME_LOSE );
+				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.LOSE_MENU );
 			}
 			else
 			{
-				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.END_GAME_WIN );
+				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
 			}
 		}
 	}

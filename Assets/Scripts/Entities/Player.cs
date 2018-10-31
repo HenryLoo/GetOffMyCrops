@@ -6,10 +6,9 @@ using UnityEngine;
 public class Player : MonoBehaviour, IEntity
 {
     public const string MSG_NOT_ENOUGH_MONEY = "Not enough money!";
-
     public const string MSG_NOT_PLANTABLE = "You can't plant here!";
-
     public const string MSG_NOT_MATURE = "This crop isn't mature yet!";
+    public const string MSG_SCARE = "Get off my crops!!";
 
     // Reference to the GameController
     private GameController _gameController;
@@ -186,11 +185,11 @@ public class Player : MonoBehaviour, IEntity
                 break;
             case TileData.TileType.Ground:
             case TileData.TileType.PlantableCooldown:
-                PopupMsgCreator.PopupTip( MSG_NOT_PLANTABLE, transform );
+                PopupMessageCreator.PopupTip( MSG_NOT_PLANTABLE, transform );
                 break;
             case TileData.TileType.CropSeed:
             case TileData.TileType.CropGrowing:
-                PopupMsgCreator.PopupTip( MSG_NOT_MATURE, transform );
+                PopupMessageCreator.PopupTip( MSG_NOT_MATURE, transform );
                 break;
         }
     }
@@ -203,14 +202,14 @@ public class Player : MonoBehaviour, IEntity
         // If not enough money
         if( _gameController.GetCurrentMoney() < SEED_BUY_PRICE )
         {
-            PopupMsgCreator.PopupTip( MSG_NOT_ENOUGH_MONEY, transform );
+            PopupMessageCreator.PopupTip( MSG_NOT_ENOUGH_MONEY, transform );
             return;
         }
 
         // Plant the seed and deduct money by investment cost
         _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
         _gameController.AddMoney( -SEED_BUY_PRICE );
-        PopupMsgCreator.PopupMoney( "-$" + SEED_BUY_PRICE, transform );
+        PopupMessageCreator.PopupMoney( "-$" + SEED_BUY_PRICE, transform );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -224,7 +223,7 @@ public class Player : MonoBehaviour, IEntity
         _tileMap.SetTile( _tilePos, TileData.TileType.PlantableCooldown );
         _gameController.AddMoney( CROP_SELL_PRICE );
 
-        PopupMsgCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
+        PopupMessageCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
@@ -236,9 +235,8 @@ public class Player : MonoBehaviour, IEntity
         this._scaring = true;
         this.ScareAdjacentEnemies();
 
-        // TODO a cooldown of skill
-
-        PopupMsgCreator.PopupMessge( "Get Out Of My Crops!!", transform, new Vector3( 0, 2, 0 ) );
+        // TODO: add cooldown timer
+        PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
     }
 
     // Reset scaring variables after the scare animation has completed

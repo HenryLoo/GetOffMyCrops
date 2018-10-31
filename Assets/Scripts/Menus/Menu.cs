@@ -56,4 +56,9 @@ public abstract class Menu : MonoBehaviour
         Debug.Log( "Menu.cs: Button index = " + _currentButtonIndex );
         _options[ _currentButtonIndex ].Button.Select();
     }
+    
+    protected void ChangeState( GameStateLoader.GAME_STATES state )
+    {
+        GameStateLoader.SwitchState( state );
+    }
 }

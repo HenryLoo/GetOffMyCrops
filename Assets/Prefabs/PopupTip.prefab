@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98e21120b2793f4bbf9b8ee54a04b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 95713522591551476}
+  Animator: {fileID: 95713522591551476}
 --- !u!114 &114043794169327782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -107,7 +107,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: no enought money
+  m_Text: TipText
 --- !u!114 &114520545546856094
 MonoBehaviour:
   m_ObjectHideFlags: 1

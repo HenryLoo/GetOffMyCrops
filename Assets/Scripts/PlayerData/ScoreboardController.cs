@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using UnityEngine;
 
-public class ScoreboardLoader : MonoBehaviour
+public class ScoreboardController : MonoBehaviour, IButtonAction
 {    
     public ScoreboardListing[] ScoreboardListings;
     private ListingValues[] _listingValues;
@@ -25,12 +25,20 @@ public class ScoreboardLoader : MonoBehaviour
         _listingValues = new ListingValues[ NUM_LISTINGS ];
 
         UpdateScoreboard();
+
+        GameInput.AttachInput(
+            actionClick: OnButtonClickAction,
+            backClick: OnButtonClickBack,
+            leftClick: OnButtonClickLeft,
+            rightClick: OnButtonClickRight,
+            downClick: OnButtonClickDown,
+            upClick: OnButtonClickUp );
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        GameInput.UpdateInput();
     }
 
     // Call this when the scene ends
@@ -64,5 +72,45 @@ public class ScoreboardLoader : MonoBehaviour
             ScoreboardListings[ i ].Name.text = _listingValues[ i ].Name;
             ScoreboardListings[ i ].Score.text = _listingValues[ i ].Score.ToString();
         }
+    }
+
+    private void ReturnToMainMenu()
+    {
+        GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.MAIN_MENU );
+    }
+
+    public void OnButtonClickUp()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickDown()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickLeft()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickRight()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickAction()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickSkill()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnButtonClickBack()
+    {
+        ReturnToMainMenu();
     }
 }
