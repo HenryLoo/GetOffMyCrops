@@ -11,4 +11,10 @@ public struct ListingValues
 {
     public string Name;
     public int Score;
+
+    public ListingValues( string name, int score )
+    {
+        Name = name;
+        Score = score;
+    }
 }

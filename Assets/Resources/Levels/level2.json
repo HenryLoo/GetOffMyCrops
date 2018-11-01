@@ -1,0 +1,11 @@
+{
+    "LevelName":"Test Level 2",
+    "MoneyGoal":100,
+    "RemainingTime":90,
+    "TileLayoutFile":"level2_tiles",
+    "EntityLayoutFile":"level2_entities",
+    "EnemySpawnPatterns": [
+        { "EnemyType" : "Dummy", "Amount" : 1, "WhenToSpawn" : 5 },
+        { "EnemyType" : "Dummy", "Amount" : 1, "WhenToSpawn" : 25 }
+    ]
+}

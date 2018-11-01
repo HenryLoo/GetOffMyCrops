@@ -8,13 +8,13 @@ using UnityEditor;
 [CustomEditor( typeof( GameController ) )]
 public class TileMapInspector : Editor
 {
-    string levelToLoad;
+    int levelToLoad;
 
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        levelToLoad = EditorGUILayout.TextField( "Level To Load", levelToLoad );
+        levelToLoad = EditorGUILayout.IntField( "Level To Load", levelToLoad );
         if( GUILayout.Button( "Reload Tile Map" ) )
         {
             GameController game = ( GameController ) target;

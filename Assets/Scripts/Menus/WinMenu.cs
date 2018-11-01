@@ -20,7 +20,7 @@ public class WinMenu : Menu, IButtonAction
     private readonly string TOTAL_MONEY_MESSAGE = "Total: $";
 
     private SaveDataController _dataController;
-	SaveDataController.DataStruct data;
+	private SaveDataController.DataStruct _data;
 
 	private Text _gameWinMessage;
 	private Text _levelNumber;
@@ -98,7 +98,29 @@ public class WinMenu : Menu, IButtonAction
     {
         // Move to next level
         Debug.Log( "Next button is selected" );
-        ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
+        int nextLevel = _data.CurrentLevel + 1;
+
+        // All levels have been cleared
+        if( nextLevel > SaveDataController.NUM_LEVELS )
+        {
+            // Reset the total money so that it doesn't persist across 
+            // play sessions
+            _dataController.ScoreToSubmit = _dataController.TotalMoney;
+            _dataController.TotalMoney = 0;
+            _dataController.CurrentLevel = 1;
+            _dataController.SaveDataToDisk();
+
+            // Flag submit request to true to indicate that a score is being
+            // submitted
+            SaveDataController.GetInstance().IsSubmitting = true;
+            ChangeState( GameStateLoader.GAME_STATES.SCOREBOARD );
+        }
+        // Go to the next level
+        else
+        {
+            _dataController.CurrentLevel = nextLevel;
+            ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
+        }
     }
 
     private void OnQuitButtonSelect()
@@ -124,14 +146,14 @@ public class WinMenu : Menu, IButtonAction
 	private void SetTextBoxData()
 	{
 		_gameWinMessage.text = WIN_MESSAGE;
-		_levelNumber.text = LEVEL_MESSAGE + data.currentLevel.ToString();
-		_currentLevelMoney.text = EARNED1_MESSAGE + data.levelMoney.ToString() + EARNED2_MESSAGE;
-		_totalMoney.text = TOTAL_MONEY_MESSAGE + data.totalMoney.ToString();
+		_levelNumber.text = LEVEL_MESSAGE + _data.CurrentLevel.ToString();
+		_currentLevelMoney.text = EARNED1_MESSAGE + _data.LevelMoney.ToString() + EARNED2_MESSAGE;
+		_totalMoney.text = TOTAL_MONEY_MESSAGE + _data.TotalMoney.ToString();
 	}
 
 	private void GetDataFromDB()
 	{
 		_dataController = SaveDataController.GetInstance();
-		data = _dataController.GetDataSnapshot();
+		_data = _dataController.GetDataSnapshot();
 	}
 }

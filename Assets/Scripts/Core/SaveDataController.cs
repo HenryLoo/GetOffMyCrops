@@ -9,24 +9,29 @@ public class SaveDataController
 	// Use this struct to pass around data for consistency
     public struct DataStruct
     {
-        public int totalMoney, currentLevel, levelMoney;
+        public int TotalMoney, CurrentLevel, LevelMoney;
     }
 
     // The database fields that will be used as a "Key" for the data value
-    public static readonly string TOTAL_MONEY = "total_money";
-    public static readonly string CURRENT_LEVEL = "current_level";
-    public static readonly int NUM_LEVELS = 7;
+    private static readonly string TOTAL_MONEY = "total_money";
+    private static readonly string CURRENT_LEVEL = "current_level";
+    private static readonly string HIGH_SCORES = "high_scores";
 
     private static SaveDataController _instance = null;
     private int _totalMoney;
     private int _levelMoney;
     private int _currentLevel;
+    private string _highScores;
+    private bool _isSubmitting;
+    private int _scoreToSubmit;
+
+    public const int NUM_LEVELS = 2;
 
     private SaveDataController()
     {
         _totalMoney = 0;
         _levelMoney = 0;
-        _currentLevel = 0;
+        _currentLevel = 1;
 
         ValidateDB();
     }
@@ -46,9 +51,9 @@ public class SaveDataController
     // This function saves the passed state to the database
     public void SaveDataSnapshot( DataStruct data )
     {
-        LevelMoney = data.levelMoney;
+        LevelMoney = data.LevelMoney;
         TotalMoney += LevelMoney;
-        CurrentLevel = data.currentLevel;
+        CurrentLevel = data.CurrentLevel;
 
         SaveDataToDisk();
     }
@@ -58,9 +63,9 @@ public class SaveDataController
     public DataStruct GetDataSnapshot()
     {
         DataStruct data;
-        data.totalMoney = PlayerPrefs.GetInt( TOTAL_MONEY );
-        data.currentLevel = PlayerPrefs.GetInt( CURRENT_LEVEL );
-        data.levelMoney = LevelMoney;
+        data.TotalMoney = PlayerPrefs.GetInt( TOTAL_MONEY );
+        data.CurrentLevel = PlayerPrefs.GetInt( CURRENT_LEVEL );
+        data.LevelMoney = LevelMoney;
 
         return data;
     }
@@ -87,14 +92,25 @@ public class SaveDataController
         else
         {
             isValid = false;
-            CurrentLevel = 0;
+            CurrentLevel = 1;
+        }
+
+        if( PlayerPrefs.HasKey( HIGH_SCORES ) )
+        {
+            HighScores = PlayerPrefs.GetString( HIGH_SCORES );
+        }
+        else
+        {
+            isValid = false;
+            HighScores = "";
         }
 
         if( !isValid )
         {
             Debug.Log( "Data not found, Creating new dataset and saving data" );
             PlayerPrefs.SetInt( TOTAL_MONEY, 0 );
-            PlayerPrefs.SetInt( CURRENT_LEVEL, 0 );
+            PlayerPrefs.SetInt( CURRENT_LEVEL, 1 );
+            PlayerPrefs.SetString( HIGH_SCORES, "" );
 
             SaveDataToDisk();
         }
@@ -152,7 +168,7 @@ public class SaveDataController
         }
         set
         {
-            if( value >= 0 && value < NUM_LEVELS )
+            if( value > 0 && value <= NUM_LEVELS )
             {
                 _currentLevel = value;
                 if( PlayerPrefs.HasKey( CURRENT_LEVEL ) )
@@ -174,6 +190,49 @@ public class SaveDataController
             if( value >= 0 )
             {
                 _levelMoney = value;
+            }
+        }
+    }
+
+    public string HighScores
+    {
+        get
+        {
+            return _highScores;
+        }
+        set
+        {
+            _highScores = value;
+            if( PlayerPrefs.HasKey( HIGH_SCORES ) )
+            {
+                PlayerPrefs.SetString( HIGH_SCORES, value );
+            }
+        }
+    }
+
+    public bool IsSubmitting
+    {
+        get
+        {
+            return _isSubmitting;
+        }
+        set
+        {
+            _isSubmitting = value;
+        }
+    }
+
+    public int ScoreToSubmit
+    {
+        get
+        {
+            return _scoreToSubmit;
+        }
+        set
+        {
+            if( value >= 0 )
+            {
+                _scoreToSubmit = value;
             }
         }
     }

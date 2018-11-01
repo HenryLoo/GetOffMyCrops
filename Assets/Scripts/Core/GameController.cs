@@ -22,6 +22,9 @@ public class GameController : MonoBehaviour, IButtonAction
     // The current level's data
     public LevelData Level;
 
+    // The index of the current level
+    private int _currentLevelNum = 1;
+
     // The starting amount of money
     private const int STARTING_MONEY = 20;
 
@@ -36,8 +39,9 @@ public class GameController : MonoBehaviour, IButtonAction
     {
         _levelTimer = new GameTimer();
 
-        // TODO: test level loading, remove this later
-        LoadLevel( "level1" );
+        // Load the current level
+        _currentLevelNum = SaveDataController.GetInstance().CurrentLevel;
+        LoadLevel( _currentLevelNum );
     }
 
     // Use this for initialization
@@ -88,14 +92,14 @@ public class GameController : MonoBehaviour, IButtonAction
         }
 	}
 
-    public void LoadLevel( string levelName )
+    public void LoadLevel( int levelNum )
     {
         // Reset current money
         _currentMoney = STARTING_MONEY;
 
         // Load the level JSON
-        TextAsset levelJson = ( TextAsset ) Resources.Load( "Levels/"
-            + levelName );
+        TextAsset levelJson = ( TextAsset ) Resources.Load( "Levels/level"
+            + levelNum.ToString() );
         Debug.Log( levelJson.text );
         Level = LevelData.CreateFromJson( levelJson.text );
         TileMap.InitTileMap( Level );
@@ -225,10 +229,9 @@ public class GameController : MonoBehaviour, IButtonAction
 	private void SaveData()
 	{
 		SaveDataController.DataStruct saveData;
-        saveData.totalMoney = 0;
-        saveData.levelMoney = _currentMoney;
-		// TODO: compute level number somehow
-		saveData.currentLevel = 0;
+        saveData.TotalMoney = 0;
+        saveData.LevelMoney = _currentMoney;
+		saveData.CurrentLevel = _currentLevelNum;
 		SaveDataController dataController = SaveDataController.GetInstance(); 
 		dataController.SaveDataSnapshot( saveData );
 	}
