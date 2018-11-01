@@ -11,7 +11,7 @@ public class PopupText : MonoBehaviour
     {
         AnimatorClipInfo[] clips = Animator.GetCurrentAnimatorClipInfo( 0 );
 
-        // destory itself after animation finished
+        // Destroy itself after the animation has finished
         Destroy( gameObject, clips[ 0 ].clip.length );
     }
 

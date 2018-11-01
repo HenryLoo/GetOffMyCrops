@@ -41,12 +41,12 @@ public class PopupMessageCreator : MonoBehaviour
     // Show large, white popup text
     public static void PopupMessage( string text, Transform transform )
     {
-        PopupMessage( text, transform, DEFAULT_OFFSET ); // offset to head
+        // Offset from player's head
+        PopupMessage( text, transform, DEFAULT_OFFSET );
     }
 
     public static void PopupMessage( string text, Transform transform, Vector3 offset )
     {
-
         if( _popupDialog == null ) Initialize();
         PopupText msg = Instantiate( _popupDialog );
         ShowPopup( msg, text, transform, offset );
@@ -55,12 +55,12 @@ public class PopupMessageCreator : MonoBehaviour
     // Show small, white popup text
     public static void PopupTip( string text, Transform transform )
     {
-        PopupTip( text, transform, DEFAULT_OFFSET ); // offset to head
+        // Offset from player's head
+        PopupTip( text, transform, DEFAULT_OFFSET );
     }
 
     public static void PopupTip( string text, Transform transform, Vector3 offset )
     {
-
         if( _popupTip == null ) Initialize();
         PopupText msg = Instantiate( _popupTip );
         ShowPopup( msg, text, transform, offset );
@@ -69,7 +69,8 @@ public class PopupMessageCreator : MonoBehaviour
     // Show yellow popup text
     public static void PopupMoney( string text, Transform transform )
     {
-        PopupMoney( text, transform, DEFAULT_OFFSET );  // offset to head
+        // Offset from player's head
+        PopupMoney( text, transform, DEFAULT_OFFSET );
     }
 
     public static void PopupMoney( string text, Transform transform, Vector3 offset )
@@ -81,7 +82,6 @@ public class PopupMessageCreator : MonoBehaviour
 
     private static void ShowPopup( PopupText textObj, string text, Transform transform, Vector3 offset )
     {
-        Transform traget = _canvas.transform;
         Vector2 screenPos = Camera.main.WorldToScreenPoint( transform.position + offset );
 
         textObj.transform.SetParent( _canvas.transform, false );
