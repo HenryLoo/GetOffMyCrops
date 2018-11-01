@@ -294,7 +294,7 @@ public class TileMap : MonoBehaviour
         if (type == TileData.TileType.CropSeed)
         {
             currentPlantedCrops.Add(new KeyValuePair<TileCoordinate, TileData.TileType>(tilePos, type));
-            Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
+            //Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
         }
         else if (type == TileData.TileType.PlantableCooldown)
         {
@@ -313,12 +313,12 @@ public class TileMap : MonoBehaviour
             if (removeCrop)
             {
                 currentPlantedCrops.RemoveAt(removeIndex);
-                Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
+                //Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
             }
         }
         foreach (var crop in currentPlantedCrops)
         {
-            Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
+            //Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
         }
     }
 

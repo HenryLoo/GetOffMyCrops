@@ -5,10 +5,11 @@ using UnityEngine;
 // Reference to the tile map instance
 public class EnemyRat : Enemy {
 
+    // initialise rat variables
     protected void InitEnemyRat()
     {
         SpawnDelayDuration = 1; // time in seconds it takes for this enemy to begin movement
-        EatingDuration = 5;    // time in seconds it takes for this enemy to damage a crop
+        EatingDuration = 5;     // time in seconds it takes for this enemy to damage a crop
         CanBeBlocked = true;    // if the player can block this enemy
         MovementSpeed = 1;      // how quickly the enemy will move between tiles
     }
@@ -21,7 +22,7 @@ public class EnemyRat : Enemy {
     
     public override void CleanUp()
     {
-        throw new System.NotImplementedException();
+        // RODO: DESTROY ME 
     }
 
     public override void Move()
@@ -35,6 +36,7 @@ public class EnemyRat : Enemy {
             _lastTilePos = _curTilePos;
             onNewTile = true;
         }
+
         // move in the direction of the target crop by the set speed.
         float step = MovementSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, _tileMap.GetPositionAtTile(_targetCropPos), step);
@@ -43,7 +45,6 @@ public class EnemyRat : Enemy {
         //Debug.Log("--AFTER MOVE POS: " + _curTilePos.CoordX + ", " + _curTilePos.CoordZ);
         if (onNewTile)
         {
-            Debug.Log("ON NEW TILE POS: " + _curTilePos.CoordX + ", " + _curTilePos.CoordZ);
             isOnTargetCrop = (_curTilePos.CoordX == _targetCropPos.CoordX &&
                     _curTilePos.CoordZ == _targetCropPos.CoordZ);
             Debug.Log("IS CURRENTLY ON TARGET CROP: " + isOnTargetCrop);

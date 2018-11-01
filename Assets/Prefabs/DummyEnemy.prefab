@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33853918222238486}
   - component: {fileID: 65320170374021932}
   - component: {fileID: 23094456726068722}
-  - component: {fileID: 114422834211514654}
+  - component: {fileID: 114802211197739816}
   m_Layer: 0
   m_Name: DummyEnemy
   m_TagString: Untagged
@@ -94,7 +94,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114422834211514654
+--- !u!114 &114802211197739816
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -102,9 +102,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1060646150021740}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 056b665337d4500439bcba1a89c3e1d5, type: 3}
+  m_Script: {fileID: 11500000, guid: 01302749fc25212478c2c52f088c2699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 0
-  CanBeBlocked: 0
+  SpawnDelayDuration: 0
   EatingDuration: 0
+  CanBeBlocked: 0
+  MovementSpeed: 0
+  isOnTargetCrop: 0

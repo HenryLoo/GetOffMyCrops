@@ -53,6 +53,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // The enemy's current state
     protected EnemyState _currentState;
 
+    // initialise enemy variables
     protected void InitEnemy()
     {
         _tileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
@@ -101,6 +102,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
                     {// Check if enemy is being blocked
                         TileCoordinate dist = GetDistanceFromTile( 
                             _tileMap.GetPlayer().GetTilePosition() );
+
+                        // TODO blocked by player behaviour
+
                         //if( ( dist.CoordX == 1 && dist.CoordZ == 0 && _isMovingRight ) ||
                         //    ( dist.CoordX == -1 && dist.CoordZ == 0 && _isMovingLeft ) ||
                         //    ( dist.CoordX == 0 && dist.CoordZ == 1 && _isMovingUp ) ||
@@ -112,8 +116,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
                         //}
                     }                    
                     if (!blocked)
-                    {// Enemy is not at its target yet, keep moving  !=! REDUNDANT AREA !=!
-                        //Debug.Log("ENEMY IS NOT BLOCKED");
+                    {// Enemy is not at its target yet, keep moving
                         Move();
                         _currentState = EnemyState.Moving;
                     }
@@ -128,14 +131,14 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 if (IsOnDespawnTile())
                 {
                     _currentState = EnemyState.Despawning;
-                }
-                else
+                }else
                 {
                     RunAway();
                 }
                 break;
             case EnemyState.Despawning:
                 // DESTROY ENEMY ENTITY
+                CleanUp();
                 break;
         }
         //Debug.Log("END ENEMY UPDATE");
@@ -181,33 +184,37 @@ public abstract class Enemy : MonoBehaviour, IEntity
     //finds the nearest exit to the enemy
     protected TileCoordinate FindNearestExit()
     {
-
- // TODO: NEEDS TO BE MODIFIED SO THAT IT IS GOING IN A PROPER DIRECTION
         int closestX;
         int closestZ;
-        if (_curTilePos.CoordX < _MaxTileMapSize.CoordX - _curTilePos.CoordX)
+        int distX;
+        int distZ;
+        // compare position on the X axis
+        if (_curTilePos.CoordX < _MaxTileMapSize.CoordX-1 - _curTilePos.CoordX)
         {
             closestX = -1;
-        }
-        else
+            distX = _curTilePos.CoordX;
+        }else
         {
-            closestX = _MaxTileMapSize.CoordX + 1;
+            closestX = _MaxTileMapSize.CoordX;
+            distX = _MaxTileMapSize.CoordX-1 - _curTilePos.CoordX;
         }
-        if (_curTilePos.CoordZ < _MaxTileMapSize.CoordZ - _curTilePos.CoordZ)
+        // compare position on the Z axis
+        if (_curTilePos.CoordZ < _MaxTileMapSize.CoordZ-1 - _curTilePos.CoordZ)
         {
             closestZ = -1;
-        }
-        else
+            distZ = _curTilePos.CoordZ;
+        }else
         {
-            closestZ = _MaxTileMapSize.CoordZ + 1;
+            closestZ = _MaxTileMapSize.CoordZ;
+            distZ = _MaxTileMapSize.CoordZ-1 - _curTilePos.CoordZ;
         }
-        if (closestX < closestZ)
+        // compare the closest x and y for closer exit
+        if (distX < distZ)
         {
             return new TileCoordinate(closestX, _curTilePos.CoordZ);
-        }
-        else
+        }else
         {
-            return new TileCoordinate(_curTilePos.CoordZ, closestZ);
+            return new TileCoordinate(_curTilePos.CoordX, closestZ);
         }
     }
 
@@ -227,6 +234,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
+    // Movement delaying after the enemy has spawned
     public void StartMoving()
     {
         //Debug.Log("delay Timer: " + _spawnDelayTimer.GetTicks());
