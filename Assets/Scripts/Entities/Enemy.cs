@@ -35,13 +35,26 @@ public abstract class Enemy : MonoBehaviour, IEntity
     public bool CanBeBlocked;
 
     // This defines how quickly the enemy will move between tiles
-    public int MovementSpeed;
+    public float MovementSpeed;
 
+    //whether the enemy has reached the target crop or not
     public bool isOnTargetCrop = false;
-    // The enemy's movement direction
+
+    // The enemy's possible movement directions
     protected bool _isMovingUp = false, _isMovingDown = false,
         _isMovingLeft = false, _isMovingRight = false;
+    public enum Direction
+    {
+        none,
+        up,
+        down,
+        left,
+        right
+    }
+    // The enemy's current movement direction
+    protected Direction _currentDirection;
 
+    // the enemy's possible states of activity
     public enum EnemyState
     {
         Spawning,
@@ -52,6 +65,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
     }
     // The enemy's current state
     protected EnemyState _currentState;
+
+    ////////////////////////////////////////////////////////////////
 
     // initialise enemy variables
     protected void InitEnemy()
@@ -73,9 +88,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     {
         InitEnemy();
     }
-
-
-
+       
     // Update the enemy's behaviour
     // This should be called every frame
     public void Update()
@@ -143,30 +156,52 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
         //Debug.Log("END ENEMY UPDATE");
     }
-    
+
+    ////////////////////////////////////////////////////////////////
+
     // Set the crop at this tile to be the enemy's target
     public void SetTargetCrop( TileCoordinate crop )
     {        
         _targetCropPos = crop;
-        Debug.Log("enemy SET targetCrop: " + _targetCropPos.CoordX + ", " + _targetCropPos.CoordZ);
+        //Debug.Log("enemy SET targetCrop: " + _targetCropPos.CoordX + ", " + _targetCropPos.CoordZ);
     }
+
+    // finds the bounds of the map
     public void SetMapBoundary(TileCoordinate tilemapSize)
     {
         _MaxTileMapSize = tilemapSize;
     }
 
-    // checks if the enemy entity is outside of the tilemap
-    public bool IsOnDespawnTile()
+    // Movement delaying after the enemy has spawned
+    public void StartMoving()
     {
-        if (_curTilePos.CoordX < 0 || _curTilePos.CoordX > _MaxTileMapSize.CoordX)
+        //Debug.Log("delay Timer: " + _spawnDelayTimer.GetTicks());
+        _spawnDelayTimer.Update();
+
+        if (_spawnDelayTimer.GetTicks() >= SpawnDelayDuration)
         {
-            return true;
+            _spawnDelayTimer.StopTimer();
+            _currentState = EnemyState.Moving;
+
+            Debug.Log("IM SWITCHED TO MOVING");
         }
-        if (_curTilePos.CoordZ < 0 || _curTilePos.CoordZ > _MaxTileMapSize.CoordZ)
-        {
-            return true;
-        }
-        return false;
+    }
+
+    private void CheckIsOnTargetCrop()
+    {
+        //TODO modify isontargetcrop so that top and right spawning enemies will be declared true afterwards
+
+    }
+
+    private void CheckMovingDirection()
+    {
+        // TODO IMPLEMENT DIRECTION IF STATEMENTS
+        _currentDirection = Direction.up;
+        _currentDirection = Direction.down;
+        _currentDirection = Direction.left;
+        _currentDirection = Direction.right;
+        _currentDirection = Direction.none;
+
     }
 
     // Get the relative distance in tiles from a given tile position
@@ -179,43 +214,6 @@ public abstract class Enemy : MonoBehaviour, IEntity
         //Debug.Log("DISTANCE Between PlayerAndEnemy: " + dist.CoordX + ", " + dist.CoordZ);
 
         return dist;
-    }
-
-    //finds the nearest exit to the enemy
-    protected TileCoordinate FindNearestExit()
-    {
-        int closestX;
-        int closestZ;
-        int distX;
-        int distZ;
-        // compare position on the X axis
-        if (_curTilePos.CoordX < _MaxTileMapSize.CoordX-1 - _curTilePos.CoordX)
-        {
-            closestX = -1;
-            distX = _curTilePos.CoordX;
-        }else
-        {
-            closestX = _MaxTileMapSize.CoordX;
-            distX = _MaxTileMapSize.CoordX-1 - _curTilePos.CoordX;
-        }
-        // compare position on the Z axis
-        if (_curTilePos.CoordZ < _MaxTileMapSize.CoordZ-1 - _curTilePos.CoordZ)
-        {
-            closestZ = -1;
-            distZ = _curTilePos.CoordZ;
-        }else
-        {
-            closestZ = _MaxTileMapSize.CoordZ;
-            distZ = _MaxTileMapSize.CoordZ-1 - _curTilePos.CoordZ;
-        }
-        // compare the closest x and y for closer exit
-        if (distX < distZ)
-        {
-            return new TileCoordinate(closestX, _curTilePos.CoordZ);
-        }else
-        {
-            return new TileCoordinate(_curTilePos.CoordX, closestZ);
-        }
     }
 
     // Attempt to eat the targeted crop
@@ -234,24 +232,63 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    // Movement delaying after the enemy has spawned
-    public void StartMoving()
+    //finds the nearest exit to the enemy
+    protected TileCoordinate FindNearestExit()
     {
-        //Debug.Log("delay Timer: " + _spawnDelayTimer.GetTicks());
-        _spawnDelayTimer.Update();
-
-        if (_spawnDelayTimer.GetTicks() >= SpawnDelayDuration)
-        {                
-            _spawnDelayTimer.StopTimer();
-            _currentState = EnemyState.Moving;
-
-            Debug.Log("IM SWITCHED TO MOVING");                
+        int closestX;
+        int closestZ;
+        int distX;
+        int distZ;
+        // compare position on the X axis
+        if (_curTilePos.CoordX < _MaxTileMapSize.CoordX - 1 - _curTilePos.CoordX)
+        {
+            closestX = -1;
+            distX = _curTilePos.CoordX;
+        }
+        else
+        {
+            closestX = _MaxTileMapSize.CoordX;
+            distX = _MaxTileMapSize.CoordX - 1 - _curTilePos.CoordX;
+        }
+        // compare position on the Z axis
+        if (_curTilePos.CoordZ < _MaxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ)
+        {
+            closestZ = -1;
+            distZ = _curTilePos.CoordZ;
+        }
+        else
+        {
+            closestZ = _MaxTileMapSize.CoordZ;
+            distZ = _MaxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ;
+        }
+        // compare the closest x and y for closer exit
+        if (distX < distZ)
+        {
+            return new TileCoordinate(closestX, _curTilePos.CoordZ);
+        }
+        else
+        {
+            return new TileCoordinate(_curTilePos.CoordX, closestZ);
         }
     }
 
+    // checks if the enemy entity is outside of the tilemap
+    public bool IsOnDespawnTile()
+    {
+        if (_curTilePos.CoordX < 0 || _curTilePos.CoordX > _MaxTileMapSize.CoordX-1)
+        {
+            return true;
+        }
+        if (_curTilePos.CoordZ < 0 || _curTilePos.CoordZ > _MaxTileMapSize.CoordZ-1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
     // Move the enemy based on its movement behaviour/AI
     public abstract void Move();
-
     // Escape off the map
     public abstract void RunAway();
 
