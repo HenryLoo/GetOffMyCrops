@@ -33,6 +33,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
     // Flag for if the player can block this enemy
     public bool CanBeBlocked;
+    // Flag for if the enemy is being blocked
+    public bool isBlocked;
 
     // This defines how quickly the enemy will move between tiles
     public float MovementSpeed;
@@ -93,7 +95,6 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // This should be called every frame
     public void Update()
     {
-        // Debug.Log("START ENEMY UPDATE");
         switch ( _currentState )
         {
             case EnemyState.Spawning:
@@ -110,37 +111,31 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 }
                 else
                 {
-                    bool blocked = false;
+                    isBlocked = false;
                     if ( CanBeBlocked )
                     {// Check if enemy is being blocked
-                        TileCoordinate dist = GetDistanceFromTile( 
-                            _tileMap.GetPlayer().GetTilePosition() );
-
-                        // TODO blocked by player behaviour
-
-                        //if( ( dist.CoordX == 1 && dist.CoordZ == 0 && _isMovingRight ) ||
-                        //    ( dist.CoordX == -1 && dist.CoordZ == 0 && _isMovingLeft ) ||
-                        //    ( dist.CoordX == 0 && dist.CoordZ == 1 && _isMovingUp ) ||
-                        //    ( dist.CoordX == 0 && dist.CoordZ == -1 && _isMovingDown ) )
-                        //{
-                        //    blocked = true;
-                        //    _currentState = EnemyState.Escaping;
-                        //    Debug.Log("IM SWITCHED TO ESCAPING");
-                        //}
+                        isBlocked = CheckIsBeingBlocked();
                     }                    
-                    if (!blocked)
+                    if (!isBlocked)
                     {// Enemy is not at its target yet, keep moving
                         Move();
-                        _currentState = EnemyState.Moving;
                     }
                 }
                 break;
             case EnemyState.Eating:
-                //Debug.Log("IM AN EATING CASE");
-                DamageCrop();
+                isBlocked = false;
+                if (CanBeBlocked)
+                {// Check if enemy is being blocked
+                    isBlocked = CheckIsBeingBlocked();
+                }
+                if (!isBlocked)
+                {// Enemy is not blocked, keep eating
+                    DamageCrop();
+                }
+
                 break;
             case EnemyState.Escaping:
-                //Debug.Log("IM AN ESCAPING CASE");                
+                _targetMovePos = FindNearestExit();
                 if (IsOnDespawnTile())
                 {
                     _currentState = EnemyState.Despawning;
@@ -154,7 +149,6 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 CleanUp();
                 break;
         }
-        //Debug.Log("END ENEMY UPDATE");
     }
 
     ////////////////////////////////////////////////////////////////
@@ -186,22 +180,63 @@ public abstract class Enemy : MonoBehaviour, IEntity
             Debug.Log("IM SWITCHED TO MOVING");
         }
     }
+    protected void StopMoving()
+    {
 
-    private void CheckIsOnTargetCrop()
+    }
+
+    protected void CheckIsOnTargetCrop()
     {
         //TODO modify isontargetcrop so that top and right spawning enemies will be declared true afterwards
 
     }
 
-    private void CheckMovingDirection()
+    protected bool CheckIsBeingBlocked()
     {
-        // TODO IMPLEMENT DIRECTION IF STATEMENTS
-        _currentDirection = Direction.up;
-        _currentDirection = Direction.down;
-        _currentDirection = Direction.left;
-        _currentDirection = Direction.right;
-        _currentDirection = Direction.none;
-
+        TileCoordinate dist = GetDistanceFromTile(_tileMap.GetPlayer().GetTilePosition());
+        CheckMovingDirection();
+        if ((dist.CoordX == 1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.right)) ||
+            (dist.CoordX == -1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.left)) ||
+            (dist.CoordX == 0 && dist.CoordZ == 1 && _currentDirection.Equals(Direction.up)) ||
+            (dist.CoordX == 0 && dist.CoordZ == -1 && _currentDirection.Equals(Direction.down)) ||
+            (dist.CoordX == 0 && dist.CoordZ == 0)
+            )
+        {
+            _currentState = EnemyState.Escaping;
+            Debug.Log("IM SWITCHED TO ESCAPING AFTER BLOCKED");
+            _targetMovePos = FindNearestExit();
+            return true;
+        }
+        return false;
+    }
+    protected void CheckMovingDirection()
+    { 
+        if (_curTilePos.CoordX == _targetMovePos.CoordX && _curTilePos.CoordZ == _targetMovePos.CoordZ)
+        {
+            _currentDirection = Direction.none;
+        }
+        if (_curTilePos.CoordX == _targetMovePos.CoordX)
+        {
+            if (_curTilePos.CoordZ > _targetMovePos.CoordZ)
+            {
+                _currentDirection = Direction.down;
+            }
+            else
+            {
+                _currentDirection = Direction.up;
+            }
+        }
+        if (_curTilePos.CoordZ == _targetMovePos.CoordZ)
+        {
+            if (_curTilePos.CoordX > _targetMovePos.CoordX)
+            {
+                _currentDirection = Direction.left;
+            }
+            else
+            {
+                _currentDirection = Direction.right;
+            }
+        }
     }
 
     // Get the relative distance in tiles from a given tile position

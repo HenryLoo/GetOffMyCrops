@@ -18,6 +18,7 @@ public class EnemyRat : Enemy {
     {
         InitEnemy();
         InitEnemyRat();
+        PopupMessageCreator.PopupMessage("Squeek, Squeek", transform);
     }
     
     public override void CleanUp()
@@ -35,14 +36,12 @@ public class EnemyRat : Enemy {
             Debug.Log(" - ENEMY MOVING FROM:" + _curTilePos.CoordX + ", " + _curTilePos.CoordZ + " - TO  CROP:" + _targetCropPos.CoordX + ", " + _targetCropPos.CoordZ);
             _lastTilePos = _curTilePos;
         }
-
         // move in the direction of the target crop by the set speed.
         float step = MovementSpeed * Time.deltaTime;
         Vector3 targetVectorPosition = _tileMap.GetPositionAtTile(_targetCropPos);
         transform.position = Vector3.MoveTowards(transform.position, targetVectorPosition, step);
         // update current tile position of enemy.
         _curTilePos = _tileMap.GetTileAtPosition(transform.position);
-
         // check if the target crop has been reached
         isOnTargetCrop = (Mathf.Abs(transform.position.x - targetVectorPosition.x) < 0.1f && Mathf.Abs(transform.position.z - targetVectorPosition.z) < 0.1f);
     }
@@ -55,7 +54,5 @@ public class EnemyRat : Enemy {
         // update current tile position of enemy.
         _curTilePos = _tileMap.GetTileAtPosition(transform.position);
     }
-
-
 
 }
