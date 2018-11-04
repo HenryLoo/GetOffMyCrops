@@ -5,54 +5,61 @@ using UnityEngine;
 // Reference to the tile map instance
 public class EnemyRat : Enemy {
 
-    // initialise rat variables
+    /// <summary> 
+    /// initialise rat specific variables 
+    /// </summary>
     protected void InitEnemyRat()
     {
-        SpawnDelayDuration = 1; // time in seconds it takes for this enemy to begin movement
-        EatingDuration = 5;     // time in seconds it takes for this enemy to damage a crop
-        CanBeBlocked = true;    // if the player can block this enemy
-        MovementSpeed = 1f;      // how quickly the enemy will move between tiles
-    }
+        _spawnDelayDuration = 1;
+        _spawnDelayTimer = new GameTimer();
+        _spawnDelayTimer.StartTimer();
 
+        _eatingDuration = 5;
+        _eatingTimer = new GameTimer();
+
+        _canBeBlocked = true;
+        _movementSpeed = 1f;
+    }
     private void Start()
     {
         InitEnemy();
         InitEnemyRat();
         PopupMessageCreator.PopupMessage("Squeek, Squeek", transform);
     }
-    
-    public override void CleanUp()
+
+    /// <summary>
+    /// Moves the rat enemy on the tile map from its _curtilePos towards the _targetMovePos
+    /// -> Sets the _lastTilePos before moving and the _curTilePos after moving
+    /// </summary>
+    private void MoveOnTileMap()
     {
-        Destroy(gameObject);
+        if (!_curTilePos.Equals(_lastTilePos))
+        {
+            Debug.Log(" - ENEMY MOVING FROM:" + _curTilePos.CoordX + ", " + _curTilePos.CoordZ + " - TO  TILE:" + _targetMovePos.CoordX + ", " + _targetMovePos.CoordZ);
+            _lastTilePos = _curTilePos;
+        }
+
+        // move in the direction of the nearest exit by the set speed.
+        float step = _movementSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, _tileMap.GetPositionAtTile(_targetMovePos), step);
+
+        // update current tile position of enemy.
+        _curTilePos = _tileMap.GetTileAtPosition(transform.position);
     }
 
     public override void Move()
     {
-        // TODO: fix movement when enemy spawns from the right or top of the map, so that it ends up ontop of the crop instread of next to it
-        // TODO: ensure that targetMovePos is used more regularly throughout the movement situations. 
-        if (!_curTilePos.Equals(_lastTilePos))
-        {
-            Debug.Log("ENEMY LAST POS: " + _lastTilePos.CoordX + ", " + _lastTilePos.CoordZ);
-            Debug.Log(" - ENEMY MOVING FROM:" + _curTilePos.CoordX + ", " + _curTilePos.CoordZ + " - TO  CROP:" + _targetCropPos.CoordX + ", " + _targetCropPos.CoordZ);
-            _lastTilePos = _curTilePos;
-        }
-        // move in the direction of the target crop by the set speed.
-        float step = MovementSpeed * Time.deltaTime;
-        Vector3 targetVectorPosition = _tileMap.GetPositionAtTile(_targetCropPos);
-        transform.position = Vector3.MoveTowards(transform.position, targetVectorPosition, step);
-        // update current tile position of enemy.
-        _curTilePos = _tileMap.GetTileAtPosition(transform.position);
-        // check if the target crop has been reached
-        isOnTargetCrop = (Mathf.Abs(transform.position.x - targetVectorPosition.x) < 0.1f && Mathf.Abs(transform.position.z - targetVectorPosition.z) < 0.1f);
+        MoveOnTileMap();
     }
 
     public override void RunAway()
     {
-        // move in the direction of the nearest exit by the set speed.
-        float step = MovementSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, _tileMap.GetPositionAtTile(_targetMovePos), step);
-        // update current tile position of enemy.
-        _curTilePos = _tileMap.GetTileAtPosition(transform.position);
+        MoveOnTileMap();
+    }
+
+    public override void CleanUp()
+    {
+        Destroy(gameObject);
     }
 
 }

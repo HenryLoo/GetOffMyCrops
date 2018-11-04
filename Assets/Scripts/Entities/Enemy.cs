@@ -4,59 +4,55 @@ using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour, IEntity
 {
-    // Reference to the tile map instance
+    ///<summary>( local reference to the tile map instance )</summary>
     protected TileMap _tileMap;
+    ///<summary>( the maximum tilemap size )</summary>
+    protected TileCoordinate _maxTileMapSize;
 
-    protected TileCoordinate _MaxTileMapSize;
-
-    protected GameController GameController;
-
-    // The enemy's spawn position on the tile map
+    ///<summary>( The enemy's spawn coordinates within the tile map )</summary>
     protected TileCoordinate _spawnTilePos;
-    // The enemy's current position on the tile map
+    ///<summary>( The enemy's current coordinates within the tile map )</summary>
     protected TileCoordinate _curTilePos;
-    // The enemy's previous position on the tile map
+    ///<summary>( The enemy's previous coordinates within the tile map )</summary>
     protected TileCoordinate _lastTilePos;
-    // The enemy's target crop to eat
+
+    ///<summary>( The enemy's target crop to eat )</summary>
     protected TileCoordinate _targetCropPos;
-    // The enemy's target tile to move towards
+    ///<summary>( The tile the enemy will move towards )</summary>
     protected TileCoordinate _targetMovePos;
 
-    // The duration of time in seconds it takes for this enemy to begin movement
-    public float SpawnDelayDuration;
+    ///<summary>( The duration of time in seconds it takes for this enemy to begin movement )</summary>
+    public float _spawnDelayDuration;
     protected GameTimer _spawnDelayTimer;
-    protected bool freshSpawn = true;
 
-    // The duration of time in seconds it takes for this enemy to damage a crop
-    public float EatingDuration;
+    ///<summary>( The duration of time in seconds it takes for this enemy to damage a crop )</summary>
+    public float _eatingDuration;
     protected GameTimer _eatingTimer;
 
-    // Flag for if the player can block this enemy
-    public bool CanBeBlocked;
-    // Flag for if the enemy is being blocked
-    public bool isBlocked;
+    ///<summary>( if the player can block this enemy )</summary>
+    public bool _canBeBlocked = false;
+    ///<summary>( if the enemy is being blocked )</summary>
+    public bool _isBlocked = false;
 
-    // This defines how quickly the enemy will move between tiles
-    public float MovementSpeed;
+    ///<summary>( if the enemy has reached the target crop or not )</summary>
+    public bool _isOnTargetCrop = false;
 
-    //whether the enemy has reached the target crop or not
-    public bool isOnTargetCrop = false;
+    ///<summary>( how quickly the enemy will move between tiles )</summary>
+    public float _movementSpeed;
 
-    // The enemy's possible movement directions
-    protected bool _isMovingUp = false, _isMovingDown = false,
-        _isMovingLeft = false, _isMovingRight = false;
+    ///<summary>( The enemy's possible movement directions )</summary>
     public enum Direction
     {
-        none,
-        up,
-        down,
-        left,
-        right
+        None,
+        Up,
+        Down,
+        Left,
+        Right
     }
-    // The enemy's current movement direction
+    ///<summary>( The enemy's current movement direction )</summary>
     protected Direction _currentDirection;
 
-    // the enemy's possible states of activity
+    ///<summary>( The enemy's possible states of activity )</summary>
     public enum EnemyState
     {
         Spawning,
@@ -65,209 +61,228 @@ public abstract class Enemy : MonoBehaviour, IEntity
         Escaping,
         Despawning
     }
-    // The enemy's current state
+    ///<summary>( The enemy's current state of activity )</summary>
     protected EnemyState _currentState;
+
 
     ////////////////////////////////////////////////////////////////
 
-    // initialise enemy variables
+    /// <summary> 
+    /// initialise universal enemy variables 
+    /// </summary>
     protected void InitEnemy()
     {
         _tileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
-        _eatingTimer = new GameTimer();
 
         _curTilePos = _tileMap.GetTileAtPosition(transform.position);
         _spawnTilePos = _curTilePos;
-        _lastTilePos = _spawnTilePos;
-
+        _lastTilePos = _curTilePos;
         _targetMovePos = _targetCropPos;
-
-        _spawnDelayTimer = new GameTimer();
-        _spawnDelayTimer.StartTimer();
     }
-
     void Start()
     {
         InitEnemy();
     }
-       
-    // Update the enemy's behaviour
-    // This should be called every frame
+
+    /// <summary> 
+    /// Update the enemy's behaviour every frame
+    /// </summary>
     public void Update()
     {
         switch ( _currentState )
         {
             case EnemyState.Spawning:
-                StartMoving();
+                SpawnMoveDelay();
+
                 break;
-            case EnemyState.Moving:               
-                               
-                if (isOnTargetCrop)
-                { // Enemy is on top of the crop, so start eating
-                    Debug.Log("ENEMY IS ON A CROP SO START EATING");
+            case EnemyState.Moving:       
+                if (_isOnTargetCrop)
+                {
                     _eatingTimer.StartTimer();
                     _currentState = EnemyState.Eating;
-                    Debug.Log("IM SWITCHED TO EATING");
+                    Debug.Log("ENEMY SWITCHED TO EATING");
                 }
                 else
                 {
-                    isBlocked = false;
-                    if ( CanBeBlocked )
-                    {// Check if enemy is being blocked
-                        isBlocked = CheckIsBeingBlocked();
+                    _isBlocked = false;
+                    if ( _canBeBlocked )
+                    {
+                        CheckIsBlocked();
                     }                    
-                    if (!isBlocked)
-                    {// Enemy is not at its target yet, keep moving
+                    if (!_isBlocked)
+                    {
                         Move();
+                        CheckIsOnTargetCrop();
                     }
                 }
+
                 break;
             case EnemyState.Eating:
-                isBlocked = false;
-                if (CanBeBlocked)
-                {// Check if enemy is being blocked
-                    isBlocked = CheckIsBeingBlocked();
+                _isBlocked = false;
+                if (_canBeBlocked)
+                {
+                    CheckIsBlocked();
                 }
-                if (!isBlocked)
-                {// Enemy is not blocked, keep eating
-                    DamageCrop();
+                if (!_isBlocked)
+                { 
+                    EatCrop();
                 }
 
                 break;
             case EnemyState.Escaping:
                 _targetMovePos = FindNearestExit();
-                if (IsOnDespawnTile())
+                if (CheckIsOnDespawnTile())
                 {
                     _currentState = EnemyState.Despawning;
                 }else
                 {
                     RunAway();
                 }
+
                 break;
             case EnemyState.Despawning:
-                // DESTROY ENEMY ENTITY
                 CleanUp();
+
                 break;
         }
     }
 
     ////////////////////////////////////////////////////////////////
+    
 
-    // Set the crop at this tile to be the enemy's target
+    /// <summary>
+    ///  Set the crop at this tile to be the enemy's target crop
+    /// </summary>
     public void SetTargetCrop( TileCoordinate crop )
     {        
         _targetCropPos = crop;
         //Debug.Log("enemy SET targetCrop: " + _targetCropPos.CoordX + ", " + _targetCropPos.CoordZ);
     }
 
-    // finds the bounds of the map
+    /// <summary>
+    /// Finds the bounds of the map
+    /// </summary>
     public void SetMapBoundary(TileCoordinate tilemapSize)
     {
-        _MaxTileMapSize = tilemapSize;
+        _maxTileMapSize = tilemapSize;
     }
 
-    // Movement delaying after the enemy has spawned
-    public void StartMoving()
+    /// <summary>
+    /// Delays the movement of the enemy until _spawnDelayTimer matches _spawnDelayDuration
+    /// -> Sets _currentState to Moving when this occurs. 
+    /// </summary>
+    public void SpawnMoveDelay()
     {
-        //Debug.Log("delay Timer: " + _spawnDelayTimer.GetTicks());
         _spawnDelayTimer.Update();
-
-        if (_spawnDelayTimer.GetTicks() >= SpawnDelayDuration)
+        if (_spawnDelayTimer.GetTicks() >= _spawnDelayDuration)
         {
             _spawnDelayTimer.StopTimer();
             _currentState = EnemyState.Moving;
-
-            Debug.Log("IM SWITCHED TO MOVING");
+            Debug.Log("ENEMY SWITCHED TO MOVING");
         }
     }
-    protected void StopMoving()
-    {
 
-    }
-
+    /// <summary>
+    /// Checks if the enemy is currently on the _targetCropPos
+    /// -> Sets _isOnTargetCrop accordingly
+    /// </summary>
     protected void CheckIsOnTargetCrop()
     {
-        //TODO modify isontargetcrop so that top and right spawning enemies will be declared true afterwards
-
+        _isOnTargetCrop = (Mathf.Abs(transform.position.x - _tileMap.GetPositionAtTile(_targetCropPos).x) < 0.1f 
+            && Mathf.Abs(transform.position.z - _tileMap.GetPositionAtTile(_targetCropPos).z) < 0.1f);
     }
 
-    protected bool CheckIsBeingBlocked()
+    /// <summary>
+    /// Checks if the enemy is blocked by the player, or touched by the player
+    /// -> Sets _currentState to Escaping when this occurs and _isBlocked to true
+    /// </summary>
+    protected void CheckIsBlocked()
     {
         TileCoordinate dist = GetDistanceFromTile(_tileMap.GetPlayer().GetTilePosition());
-        CheckMovingDirection();
-        if ((dist.CoordX == 1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.right)) ||
-            (dist.CoordX == -1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.left)) ||
-            (dist.CoordX == 0 && dist.CoordZ == 1 && _currentDirection.Equals(Direction.up)) ||
-            (dist.CoordX == 0 && dist.CoordZ == -1 && _currentDirection.Equals(Direction.down)) ||
-            (dist.CoordX == 0 && dist.CoordZ == 0)
+        GetMovingDirection();
+        if ((dist.CoordX == 1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.Right))
+            || (dist.CoordX == -1 && dist.CoordZ == 0 && _currentDirection.Equals(Direction.Left))
+            || (dist.CoordX == 0 && dist.CoordZ == 1 && _currentDirection.Equals(Direction.Up))
+            || (dist.CoordX == 0 && dist.CoordZ == -1 && _currentDirection.Equals(Direction.Down))
+            || (dist.CoordX == 0 && dist.CoordZ == 0)
             )
         {
+            _isBlocked = true;
+
             _currentState = EnemyState.Escaping;
-            Debug.Log("IM SWITCHED TO ESCAPING AFTER BLOCKED");
-            _targetMovePos = FindNearestExit();
-            return true;
-        }
-        return false;
+            Debug.Log("ENEMY SWITCHED TO ESCAPING AFTER BLOCKED");
+            _targetMovePos = FindNearestExit();         
+        }        
     }
-    protected void CheckMovingDirection()
+
+    /// <summary>
+    /// Delays the destruction of the crop until the _eatingTimer of the enemy matches _eatingDuration
+    /// -> Sets _currentState to Escaping when this occurs and the eaten crop changes to a PlantableCooldown state
+    /// </summary>
+    public void EatCrop()
+    {
+        _eatingTimer.Update();
+        // After crop is eaten, run away
+        if (_eatingTimer.GetTicks() >= _eatingDuration)
+        {
+            _tileMap.SetTile(_targetCropPos, TileData.TileType.PlantableCooldown);
+            _eatingTimer.StopTimer();
+
+            _currentState = EnemyState.Escaping;
+            Debug.Log("ENEMY SWITCHED TO ESCAPING AFTER EATING");
+            _targetMovePos = FindNearestExit();
+        }
+    }
+
+    /// <summary>
+    /// Checks the Movement direction of the enemy based on its _curTilePos and _targetMovePos 
+    /// -> Sets _currentDirection accordingly
+    /// </summary>
+    protected void GetMovingDirection()
     { 
         if (_curTilePos.CoordX == _targetMovePos.CoordX && _curTilePos.CoordZ == _targetMovePos.CoordZ)
         {
-            _currentDirection = Direction.none;
+            _currentDirection = Direction.None;
         }
         if (_curTilePos.CoordX == _targetMovePos.CoordX)
         {
             if (_curTilePos.CoordZ > _targetMovePos.CoordZ)
             {
-                _currentDirection = Direction.down;
+                _currentDirection = Direction.Down;
             }
             else
             {
-                _currentDirection = Direction.up;
+                _currentDirection = Direction.Up;
             }
         }
         if (_curTilePos.CoordZ == _targetMovePos.CoordZ)
         {
             if (_curTilePos.CoordX > _targetMovePos.CoordX)
             {
-                _currentDirection = Direction.left;
+                _currentDirection = Direction.Left;
             }
             else
             {
-                _currentDirection = Direction.right;
+                _currentDirection = Direction.Right;
             }
         }
     }
 
-    // Get the relative distance in tiles from a given tile position
+    /// <summary>
+    /// returns the relative distance in tiles from the enemy's _curTilePos to a given tile position
+    /// </summary>
     public TileCoordinate GetDistanceFromTile( TileCoordinate tile )
     {
         TileCoordinate dist;
         dist.CoordX = tile.CoordX - _curTilePos.CoordX;
         dist.CoordZ = tile.CoordZ - _curTilePos.CoordZ;
-
-        //Debug.Log("DISTANCE Between PlayerAndEnemy: " + dist.CoordX + ", " + dist.CoordZ);
-
         return dist;
     }
 
-    // Attempt to eat the targeted crop
-    public void DamageCrop()
-    {
-        _eatingTimer.Update();
-
-        // After crop is eaten, run away
-        if( _eatingTimer.GetTicks() >= EatingDuration )
-        {
-            _tileMap.SetTile( _targetCropPos, TileData.TileType.PlantableCooldown );
-            _eatingTimer.StopTimer();
-            _currentState = EnemyState.Escaping;
-            Debug.Log("IM SWITCHED TO ESCAPING AFTER EATING");
-            _targetMovePos = FindNearestExit();
-        }
-    }
-
-    //finds the nearest exit to the enemy
+    /// <summary>
+    /// checks the enemy's _curTilePos and compares it with the tilemaps dimensions to determine the closest exit from the map.
+    /// -> returns the TileCoordinate of the closest available exit
+    /// </summary>
     protected TileCoordinate FindNearestExit()
     {
         int closestX;
@@ -275,26 +290,26 @@ public abstract class Enemy : MonoBehaviour, IEntity
         int distX;
         int distZ;
         // compare position on the X axis
-        if (_curTilePos.CoordX < _MaxTileMapSize.CoordX - 1 - _curTilePos.CoordX)
+        if (_curTilePos.CoordX < _maxTileMapSize.CoordX - 1 - _curTilePos.CoordX)
         {
             closestX = -1;
             distX = _curTilePos.CoordX;
         }
         else
         {
-            closestX = _MaxTileMapSize.CoordX;
-            distX = _MaxTileMapSize.CoordX - 1 - _curTilePos.CoordX;
+            closestX = _maxTileMapSize.CoordX;
+            distX = _maxTileMapSize.CoordX - 1 - _curTilePos.CoordX;
         }
         // compare position on the Z axis
-        if (_curTilePos.CoordZ < _MaxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ)
+        if (_curTilePos.CoordZ < _maxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ)
         {
             closestZ = -1;
             distZ = _curTilePos.CoordZ;
         }
         else
         {
-            closestZ = _MaxTileMapSize.CoordZ;
-            distZ = _MaxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ;
+            closestZ = _maxTileMapSize.CoordZ;
+            distZ = _maxTileMapSize.CoordZ - 1 - _curTilePos.CoordZ;
         }
         // compare the closest x and y for closer exit
         if (distX < distZ)
@@ -307,14 +322,17 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    // checks if the enemy entity is outside of the tilemap
-    public bool IsOnDespawnTile()
+    /// <summary>
+    /// checks the enemy's _curPosition with the edges of the map to determine if the enemy has reached a despawn zone
+    /// -> returns true if this occurs, false otherwise
+    /// </summary>
+    public bool CheckIsOnDespawnTile()
     {
-        if (_curTilePos.CoordX < 0 || _curTilePos.CoordX > _MaxTileMapSize.CoordX-1)
+        if (_curTilePos.CoordX < 0 || _curTilePos.CoordX > _maxTileMapSize.CoordX-1)
         {
             return true;
         }
-        if (_curTilePos.CoordZ < 0 || _curTilePos.CoordZ > _MaxTileMapSize.CoordZ-1)
+        if (_curTilePos.CoordZ < 0 || _curTilePos.CoordZ > _maxTileMapSize.CoordZ-1)
         {
             return true;
         }
@@ -324,7 +342,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
     // Move the enemy based on its movement behaviour/AI
     public abstract void Move();
-    // Escape off the map
+
+
+
     public abstract void RunAway();
 
     public abstract void CleanUp();
