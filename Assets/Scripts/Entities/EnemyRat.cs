@@ -2,49 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Reference to the tile map instance
-public class EnemyRat : Enemy {
-
-    /// <summary> 
-    /// initialise rat specific variables 
-    /// </summary>
+public class EnemyRat : Enemy
+{
+    // Initialize rat specific variables
     protected void InitEnemyRat()
     {
-        _spawnDelayDuration = 1;
-        _spawnDelayTimer = new GameTimer();
-        _spawnDelayTimer.StartTimer();
+        SpawnDelayDuration = 1;
+        spawnDelayTimer = new GameTimer();
+        spawnDelayTimer.StartTimer();
 
-        _eatingDuration = 5;
-        _eatingTimer = new GameTimer();
+        EatingDuration = 5;
+        eatingTimer = new GameTimer();
 
-        _canBeBlocked = true;
-        _movementSpeed = 1f;
+        CanBeBlocked = true;
+        MovementSpeed = 1f;
     }
+
     private void Start()
     {
         InitEnemy();
         InitEnemyRat();
-        PopupMessageCreator.PopupMessage("Squeek, Squeek", transform);
+        PopupMessageCreator.PopupMessage( "Squeek, Squeek", transform );
     }
 
-    /// <summary>
-    /// Moves the rat enemy on the tile map from its _curtilePos towards the _targetMovePos
-    /// -> Sets the _lastTilePos before moving and the _curTilePos after moving
-    /// </summary>
+    // Moves this rat enemy on the tile map from its currentTilePos towards 
+    // the targetMovePos
     private void MoveOnTileMap()
     {
-        if (!_curTilePos.Equals(_lastTilePos))
+        if( !currentTilePos.Equals( previousTilePos ) )
         {
-            Debug.Log(" - ENEMY MOVING FROM:" + _curTilePos.CoordX + ", " + _curTilePos.CoordZ + " - TO  TILE:" + _targetMovePos.CoordX + ", " + _targetMovePos.CoordZ);
-            _lastTilePos = _curTilePos;
+            Debug.Log( "EnemyRat.MoveOnTileMap(): Current position: (" + 
+                currentTilePos.CoordX + ", " + currentTilePos.CoordZ + 
+                "), Target position: (" + targetMovePos.CoordX +  ", " + 
+                targetMovePos.CoordZ + ")" );
+            previousTilePos = currentTilePos;
         }
 
-        // move in the direction of the nearest exit by the set speed.
-        float step = _movementSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, _tileMap.GetPositionAtTile(_targetMovePos), step);
+        // Move in the direction of the nearest exit
+        float step = MovementSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards( transform.position, 
+            tileMap.GetPositionAtTile( targetMovePos ), step );
 
-        // update current tile position of enemy.
-        _curTilePos = _tileMap.GetTileAtPosition(transform.position);
+        //Debug.Log( "thisPos: " + transform.position );
+        //Debug.Log( "targetPos: " + tileMap.GetPositionAtTile( targetMovePos ) );
+
+        // Update current tile position
+        currentTilePos = tileMap.GetTileAtPosition( transform.position );
     }
 
     public override void Move()
@@ -59,7 +62,6 @@ public class EnemyRat : Enemy {
 
     public override void CleanUp()
     {
-        Destroy(gameObject);
+        Destroy( gameObject );
     }
-
 }
