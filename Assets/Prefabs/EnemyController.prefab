@@ -54,4 +54,4 @@ MonoBehaviour:
   GameController: {fileID: 0}
   EnemyMappings:
   - EnemyType: Dummy
-    Prefab: {fileID: 1060646150021740, guid: e1f6589253304d8499e748e2e337c449, type: 2}
+    Prefab: {fileID: 1795930821635288, guid: 895275fcc4b493a4f9a67ed6f75706cf, type: 2}

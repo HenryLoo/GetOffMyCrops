@@ -133,7 +133,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
                 break;
             case EnemyState.Escaping:
-                targetMovePos = FindNearestExit();
+                //targetMovePos = FindNearestExit();  // redundant?
 
                 if( CheckIsOnDespawnTile() )
                 {
@@ -170,6 +170,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // spawnDelayDuration
     public void SpawnMoveDelay()
     {
+        StateAnim();
         spawnDelayTimer.Update();
 
         // Set currentState to Moving when spawn delay is over
@@ -177,7 +178,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
         {
             spawnDelayTimer.StopTimer();
             currentState = EnemyState.Moving;
-            Debug.Log( "Enemy.SpawnMoveDelay(): Switched to Moving state" );
+            Debug.Log("Enemy.SpawnMoveDelay(): Switched to Moving state");
+            StateAnim();
         }
     }
     
@@ -204,6 +206,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
             currentState = EnemyState.Escaping;
             Debug.Log( "Enemy.CheckIsBlocked(): Switched to Escaping state" );
             targetMovePos = FindNearestExit();
+            SetMovingDirection();
+            StateAnim();
         }
     }
 
@@ -211,10 +215,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // reaches eatingDuration
     public void EatCrop()
     {
+        StateAnim();
         eatingTimer.Update();
 
         // After crop is eaten, run away
-        if( eatingTimer.GetTicks() >= EatingDuration )
+        if ( eatingTimer.GetTicks() >= EatingDuration )
         {
             // Not eating anymore, so stop the timer
             eatingTimer.StopTimer();
@@ -225,6 +230,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
             currentState = EnemyState.Escaping;
             Debug.Log( "Enemy.EatCrop(): Switched to Escaping state" );
             targetMovePos = FindNearestExit();
+            SetMovingDirection();
+            StateAnim();
         }
     }
 
@@ -348,6 +355,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
         return false;
     }
+
+    // animate the enemy based on its current state
+    public abstract void StateAnim();
 
     // Move the enemy based on its movement behaviour/AI
     public abstract void Move();
