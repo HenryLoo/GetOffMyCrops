@@ -12,4 +12,13 @@ public static class HelperFunctions
 	{
 		return ( value % modBy + modBy ) % modBy;
 	}
+
+    // Return the distance from tile a to tile b
+    public static TileCoordinate GetTileDistance( TileCoordinate a, TileCoordinate b )
+    {
+        TileCoordinate dist;
+        dist.CoordX = b.CoordX - a.CoordX;
+        dist.CoordZ = b.CoordZ - a.CoordZ;
+        return dist;
+    }
 }

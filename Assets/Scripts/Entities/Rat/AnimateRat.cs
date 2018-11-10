@@ -4,62 +4,57 @@ using UnityEngine;
 
 public class AnimateRat : MonoBehaviour
 {
-    Animator Rat_Animator;
-    RatRunAnimator Moving;
+    private Animator _animator;
+    private RatRunAnimator _animationHandler;
+    private float _animationSpeed;
 
     // Use this for initialization
     void Start()
     {
-        Rat_Animator = gameObject.GetComponent<Animator>();
-        Moving = gameObject.GetComponent<RatRunAnimator>();
+        _animator = gameObject.GetComponent<Animator>();
+        _animationHandler = gameObject.GetComponent<RatRunAnimator>();
     }
-
-    float _moveSpeed = 5;
 
     // Update is called once per frame
     void Update()
     {
-        Moving.SetMoveSpeed(_moveSpeed);
+        _animationHandler.SetAnimationSpeed( _animationSpeed );
     }
 
-    public void StopAnim()
+    public void StopAnimation()
     {
-        //_moveSpeed = 0;
-        //Rat_Animator.ResetTrigger("Reset");
-        Rat_Animator.ResetTrigger("Idle Reaction");
-        //Rat_Animator.ResetTrigger("Jump");
-        Rat_Animator.ResetTrigger("Attack");
-       // Rat_Animator.ResetTrigger("Die");
+        _animator.ResetTrigger( "Idle Reaction" );
+        _animator.ResetTrigger( "Attack" );
     }
 
-    public void ResetAnim()
+    public void ResetAnimation()
     {
-        Rat_Animator.SetTrigger("Reset");
+        _animator.SetTrigger( "Reset" );
     }
 
-    public void SetWalkingAnimSpeed(float moveSpeed)
+    public void SetAnimationSpeed( float moveSpeed )
     {
-        _moveSpeed = moveSpeed;
+        _animationSpeed = moveSpeed;
     }
 
-    public void IdleInspectAnim()
+    public void SetIdleAnimation()
     {
-        Rat_Animator.SetTrigger("Idle Reaction");
+        _animator.SetTrigger( "Idle Reaction" );
     }
 
-    public void JumpAnim()
+    public void SetJumpAnimation()
     {
-        Rat_Animator.SetTrigger("Jump");
+        _animator.SetTrigger( "Jump" );
     }
 
-    public void AttackAnim()
+    public void SetAttackAnimation()
     {
-        Rat_Animator.SetTrigger("Attack");
+        _animator.SetTrigger( "Attack" );
     }
 
-    public void DieAnim()
+    public void SetDieAnimation()
     {
-        Rat_Animator.SetTrigger("Die");
+        _animator.SetTrigger( "Die" );
     }
 
 }

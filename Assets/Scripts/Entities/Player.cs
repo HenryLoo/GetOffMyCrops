@@ -261,7 +261,8 @@ public class Player : MonoBehaviour, IEntity
         {
             // The enemy is on an adjacent tile to the player, then call 
             // its RunAway method
-            TileCoordinate dist = e.GetDistanceFromTile( this.GetTilePosition() );
+            TileCoordinate dist = HelperFunctions.GetTileDistance( this.GetTilePosition(), 
+                e.GetTilePosition() );
             if( Math.Abs( dist.CoordX ) <= 1 && Math.Abs( dist.CoordZ ) <= 1 )
             {
                 e.RunAway();

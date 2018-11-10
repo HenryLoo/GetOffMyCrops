@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class RatRunAnimator : MonoBehaviour
 {
-    [SerializeField] Animator anim;
+    private Animator _animator;
+
     void Start()
     {
-        anim = gameObject.GetComponent<Animator>();
-
+        _animator = gameObject.GetComponent<Animator>();
     }
-    public void SetMoveSpeed(float speed)
+
+    public void SetAnimationSpeed( float speed )
     {
-        anim.SetFloat("Speed", speed);
+        _animator.SetFloat( "Speed", speed );
     }
 }

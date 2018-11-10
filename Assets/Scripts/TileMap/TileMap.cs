@@ -272,6 +272,12 @@ public class TileMap : MonoBehaviour
         return _levelData.TileLayout.height;
     }
 
+    // Get the size of the tile map in tiles
+    public TileCoordinate GetSize()
+    {
+        return new TileCoordinate( GetSizeX(), GetSizeZ() );
+    }
+
     // Return the vector corresponding to the tile coordinate (x, z)
     public Vector3 GetPositionAtTile( TileCoordinate tilePos )
     {

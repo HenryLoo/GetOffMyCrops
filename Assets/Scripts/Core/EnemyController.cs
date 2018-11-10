@@ -64,16 +64,17 @@ public class EnemyController : MonoBehaviour
     {
         int randomPicked = _randomNum.Next( 4 );
         TileCoordinate spawnTile = new TileCoordinate();
+        TileCoordinate mapSize = GameController.TileMap.GetSize();
         switch( randomPicked )
         {
             case 3:
-                spawnTile = new TileCoordinate( targetCrop.CoordX, GameController.TileMap.GetSizeZ());
+                spawnTile = new TileCoordinate( targetCrop.CoordX, mapSize.CoordZ );
                 break;
             case 2:
                 spawnTile = new TileCoordinate( targetCrop.CoordX, -1 );
                 break;
             case 1:
-                spawnTile = new TileCoordinate( GameController.TileMap.GetSizeX(), targetCrop.CoordZ );
+                spawnTile = new TileCoordinate( mapSize.CoordX, targetCrop.CoordZ );
                 break;
             default:
                 spawnTile = new TileCoordinate( -1, targetCrop.CoordZ );
@@ -95,9 +96,7 @@ public class EnemyController : MonoBehaviour
         TileCoordinate targetCrop = GameController.TileMap.currentPlantedCrops[ randomTilePicked ].Key;
 
         // Instantiate the enemy and set its target crop
-        GameObject enemy = GameController.TileMap.CreateEntity( GetRandomSpawnLocation( targetCrop ), prefab);
+        GameObject enemy = GameController.TileMap.CreateEntity( GetRandomSpawnLocation( targetCrop ), prefab );
         enemy.GetComponent<Enemy>().SetTargetCrop( targetCrop );
-        TileCoordinate mapBoundary = new TileCoordinate(GameController.TileMap.GetSizeX(), GameController.TileMap.GetSizeZ());
-        enemy.GetComponent<Enemy>().SetMapBoundary(mapBoundary);
     }
 }

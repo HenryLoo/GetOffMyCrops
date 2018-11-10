@@ -1,118 +1,86 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyRat : Enemy
 {
-    AnimateRat ratAnimations;
+    private AnimateRat _ratAnimations;
+
     // Initialize rat specific variables
-    protected void InitEnemyRat()
+    protected override void InitEnemy()
     {
-        SpawnDelayDuration = 1;
-        spawnDelayTimer = new GameTimer();
-        spawnDelayTimer.StartTimer();
+        base.InitEnemy();
 
-        EatingDuration = 5;
-        eatingTimer = new GameTimer();
-
-        CanBeBlocked = true;
-        MovementSpeed = 1f;
-        ratAnimations = gameObject.GetComponent<AnimateRat>();
+        _ratAnimations = gameObject.GetComponent<AnimateRat>();
     }
 
-    private void Start()
+    public override void Start()
     {
-        InitEnemy();
-        InitEnemyRat();
-        PopupMessageCreator.PopupMessage( "Squeek, Squeek", transform );
+        base.Start();
+        PopupMessageCreator.PopupMessage( "Squeak, squeak!", transform );
     }
 
-    // Moves this rat enemy on the tile map from its currentTilePos towards 
-    // the targetMovePos
-    private void MoveOnTileMap()
+    protected override void SetAnimationState()
     {
-        OrientInDirection();
-        if ( !currentTilePos.Equals( previousTilePos ) )
-        {
-            Debug.Log( "EnemyRat.MoveOnTileMap(): Current position: (" + 
-                currentTilePos.CoordX + ", " + currentTilePos.CoordZ + 
-                "), Target position: (" + targetMovePos.CoordX +  ", " + 
-                targetMovePos.CoordZ + ")" );
-            previousTilePos = currentTilePos;
-        }
-
-        // Move in the direction of the targetMovePos
-        float step = MovementSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards( transform.position, 
-            tileMap.GetPositionAtTile( targetMovePos ), step );
-
-        //Debug.Log( "thisPos: " + transform.position );
-        //Debug.Log( "targetPos: " + tileMap.GetPositionAtTile( targetMovePos ) );
-
-        // Update current tile position
-        currentTilePos = tileMap.GetTileAtPosition( transform.position );
-    }
-
-    private void OrientInDirection()
-    {
-        switch (currentDirection)
-        {
-            case Direction.Up:
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-                break;
-
-            case Direction.Down:
-                transform.rotation = Quaternion.Euler(0, 180, 0);
-                break;
-
-            case Direction.Left:
-                transform.rotation = Quaternion.Euler(0, 260, 0);
-                break;
-
-            case Direction.Right:
-                transform.rotation = Quaternion.Euler(0, 90, 0);
-                break;
-        }
-    }
-
-    public override void StateAnim()
-    {
-        switch (currentState)
+        switch( currentState )
         {
             case EnemyState.Spawning:
-                ratAnimations.IdleInspectAnim();
+                _ratAnimations.SetIdleAnimation();
                 break;
 
             case EnemyState.Moving:
-                ratAnimations.StopAnim();
-                ratAnimations.SetWalkingAnimSpeed(3);
+                _ratAnimations.StopAnimation();
+                _ratAnimations.SetAnimationSpeed( 3 );
                 break;
 
             case EnemyState.Eating:
-                ratAnimations.AttackAnim();
+                _ratAnimations.SetAttackAnimation();
                 break;
 
             case EnemyState.Escaping:
-                ratAnimations.StopAnim();
-                ratAnimations.SetWalkingAnimSpeed(10);
+                _ratAnimations.StopAnimation();
+                _ratAnimations.SetAnimationSpeed( 10 );
                 MovementSpeed++;
                 break;
 
             case EnemyState.Despawning:
-                ratAnimations.DieAnim();
+                _ratAnimations.SetDieAnimation();
                 break;
-      
+
         }
     }
 
-    public override void Move()
+    protected override void Move()
     {
-        MoveOnTileMap();
-    }
+        // Rotate the model to face direction of movement
+        OrientInDirection();
 
-    public override void RunAway()
-    {
-        MoveOnTileMap();
+        // Translate this rat's world coordinates toward the next tile
+        float step = MovementSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards( transform.position,
+            gameController.TileMap.GetPositionAtTile( targetNextPos ), step );
+
+        // Update current tile position once the rat has fully transitioned 
+        // onto the next tile
+        if( Math.Abs( transform.position.x - gameController.TileMap.GetPositionAtTile( targetNextPos ).x ) < 0.1f &&
+            Math.Abs( transform.position.z - gameController.TileMap.GetPositionAtTile( targetNextPos ).z ) < 0.1f )
+        {
+            currentTilePos = targetNextPos;
+
+            // Set the next tile to move to if not at target yet
+            if( !currentTilePos.Equals( targetFinalPos ) )
+            {
+                MoveInDirection( currentDirection );
+
+                Debug.Log( "EnemyRat.Move(): Current position: (" +
+                    currentTilePos.CoordX + ", " + currentTilePos.CoordZ +
+                    "), Next position: (" + targetNextPos.CoordX + ", " +
+                    targetNextPos.CoordZ +
+                    "), Target position: (" + targetFinalPos.CoordX + ", " +
+                    targetFinalPos.CoordZ + ")" );
+            }
+        }
     }
 
     public override void CleanUp()
