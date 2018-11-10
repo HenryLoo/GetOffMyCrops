@@ -7,6 +7,17 @@ public class EnemyRat : Enemy
 {
     private AnimateRat _ratAnimations;
 
+    // Animation speed constants
+    private const int MOVING_ANIMATION_SPEED = 3;
+    private const int ESCAPING_ANIMATION_SPEED = 10;
+
+    // Threshold value for determining if this enemy is on a tile while 
+    // transitioning to that tile
+    private const float ON_TILE_THRESHOLD = 0.1f;
+
+    // The text for the pop-up message to show upon spawning
+    private const string SPAWN_TEXT = "Squeak, squeak!";
+
     // Initialize rat specific variables
     protected override void InitEnemy()
     {
@@ -18,7 +29,7 @@ public class EnemyRat : Enemy
     public override void Start()
     {
         base.Start();
-        PopupMessageCreator.PopupMessage( "Squeak, squeak!", transform );
+        PopupMessageCreator.PopupMessage( SPAWN_TEXT, transform );
     }
 
     protected override void SetAnimationState()
@@ -31,7 +42,7 @@ public class EnemyRat : Enemy
 
             case EnemyState.Moving:
                 _ratAnimations.StopAnimation();
-                _ratAnimations.SetAnimationSpeed( 3 );
+                _ratAnimations.SetAnimationSpeed( MOVING_ANIMATION_SPEED );
                 break;
 
             case EnemyState.Eating:
@@ -40,7 +51,7 @@ public class EnemyRat : Enemy
 
             case EnemyState.Escaping:
                 _ratAnimations.StopAnimation();
-                _ratAnimations.SetAnimationSpeed( 10 );
+                _ratAnimations.SetAnimationSpeed( ESCAPING_ANIMATION_SPEED );
                 MovementSpeed++;
                 break;
 
@@ -63,8 +74,9 @@ public class EnemyRat : Enemy
 
         // Update current tile position once the rat has fully transitioned 
         // onto the next tile
-        if( Math.Abs( transform.position.x - gameController.TileMap.GetPositionAtTile( targetNextPos ).x ) < 0.1f &&
-            Math.Abs( transform.position.z - gameController.TileMap.GetPositionAtTile( targetNextPos ).z ) < 0.1f )
+        Vector3 targetPos = gameController.TileMap.GetPositionAtTile( targetNextPos );
+        if( Math.Abs( transform.position.x - targetPos.x ) < ON_TILE_THRESHOLD &&
+            Math.Abs( transform.position.z - targetPos.z ) < ON_TILE_THRESHOLD )
         {
             currentTilePos = targetNextPos;
 
