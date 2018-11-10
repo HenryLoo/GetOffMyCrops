@@ -53,5 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameController: {fileID: 0}
   EnemyMappings:
-  - EnemyType: Dummy
+  - EnemyType: Rat
     Prefab: {fileID: 1795930821635288, guid: 2768b01c701f6894ca517ef30078b27d, type: 2}

@@ -5,7 +5,7 @@
     "TileLayoutFile":"level1_tiles",
     "EntityLayoutFile":"level1_entities",
     "EnemySpawnPatterns": [
-        { "EnemyType" : "Dummy", "Amount" : 1, "WhenToSpawn" : 5 },
-        { "EnemyType" : "Dummy", "Amount" : 1, "WhenToSpawn" : 25 }
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 5 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 25 }
     ]
 }

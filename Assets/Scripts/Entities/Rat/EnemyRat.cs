@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyRat : Enemy
 {
-    private AnimateRat _ratAnimations;
+    private RatAnimator _ratAnimations;
 
     // Animation speed constants
     private const int MOVING_ANIMATION_SPEED = 3;
@@ -23,7 +23,7 @@ public class EnemyRat : Enemy
     {
         base.InitEnemy();
 
-        _ratAnimations = gameObject.GetComponent<AnimateRat>();
+        _ratAnimations = gameObject.GetComponent<RatAnimator>();
     }
 
     public override void Start()

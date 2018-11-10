@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimateRat : MonoBehaviour
+public class RatAnimator : MonoBehaviour
 {
     private Animator _animator;
-    private RatRunAnimator _animationHandler;
     private float _animationSpeed;
 
     // Use this for initialization
     void Start()
     {
         _animator = gameObject.GetComponent<Animator>();
-        _animationHandler = gameObject.GetComponent<RatRunAnimator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _animationHandler.SetAnimationSpeed( _animationSpeed );
+
     }
 
     public void StopAnimation()
@@ -32,9 +30,9 @@ public class AnimateRat : MonoBehaviour
         _animator.SetTrigger( "Reset" );
     }
 
-    public void SetAnimationSpeed( float moveSpeed )
+    public void SetAnimationSpeed( float speed )
     {
-        _animationSpeed = moveSpeed;
+        _animator.SetFloat( "Speed", speed );
     }
 
     public void SetIdleAnimation()
