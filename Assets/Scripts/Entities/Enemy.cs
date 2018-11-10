@@ -89,7 +89,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // Update the enemy's behaviour every frame
     public void Update()
     {
-        // Don't move if the game is paused
+        // Don't 
         if( gameController.GetIsPaused() ) return;
 
         actionTimer.Update();
@@ -204,11 +204,14 @@ public abstract class Enemy : MonoBehaviour, IEntity
             gameController.TileMap.GetPlayer().GetTilePosition() );
 
         // If this enemy is being blocked by the player, then run away
-        if( ( dist.CoordX == 1 && dist.CoordZ == 0 && currentDirection.Equals( Direction.Right ) )
-            || ( dist.CoordX == -1 && dist.CoordZ == 0 && currentDirection.Equals( Direction.Left ) )
-            || ( dist.CoordX == 0 && dist.CoordZ == 1 && currentDirection.Equals( Direction.Up ) )
-            || ( dist.CoordX == 0 && dist.CoordZ == -1 && currentDirection.Equals( Direction.Down ) )
-            || ( dist.CoordX == 0 && dist.CoordZ == 0 ) )
+        // If the enemy is eating, then it can only be blocked when the 
+        // player is directly on top of it
+        if( ( currentState != EnemyState.Eating && 
+            ( ( dist.CoordX == 1 && dist.CoordZ == 0 && currentDirection == Direction.Right )
+            || ( dist.CoordX == -1 && dist.CoordZ == 0 && currentDirection == Direction.Left )
+            || ( dist.CoordX == 0 && dist.CoordZ == 1 && currentDirection == Direction.Up )
+            || ( dist.CoordX == 0 && dist.CoordZ == -1 && currentDirection == Direction.Down ) ) ) ||
+            ( currentState == EnemyState.Eating && dist.CoordX == 0 && dist.CoordZ == 0 ) )
         {
             isBlocked = true;
             RunAway();
