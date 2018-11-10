@@ -97,6 +97,6 @@ public class EnemyController : MonoBehaviour
 
         // Instantiate the enemy and set its target crop
         GameObject enemy = GameController.TileMap.CreateEntity( GetRandomSpawnLocation( targetCrop ), prefab );
-        enemy.GetComponent<Enemy>().SetTargetCrop( targetCrop );
+        enemy.GetComponent<Enemy>().SetTargetTile( targetCrop );
     }
 }

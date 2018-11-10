@@ -9,13 +9,10 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // The enemy's current coordinates within the tile map
     protected TileCoordinate currentTilePos;
 
-    // The enemy's target crop to eat
-    protected TileCoordinate targetCropPos;
-
     // The tile that this enemy will move towards
     protected TileCoordinate targetFinalPos;
 
-    // The next tile to move to, on the path towards targetMovePos
+    // The next tile to move to, on the path towards targetFinalPos
     protected TileCoordinate targetNextPos;
 
     // Handle timing for this enemy's current action
@@ -33,9 +30,6 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
     // Flag for if this enemy is being blocked
     protected bool isBlocked = false;
-
-    // Flag for if the enemy has reached the target crop or not
-    protected bool isOnTargetCrop = false;
 
     // How quickly the enemy will move between tiles
     public float MovementSpeed;
@@ -72,9 +66,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
         gameController = GameObject.Find( "GameController" ).GetComponent<GameController>();
 
         currentTilePos = gameController.TileMap.GetTileAtPosition( transform.position );
-        targetNextPos = currentTilePos;
-        SetTargetTile( targetCropPos );
+        UpdateMovingDirection();
         OrientInDirection();
+        MoveInDirection( currentDirection );
 
         // Start timer for spawn delay
         actionTimer = new GameTimer();
@@ -89,7 +83,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // Update the enemy's behaviour every frame
     public void Update()
     {
-        // Don't 
+        // Don't update this enemy if the game is paused
         if( gameController.GetIsPaused() ) return;
 
         actionTimer.Update();
@@ -101,33 +95,19 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 break;
 
             case EnemyState.Moving:
-                // Start eating the target crop if on top of it
-                if( isOnTargetCrop )
+                if( IsOnTargetTile() )
                 {
-                    actionTimer.StartTimer();
-                    currentState = EnemyState.Eating;
-                    Debug.Log( "Enemy.Update(): Switched to Eating state" );
+                    HandleOnTarget();
                 }
                 else
                 {
-                    // If the target crop is removed early, just run away
-                    if( !IsTargetACrop() )
-                    {
-                        RunAway();
-                    }
-
                     // Update whether this enemy has been blocked
                     if( CanBeBlocked )
                     {
                         UpdateIsBlocked();
                     }
 
-                    // Keep moving if not blocked
-                    if( !isBlocked )
-                    {
-                        Move();
-                        UpdateIsOnTargetCrop();
-                    }
+                    HandleMoving();
                 }
 
                 break;
@@ -142,7 +122,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 // Keep eating if not blocked
                 if( !isBlocked )
                 {
-                    EatCrop();
+                    HandleEating();
                 }
 
                 break;
@@ -156,7 +136,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 // Otherwise, keep trying to escape
                 else
                 {
-                    Move();
+                    HandleEscaping();
                 }
 
                 break;
@@ -167,18 +147,10 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    // Set the crop at this tile to be the enemy's target crop
-    public void SetTargetCrop( TileCoordinate crop )
-    {
-        targetCropPos = crop;
-    }
-
     // Delays the movement of this enemy until spawnDelayTimer reaches 
     // spawnDelayDuration
     public void DelaySpawnMovement()
     {
-        SetAnimationState();
-
         // Set currentState to Moving when spawn delay is over
         if( actionTimer.GetTicks() >= SpawnDelayDuration )
         {
@@ -189,11 +161,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    // Updates whether this enemy is currently on the targetCropPos tile
-    protected void UpdateIsOnTargetCrop()
+    // Check whether this enemy is currently on the targetFinalPos tile
+    protected bool IsOnTargetTile()
     {
-        TileCoordinate dist = HelperFunctions.GetTileDistance( currentTilePos, targetCropPos );
-        isOnTargetCrop = dist.CoordX == 0 && dist.CoordZ == 0;
+        TileCoordinate dist = HelperFunctions.GetTileDistance( currentTilePos, targetFinalPos );
+        return dist.CoordX == 0 && dist.CoordZ == 0;
     }
 
     // Updates whether this enemy is blocked by the player
@@ -218,27 +190,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
         }
     }
 
-    // Delays the destruction of the crop until the eatingTimer of the enemy 
-    // reaches eatingDuration
-    protected void EatCrop()
-    {
-        SetAnimationState();
-
-        // After crop is eaten or removed early, then run away
-        if( actionTimer.GetTicks() >= EatingDuration || !IsTargetACrop() )
-        {
-            // Not eating anymore, so stop the timer
-            actionTimer.StopTimer();
-
-            // Set eaten crop's tile to be on cooldown
-            gameController.TileMap.SetTile( targetCropPos, TileData.TileType.PlantableCooldown );
-
-            RunAway();
-        }
-    }
-
     // Sets the movement direction of this enemy based on its 
-    // currentTilePos and targetMovePos
+    // currentTilePos and targetFinalPos
     protected void UpdateMovingDirection()
     {
         bool isAtTargetCoordX = ( currentTilePos.CoordX == targetFinalPos.CoordX );
@@ -353,7 +306,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     }
 
     // Set the targetFinalPos that this enemy should move toward
-    protected void SetTargetTile( TileCoordinate tile )
+    public void SetTargetTile( TileCoordinate tile )
     {
         targetFinalPos = tile;
         UpdateMovingDirection();
@@ -384,9 +337,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
     }
 
     // Check if the target is a crop
-    private bool IsTargetACrop()
+    protected bool IsTargetACrop()
     {
-        TileData.TileType targetType = gameController.TileMap.GetTile( targetCropPos );
+        TileData.TileType targetType = gameController.TileMap.GetTile( targetFinalPos );
         return targetType == TileData.TileType.CropSeed ||
             targetType == TileData.TileType.CropGrowing ||
             targetType == TileData.TileType.CropMature;
@@ -438,9 +391,22 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // Animate the enemy based on its current state
     protected abstract void SetAnimationState();
 
+    // Handle how this enemy should behave once it has reached its target
+    protected abstract void HandleOnTarget();
+
     // Move the enemy based on its movement behaviour/AI
-    protected abstract void Move();
+    protected abstract void HandleMoving();
+
+    // Attempt to destroy the target crop
+    protected abstract void HandleEating();
+
+    // Attempt to escape the map
+    protected abstract void HandleEscaping();
 
     // Call necessary methods when cleaning up
-    public abstract void CleanUp();
+    public virtual void CleanUp()
+    {
+        actionTimer.StopTimer();
+        Destroy( gameObject );
+    }
 }
