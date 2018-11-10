@@ -365,7 +365,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
                 break;
 
             case Direction.Left:
-                transform.rotation = Quaternion.Euler( 0, 260, 0 );
+                transform.rotation = Quaternion.Euler( 0, 270, 0 );
                 break;
 
             case Direction.Right:

@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class EnemyPig : Enemy
 {
-    private RatAnimator _animator;
+    private Animator _animator;
 
     // Animation speed constants
-    private const int MOVING_ANIMATION_SPEED = 3;
+    private const int MOVING_ANIMATION_SPEED = 5;
     private const int ESCAPING_ANIMATION_SPEED = 10;
 
     // Threshold value for determining if this enemy is on a tile while 
@@ -20,7 +20,7 @@ public class EnemyPig : Enemy
     {
         base.InitEnemy();
 
-        _animator = gameObject.GetComponent<RatAnimator>();
+        _animator = gameObject.GetComponent<Animator>();
     }
 
     // Use this for initialization
@@ -127,27 +127,13 @@ public class EnemyPig : Enemy
     {
         switch( currentState )
         {
-            case EnemyState.Spawning:
-                _animator.SetIdleAnimation();
-                break;
-
             case EnemyState.Moving:
-                _animator.StopAnimation();
-                _animator.SetAnimationSpeed( MOVING_ANIMATION_SPEED );
-                break;
-
-            case EnemyState.Eating:
-                _animator.SetAttackAnimation();
+                _animator.SetFloat( "Speed", MOVING_ANIMATION_SPEED );
                 break;
 
             case EnemyState.Escaping:
-                _animator.StopAnimation();
-                _animator.SetAnimationSpeed( ESCAPING_ANIMATION_SPEED );
+                _animator.SetFloat( "Speed", ESCAPING_ANIMATION_SPEED );
                 MovementSpeed++;
-                break;
-
-            case EnemyState.Despawning:
-                _animator.SetDieAnimation();
                 break;
         }
     }

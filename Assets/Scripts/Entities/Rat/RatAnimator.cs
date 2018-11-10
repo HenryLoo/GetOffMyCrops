@@ -13,12 +13,6 @@ public class RatAnimator : MonoBehaviour
         _animator = gameObject.GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void StopAnimation()
     {
         _animator.ResetTrigger( "Idle Reaction" );
