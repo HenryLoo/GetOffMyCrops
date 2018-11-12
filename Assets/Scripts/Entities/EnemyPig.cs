@@ -27,6 +27,8 @@ public class EnemyPig : Enemy
     public override void Start()
     {
         base.Start();
+
+        SoundController.PlaySound( SoundType.PigSpawn );
     }
 
     protected override void HandleOnTarget()

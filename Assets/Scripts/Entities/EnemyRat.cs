@@ -15,9 +15,6 @@ public class EnemyRat : Enemy
     // transitioning to that tile
     private const float ON_TILE_THRESHOLD = 0.1f;
 
-    // The text for the pop-up message to show upon spawning
-    private const string SPAWN_TEXT = "Squeak, squeak!";
-
     // Initialize rat specific variables
     protected override void InitEnemy()
     {
@@ -29,7 +26,8 @@ public class EnemyRat : Enemy
     public override void Start()
     {
         base.Start();
-        PopupMessageCreator.PopupMessage( SPAWN_TEXT, transform );
+
+        SoundController.PlaySound( SoundType.RatSpawn );
     }
 
     protected override void SetAnimationState()

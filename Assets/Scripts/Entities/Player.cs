@@ -139,7 +139,7 @@ public class Player : MonoBehaviour, IEntity
         _moveStartPos = transform.position;
         _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * 1.5f;
 
-        SoundController.PlaySound( SoundType.Player_Jump );
+        SoundController.PlaySound( SoundType.PlayerJump );
     }
 
     // Movement transition between tiles
@@ -212,7 +212,7 @@ public class Player : MonoBehaviour, IEntity
         _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
         _gameController.AddMoney( -SEED_BUY_PRICE );
         PopupMessageCreator.PopupMoney( "-$" + SEED_BUY_PRICE, transform );
-        SoundController.PlaySound( SoundType.Player_Plant );
+        SoundController.PlaySound( SoundType.PlayerPlant );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
@@ -227,7 +227,7 @@ public class Player : MonoBehaviour, IEntity
         _gameController.AddMoney( CROP_SELL_PRICE );
 
         PopupMessageCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
-        SoundController.PlaySound( SoundType.Player_Harvest );
+        SoundController.PlaySound( SoundType.PlayerHarvest );
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
@@ -241,7 +241,7 @@ public class Player : MonoBehaviour, IEntity
 
         // TODO: add cooldown timer
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
-        SoundController.PlaySound( SoundType.Player_Scare );
+        SoundController.PlaySound( SoundType.PlayerScare );
     }
 
     // Reset scaring variables after the scare animation has completed

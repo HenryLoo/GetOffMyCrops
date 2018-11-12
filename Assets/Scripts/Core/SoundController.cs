@@ -4,95 +4,104 @@ using UnityEngine;
 
 public enum SoundType
 {
-    Player_Jump,
-    Player_Plant,
-    Player_Scare,
-    Player_Harvest,
-    Rat_Spawn,
-    Big_Spawn,
-    Rat_Scared,
-    UI_Congratulation,
-    UI_Feedback,
+    PlayerJump,
+    PlayerPlant,
+    PlayerScare,
+    PlayerHarvest,
+    RatSpawn,
+    PigSpawn,
+    RatScared,
+    UIWin,
+    UIFeedback,
 }
 
 [System.Serializable]
 public class SoundMapping
 {
-    public SoundType name;
-    public AudioClip[] audioClips;
+    public SoundType Name;
+    public AudioClip[] AudioClips;
 }
 
-[RequireComponent(typeof(AudioSource))]
+[RequireComponent( typeof( AudioSource ) )]
 public class SoundController : MonoBehaviour
 {
+    // List of sound mappings
+    public List<SoundMapping> SoundEffectList;
+    //public Dictionary<SoundType, AudioClip[]> SoundEffectList;
 
-    public SoundMapping[] soundEffectList;
-    
-    public AudioSource efxSource;                   //Drag a reference to the audio source which will play the sound effects.
-    public static SoundController instance = null;     //Allows other scripts to call functions from SoundManager.             
-    private readonly float lowPitchRange = .95f;              //The lowest a sound effect will be randomly pitched.
-    private readonly float highPitchRange = 1.05f;            //The highest a sound effect will be randomly pitched.
+    // Drag a reference to the audio source which will play the sound effects
+    public AudioSource SoundSource;
+
+    // Singleton instance
+    // Allows other scripts to call functions from SoundController
+    public static SoundController Instance = null;
+
+    // The lowest a sound effect will be randomly pitched
+    private readonly float LOWEST_PITCH = .95f;
+
+    // The highest a sound effect will be randomly pitched
+    private readonly float HIGHEST_PITCH = 1.05f;
 
 
     void Awake()
     {
-        //Check if there is already an instance of SoundManager
-        if (instance == null)
-            //if not, set it to this.
-            instance = this;
-        //If instance already exists:
-        else if (instance != this)
-            //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
-            Destroy(gameObject);
+        // Check if there is already an instance of SoundManager
+        if( Instance == null )
+        {
+            // If not, set it to this.
+            Instance = this;
+        }
+        // If instance already exists
+        else if( Instance != this )
+        {
+            // Destroy this, this enforces our Singleton pattern such that 
+            // there can only be one instance of SoundController
+            Destroy( gameObject );
+        }
 
-        //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        DontDestroyOnLoad(gameObject);
+        // Set SoundController to DontDestroyOnLoad so that it won't be 
+        // destroyed when reloading our scene.
+        DontDestroyOnLoad( gameObject );
     }
 
-    public static void PlaySound(SoundType audioName)
+    // Play a sound, given its type
+    public static void PlaySound( SoundType type )
     {
-        foreach (SoundMapping map in instance.soundEffectList)
+        // Find the sound with the given name
+        foreach( SoundMapping mapping in Instance.SoundEffectList )
         {
-            Debug.Log("Search " + map.name + ":" + map.audioClips +" audios.");
-            if (map.name == audioName && map.audioClips != null && map.audioClips.Length > 0)
+            Debug.Log( "SoundController.PlaySound(): name: " + mapping.Name +
+                ", audio: " + mapping.AudioClips );
+            if( mapping.Name == type && mapping.AudioClips != null &&
+                mapping.AudioClips.Length > 0 )
             {
-                Debug.Log("Find " + map.name + " audios. Go play");
-                instance.RandomizeSfx(map.audioClips);
+                // Audio was found, so play it
+                Debug.Log( "Found audio to play: " + mapping.Name );
+                Instance.RandomizeSfx( mapping.AudioClips );
                 return;
             }
         }
-        // Exception line
-        Debug.LogError("No audio was bound to " + audioName);
+
+        // No audio found
+        Debug.LogError( "SoundController.PlaySound(): No audio was bound to: " + type );
     }
 
-    //Used to play single sound clips.
-    protected void PlaySingle(AudioClip clip)
+    // Randomly choose a sound from a set of audio clips and slightly 
+    // adjust their pitch
+    private void RandomizeSfx( params AudioClip[] clips )
     {
-        //Set the clip of our efxSource audio source to the clip passed in as a parameter.
-        efxSource.clip = clip;
+        // Generate a random number between 0 and the length of the 
+        // array of clips passed in
+        int randomIndex = Random.Range( 0, clips.Length );
 
-        //Play the clip.
-        efxSource.Play();
-    }
+        // Choose a random pitch to play the clip at
+        float randomPitch = Random.Range( LOWEST_PITCH, HIGHEST_PITCH );
 
+        // Set the pitch of the audio source to the randomly chosen pitch
+        SoundSource.pitch = randomPitch;
 
-    //RandomizeSfx chooses randomly between various audio clips and slightly changes their pitch.
-    protected void RandomizeSfx(params AudioClip[] clips)
-    {
-        //Generate a random number between 0 and the length of our array of clips passed in.
-        int randomIndex = Random.Range(0, clips.Length);
-
-        //Choose a random pitch to play back our clip at between our high and low pitch ranges.
-        float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-
-        //Set the pitch of the audio source to the randomly chosen pitch.
-        efxSource.pitch = randomPitch;
-
-        //Set the clip to the clip at our randomly chosen index.
-        efxSource.clip = clips[randomIndex];
-
-        //Play the clip.
-        efxSource.Play();
+        // Play the clip
+        SoundSource.PlayOneShot( clips[ randomIndex ] );
     }
 
 }
