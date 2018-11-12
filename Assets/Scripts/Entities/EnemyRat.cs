@@ -51,6 +51,7 @@ public class EnemyRat : Enemy
                 _animator.StopAnimation();
                 _animator.SetAnimationSpeed( ESCAPING_ANIMATION_SPEED );
                 MovementSpeed++;
+                SoundController.PlaySound( SoundType.RatScared );
                 break;
 
             case EnemyState.Despawning:

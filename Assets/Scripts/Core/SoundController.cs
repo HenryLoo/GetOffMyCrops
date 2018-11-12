@@ -27,7 +27,6 @@ public class SoundController : MonoBehaviour
 {
     // List of sound mappings
     public List<SoundMapping> SoundEffectList;
-    //public Dictionary<SoundType, AudioClip[]> SoundEffectList;
 
     // Drag a reference to the audio source which will play the sound effects
     public AudioSource SoundSource;
@@ -41,7 +40,6 @@ public class SoundController : MonoBehaviour
 
     // The highest a sound effect will be randomly pitched
     private readonly float HIGHEST_PITCH = 1.05f;
-
 
     void Awake()
     {

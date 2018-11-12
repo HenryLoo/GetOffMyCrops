@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class EnemyPig : Enemy
 {
-    private Animator _animator;
-
     // Animation speed constants
     private const int MOVING_ANIMATION_SPEED = 5;
     private const int ESCAPING_ANIMATION_SPEED = 10;
@@ -19,8 +17,6 @@ public class EnemyPig : Enemy
     protected override void InitEnemy()
     {
         base.InitEnemy();
-
-        _animator = gameObject.GetComponent<Animator>();
     }
 
     // Use this for initialization
@@ -130,11 +126,11 @@ public class EnemyPig : Enemy
         switch( currentState )
         {
             case EnemyState.Moving:
-                _animator.SetFloat( "Speed", MOVING_ANIMATION_SPEED );
+                animator.SetFloat( "Speed", MOVING_ANIMATION_SPEED );
                 break;
 
             case EnemyState.Escaping:
-                _animator.SetFloat( "Speed", ESCAPING_ANIMATION_SPEED );
+                animator.SetFloat( "Speed", ESCAPING_ANIMATION_SPEED );
                 MovementSpeed++;
                 break;
         }

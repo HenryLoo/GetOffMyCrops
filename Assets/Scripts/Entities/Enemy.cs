@@ -6,6 +6,9 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // Reference to the GameController instance
     protected GameController gameController;
 
+    // Reference to the enemy animator
+    protected Animator animator;
+
     // The enemy's current coordinates within the tile map
     protected TileCoordinate currentTilePos;
 
@@ -73,6 +76,8 @@ public abstract class Enemy : MonoBehaviour, IEntity
         // Start timer for spawn delay
         actionTimer = new GameTimer();
         actionTimer.StartTimer();
+
+        animator = GetComponent<Animator>();
     }
 
     public virtual void Start()
@@ -83,8 +88,11 @@ public abstract class Enemy : MonoBehaviour, IEntity
     // Update the enemy's behaviour every frame
     public void Update()
     {
-        // Don't update this enemy if the game is paused
-        if( gameController.GetIsPaused() ) return;
+        // If the game is paused, then pause the enemy's animations and
+        // don't update movement
+        bool isPaused = gameController.GetIsPaused();
+        animator.enabled = !isPaused;
+        if( isPaused ) return;
 
         actionTimer.Update();
 

@@ -19,6 +19,9 @@ public class Player : MonoBehaviour, IEntity
     // Reference to the TileMap instance
     private TileMap _tileMap;
 
+    // Reference to the character animator
+    private Animator _animator;
+
     // Don't read key input while player is moving
     private bool _movingLock = false;
 
@@ -66,12 +69,18 @@ public class Player : MonoBehaviour, IEntity
         _tilePos = _tileMap.GetTileAtPosition( transform.position );
 
         _updateEveryFrame = UpdateEveryFrame;
+
+        _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if( _updateEveryFrame != null ) _updateEveryFrame();
+        // If the game is paused, then pause character animations and movement
+        bool isPaused = _gameController.GetIsPaused();
+        _animator.enabled = !isPaused;
+
+        if( _updateEveryFrame != null && !isPaused ) _updateEveryFrame();
     }
 
     void UpdateEveryFrame()
@@ -132,7 +141,7 @@ public class Player : MonoBehaviour, IEntity
         _moveTargetPos.y = transform.position.y;
         _movingLock = true;
 
-        // rotation player to moveing direction
+        // Rotate player to face direction of movement
         transform.LookAt( _moveTargetPos );
 
         // Move along a Bezier curve
