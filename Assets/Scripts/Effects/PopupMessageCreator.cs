@@ -4,38 +4,34 @@ using UnityEngine;
 
 public class PopupMessageCreator : MonoBehaviour
 {
-    private static PopupText _popupDialog;
-    private static PopupText _popupMoney;
-    private static PopupText _popupTip;
-
     private static GameObject _canvas;
 
     private static readonly Vector3 DEFAULT_OFFSET = new Vector3( 0, 2, 0 );
 
+    // Message constants
+    private static readonly int MESSAGE_SIZE_LARGE = 18;
+    private static readonly int MESSAGE_SIZE_MEDIUM = 14;
+    private static readonly Vector3 MESSAGE_COLOUR_MSG = new Vector3( 1, 1, 1 );
+    private static readonly Vector3 MESSAGE_OUTLINE_MSG = new Vector3( 0, 0, 0 );
+    private static readonly Vector3 MESSAGE_COLOUR_MONEY = new Vector3( 1, 1, 0.2f );
+    private static readonly Vector3 MESSAGE_OUTLINE_MONEY = new Vector3( 0.67f, 0.47f, 0.09f );
+
     // Use this for initialization
     public static void Initialize()
     {
-        _canvas = GameObject.Find( "HUD" );
+        if( _canvas == null ) _canvas = GameObject.Find( "HUD" );
+    }
 
-        Debug.Log( "Types : " + Resources.FindObjectsOfTypeAll<PopupText>()[ 0 ].name );
+    private static GameObject InstantiateMessage( int size, Vector3 colour, 
+        Vector3 outlineColour )
+    {
+        GameObject popupMessage = ( GameObject ) Instantiate( Resources.Load( "PopupMessage" ) );
+        PopupText popup = popupMessage.GetComponent<PopupText>();
+        popup.SetFontSize( size );
+        popup.SetFontColour( colour );
+        popup.SetOutlineColour( outlineColour );
 
-        PopupText[] textObject = Resources.FindObjectsOfTypeAll<PopupText>();
-
-        foreach( PopupText text in textObject )
-        {
-            if( text.name == "PopupDialog" )
-            {
-                _popupDialog = text;
-            }
-            else if( text.name == "PopupMoney" )
-            {
-                _popupMoney = text;
-            }
-            else if( text.name == "PopupTip" )
-            {
-                _popupTip = text;
-            }
-        }
+        return popupMessage;
     }
 
     // Show large, white popup text
@@ -47,8 +43,10 @@ public class PopupMessageCreator : MonoBehaviour
 
     public static void PopupMessage( string text, Transform transform, Vector3 offset )
     {
-        if( _popupDialog == null ) Initialize();
-        PopupText msg = Instantiate( _popupDialog );
+        Initialize();
+
+        GameObject msg = InstantiateMessage( MESSAGE_SIZE_LARGE, MESSAGE_COLOUR_MSG,
+            MESSAGE_OUTLINE_MSG );
         ShowPopup( msg, text, transform, offset );
     }
 
@@ -61,8 +59,10 @@ public class PopupMessageCreator : MonoBehaviour
 
     public static void PopupTip( string text, Transform transform, Vector3 offset )
     {
-        if( _popupTip == null ) Initialize();
-        PopupText msg = Instantiate( _popupTip );
+        Initialize();
+        
+        GameObject msg = InstantiateMessage( MESSAGE_SIZE_MEDIUM, 
+            MESSAGE_COLOUR_MSG, MESSAGE_OUTLINE_MSG );
         ShowPopup( msg, text, transform, offset );
     }
 
@@ -75,17 +75,19 @@ public class PopupMessageCreator : MonoBehaviour
 
     public static void PopupMoney( string text, Transform transform, Vector3 offset )
     {
-        if( _popupMoney == null ) Initialize();
-        PopupText msg = Instantiate( _popupMoney );
+        Initialize();
+        
+        GameObject msg = InstantiateMessage( MESSAGE_SIZE_MEDIUM, 
+            MESSAGE_COLOUR_MONEY, MESSAGE_OUTLINE_MONEY );
         ShowPopup( msg, text, transform, offset );
     }
 
-    private static void ShowPopup( PopupText textObj, string text, Transform transform, Vector3 offset )
+    private static void ShowPopup( GameObject textObj, string text, Transform transform, Vector3 offset )
     {
         Vector2 screenPos = Camera.main.WorldToScreenPoint( transform.position + offset );
 
         textObj.transform.SetParent( _canvas.transform, false );
         textObj.transform.position = screenPos;
-        textObj.SetText( text );
+        textObj.GetComponent<PopupText>().SetText( text );
     }
 }

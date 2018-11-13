@@ -19,4 +19,19 @@ public class PopupText : MonoBehaviour
     {
         Animator.GetComponent<Text>().text = text;
     }
+
+    public void SetFontSize( int size )
+    {
+        Animator.GetComponent<Text>().fontSize = size;
+    }
+
+    public void SetFontColour( Vector3 rgb )
+    {
+        Animator.GetComponent<Text>().color = new Color( rgb.x, rgb.y, rgb.z );
+    }
+
+    public void SetOutlineColour( Vector3 rgb )
+    {
+        Animator.GetComponent<Outline>().effectColor = new Color( rgb.x, rgb.y, rgb.z );
+    }
 }
