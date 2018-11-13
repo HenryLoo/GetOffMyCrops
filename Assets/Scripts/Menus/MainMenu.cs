@@ -5,6 +5,7 @@ public class MainMenu : Menu, IButtonAction
 {
     private readonly string PLAY_BUTTON = "PlayButton";
     private readonly string INSTRUCTIONS_BUTTON = "InstructionsButton";
+    private readonly string SCOREBOARD_BUTTON = "ScoreboardButton";
     private readonly string EXIT_BUTTON = "ExitButton";
 
     // Use this for initialization
@@ -24,6 +25,7 @@ public class MainMenu : Menu, IButtonAction
         // Initialize menu options
         AddMenuOption( PLAY_BUTTON, OnPlayButtonSelect );
         AddMenuOption( INSTRUCTIONS_BUTTON, OnInstructionsButtonSelect );
+        AddMenuOption( SCOREBOARD_BUTTON, OnScoreboardButtonSelect );
         AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
 
         SelectDefaultButton();
@@ -85,6 +87,13 @@ public class MainMenu : Menu, IButtonAction
         Debug.Log( "Instructions button is selected" );
 
         // TODO: implement instruction screen and link it.
+    }
+
+    private void OnScoreboardButtonSelect()
+    {
+        // Load the scoreboard
+        Debug.Log( "Scoreboard button is selected" );
+        ChangeState( GameStateLoader.GAME_STATES.SCOREBOARD );
     }
 
     private void OnExitButtonSelect()
