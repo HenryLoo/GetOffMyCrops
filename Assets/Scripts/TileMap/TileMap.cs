@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(MeshCollider))]
+[RequireComponent( typeof( MeshFilter ) )]
+[RequireComponent( typeof( MeshRenderer ) )]
+[RequireComponent( typeof( MeshCollider ) )]
 public class TileMap : MonoBehaviour
 {
     // The tileset and the size of each tile on it
@@ -31,28 +31,43 @@ public class TileMap : MonoBehaviour
     // Constants
     private const int NUM_VERTICES_PER_TILE = 4;
     private const int NUM_TRIANGLES_PER_TILE = 2;
-	private const int NUM_VERTICES_PER_TRIANGLE = 3;
+    private const int NUM_VERTICES_PER_TRIANGLE = 3;
 
-	private delegate void TileMapDelegate();
-	private TileMapDelegate _tileMapUpdate;
+    private delegate void TileMapDelegate();
+    private TileMapDelegate _tileMapUpdate;
 
     // TileMap's currently planted crops
     public List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
 
+    // Z-distance to offset the camera from the player
+    private const float CAMERA_Z_OFFSET = -2.31f;
 
     // Use this for initialization
     void Start()
     {
-		_tileMapUpdate = UpdateTileData;
+        _tileMapUpdate = UpdateTileData;
     }
 
-	// Call this once every frame to update the tile data
-	public void UpdateEveryFrame()
-	{
-		if ( _tileMapUpdate != null ) _tileMapUpdate();
-	}
+    // This is called once per frame, at the end of all updates
+    void LateUpdate()
+    {
+        // Center the camera on the player
+        if( _player != null )
+        {
+            Vector3 pos = _player.transform.position;
+            pos.z += CAMERA_Z_OFFSET;
+            pos.y = Camera.main.transform.position.y;
+            Camera.main.transform.position = pos;
+        }
+    }
 
-	public void UpdateTileData()
+    // Call this once every frame to update the tile data
+    public void UpdateEveryFrame()
+    {
+        if( _tileMapUpdate != null ) _tileMapUpdate();
+    }
+
+    public void UpdateTileData()
     {
         _mapData.Update();
     }
@@ -95,7 +110,7 @@ public class TileMap : MonoBehaviour
     // Parse the tile map's tile layout image and create the appropriate tile
     private void CreateTile( TileCoordinate tilePos )
     {
-        Color pixel = _levelData.TileLayout.GetPixel( tilePos.CoordX, 
+        Color pixel = _levelData.TileLayout.GetPixel( tilePos.CoordX,
             tilePos.CoordZ );
 
         foreach( ColourToTile mapping in TileMappings )
@@ -128,7 +143,7 @@ public class TileMap : MonoBehaviour
     // Instantiate a prefab at a given (x, z) tile position
     public GameObject CreateEntity( TileCoordinate tilePos, GameObject prefab )
     {
-        GameObject entity = Instantiate( prefab, GetPositionAtTile( tilePos ), 
+        GameObject entity = Instantiate( prefab, GetPositionAtTile( tilePos ),
             Quaternion.identity, transform );
 
         if( prefab.CompareTag( "Player" ) ) _player = entity.GetComponent<Player>();
@@ -162,44 +177,44 @@ public class TileMap : MonoBehaviour
         {
             for( x = 0; x < sizeX; ++x )
             {
-                int tileIndex = z * sizeX * NUM_VERTICES_PER_TILE + x * 
+                int tileIndex = z * sizeX * NUM_VERTICES_PER_TILE + x *
                     NUM_VERTICES_PER_TILE;
-                int tileType = ( int ) _mapData.GetTile( 
+                int tileType = ( int ) _mapData.GetTile(
                     new TileCoordinate( x, z ) );
-                
+
                 // The position of the tile type on the tileset
                 int tileTypeX = tileType % tilesetWidth;
-                int tileTypeY = ( tileType - tileTypeX ) / tilesetHeight ;
+                int tileTypeY = ( tileType - tileTypeX ) / tilesetHeight;
 
                 // Bottom-left vertex
                 vertices[ tileIndex ] = new Vector3( x * _tileSize, 0,
                     z * _tileSize );
                 normals[ tileIndex ] = Vector3.up;
-                uv[ tileIndex ] = new Vector2( 
+                uv[ tileIndex ] = new Vector2(
                     ( float ) tileTypeX / tilesetWidth,
                     ( float ) tileTypeY / tilesetHeight );
 
                 // Top-right vertex
-                vertices[ tileIndex + 1 ] = new Vector3( 
+                vertices[ tileIndex + 1 ] = new Vector3(
                     ( x + 1 ) * _tileSize, 0, ( z + 1 ) * _tileSize );
                 normals[ tileIndex + 1 ] = Vector3.up;
-                uv[ tileIndex + 1 ] = new Vector2( 
+                uv[ tileIndex + 1 ] = new Vector2(
                     ( float ) ( tileTypeX + 1 ) / tilesetWidth,
                     ( float ) ( tileTypeY + 1 ) / tilesetHeight );
 
                 // Bottom-right vertex
-                vertices[ tileIndex + 2 ] = new Vector3( 
+                vertices[ tileIndex + 2 ] = new Vector3(
                     ( x + 1 ) * _tileSize, 0, z * _tileSize );
                 normals[ tileIndex + 2 ] = Vector3.up;
-                uv[ tileIndex + 2 ] = new Vector2( 
+                uv[ tileIndex + 2 ] = new Vector2(
                     ( float ) ( tileTypeX + 1 ) / tilesetWidth,
                     ( float ) tileTypeY / tilesetHeight );
 
                 // Top-left vertex
-                vertices[ tileIndex + 3 ] = new Vector3( 
+                vertices[ tileIndex + 3 ] = new Vector3(
                     x * _tileSize, 0, ( z + 1 ) * _tileSize );
                 normals[ tileIndex + 3 ] = Vector3.up;
-                uv[ tileIndex + 3 ] = new Vector2( 
+                uv[ tileIndex + 3 ] = new Vector2(
                     ( float ) tileTypeX / tilesetWidth,
                     ( float ) ( tileTypeY + 1 ) / tilesetHeight );
             }
@@ -216,7 +231,7 @@ public class TileMap : MonoBehaviour
             {
                 int tileIndex = z * sizeX + x;
                 int indexOffset = tileIndex * 6;
-                int vertexOffset = z * sizeX * NUM_VERTICES_PER_TILE + x * 
+                int vertexOffset = z * sizeX * NUM_VERTICES_PER_TILE + x *
                     NUM_VERTICES_PER_TILE;
 
                 // 2 triangles for each quad
@@ -295,48 +310,48 @@ public class TileMap : MonoBehaviour
     }
 
     // adds o9r removes crop tiles in an array list of all currently growing tiles
-    public void UpdateCropArray(TileCoordinate tilePos, TileData.TileType type)
+    public void UpdateCropArray( TileCoordinate tilePos, TileData.TileType type )
     {
-        if (type == TileData.TileType.CropSeed)
+        if( type == TileData.TileType.CropSeed )
         {
-            currentPlantedCrops.Add(new KeyValuePair<TileCoordinate, TileData.TileType>(tilePos, type));
+            currentPlantedCrops.Add( new KeyValuePair<TileCoordinate, TileData.TileType>( tilePos, type ) );
             //Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
         }
-        else if (type == TileData.TileType.PlantableCooldown)
+        else if( type == TileData.TileType.PlantableCooldown )
         {
             int curIndex = -1;
             int removeIndex = -1;
             bool removeCrop = false;
-            foreach (var crop in currentPlantedCrops)
+            foreach( var crop in currentPlantedCrops )
             {
                 curIndex++;
-                if (crop.Key.Equals(tilePos))
+                if( crop.Key.Equals( tilePos ) )
                 {
                     removeCrop = true;
                     removeIndex = curIndex;
                 }
             }
-            if (removeCrop)
+            if( removeCrop )
             {
-                currentPlantedCrops.RemoveAt(removeIndex);
+                currentPlantedCrops.RemoveAt( removeIndex );
                 //Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
             }
         }
-        foreach (var crop in currentPlantedCrops)
+        foreach( var crop in currentPlantedCrops )
         {
             //Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
         }
     }
 
     public void CleanUp()
-	{
-		_tileMapUpdate = null;
-		foreach( Transform child in transform )
+    {
+        _tileMapUpdate = null;
+        foreach( Transform child in transform )
         {
             //GameObject.DestroyImmediate( child.gameObject );
             GameObject.Destroy( child.gameObject );
         }
-	}
+    }
 
     public Player GetPlayer()
     {
