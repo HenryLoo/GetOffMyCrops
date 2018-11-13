@@ -20,9 +20,9 @@ public class LoseMenu : Menu, IButtonAction
     private readonly string TOTAL_MONEY_MESSAGE = "Total: $";
 
     private SaveDataController _dataController;
-	private SaveDataController.DataStruct _data;
+    private GameData _data;
 
-	private Text _gameLoseMessage;
+    private Text _gameLoseMessage;
 	private Text _levelNumber;
 	private Text _currentLevelMoney;
 	private Text _totalMoney;
@@ -32,18 +32,16 @@ public class LoseMenu : Menu, IButtonAction
     {
         Debug.Log( "LoseMenu.cs" );
 
-        GetDataFromDB();
+        GetDataFromController();
 		InitTextBoxes();
 		SetTextBoxData();
 
         // Reset the total money so that it doesn't persist across 
         // play sessions
-        _dataController.ScoreToSubmit = _dataController.TotalMoney;
-        _dataController.TotalMoney = 0;
-        _dataController.CurrentLevel = 1;
-        _dataController.SaveDataToDisk();
+        _dataController.ScoreToSubmit = _data.TotalMoney;
+        _dataController.ResetPlayData();
 
-		GameInput.AttachInput(
+        GameInput.AttachInput(
             actionClick: OnButtonClickAction,
             backClick: OnButtonClickBack,
             leftClick: OnButtonClickLeft, 
@@ -136,13 +134,13 @@ public class LoseMenu : Menu, IButtonAction
 	{
         _gameLoseMessage.text = LOSE_MESSAGE;
         _levelNumber.text = LEVEL_MESSAGE + _data.CurrentLevel.ToString();
-        _currentLevelMoney.text = EARNED1_MESSAGE + _data.LevelMoney.ToString() + EARNED2_MESSAGE;
+        _currentLevelMoney.text = EARNED1_MESSAGE + _dataController.LevelMoney.ToString() + EARNED2_MESSAGE;
         _totalMoney.text = TOTAL_MONEY_MESSAGE + _data.TotalMoney.ToString();
     }
 
-	private void GetDataFromDB()
+	private void GetDataFromController()
 	{
 		_dataController = SaveDataController.GetInstance();
-		_data = _dataController.GetDataSnapshot();
+        _data = _dataController.LoadData();
 	}
 }

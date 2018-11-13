@@ -1,39 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-// This SINGLETON class is reposonsible for handling save data in the game
+// This singleton class is responsible for handling save data in the game
 public class SaveDataController
 {
-    // This struct represents the dynamic fields that can be saved to the database
-	// Use this struct to pass around data for consistency
-    public struct DataStruct
-    {
-        public int TotalMoney, CurrentLevel, LevelMoney;
-    }
-
-    // The database fields that will be used as a "Key" for the data value
-    private static readonly string TOTAL_MONEY = "total_money";
-    private static readonly string CURRENT_LEVEL = "current_level";
-    private static readonly string HIGH_SCORES = "high_scores";
-
     private static SaveDataController _instance = null;
-    private int _totalMoney;
+
+    // Temporary data values
     private int _levelMoney;
-    private int _currentLevel;
-    private string _highScores;
     private bool _isSubmitting;
     private int _scoreToSubmit;
 
+    // Hold permanent data values
+    private GameData _data;
+
     public const int NUM_LEVELS = 2;
+
+    // The name of the save file
+    private static readonly string SAVE_FILE = "data.sav";
 
     private SaveDataController()
     {
-        _totalMoney = 0;
+        // Set temporary data values
         _levelMoney = 0;
-        _currentLevel = 1;
 
-        ValidateDB();
+        // Set persistent data values
+        _data = new GameData();
+        LoadDataFromDisk();
     }
 
     // Return the instance of the controller
@@ -48,135 +44,67 @@ public class SaveDataController
         return _instance;
     }
 
-    // This function saves the passed state to the database
-    public void SaveDataSnapshot( DataStruct data )
+    // Return the already loaded data file
+    public GameData LoadData()
     {
-        LevelMoney = data.LevelMoney;
-        TotalMoney += LevelMoney;
-        CurrentLevel = data.CurrentLevel;
-
-        SaveDataToDisk();
+        return _data;
     }
 
-    // This function will return the current state of the database
-    // Use this anywhere where you will need to get the data
-    public DataStruct GetDataSnapshot()
+    // Load the data file from disk and return it
+    public GameData LoadDataFromDisk()
     {
-        DataStruct data;
-        data.TotalMoney = PlayerPrefs.GetInt( TOTAL_MONEY );
-        data.CurrentLevel = PlayerPrefs.GetInt( CURRENT_LEVEL );
-        data.LevelMoney = LevelMoney;
-
-        return data;
-    }
-
-    // This function validates the database at each init of SaveDataController
-    // If the requested data doesn't exist, create a new data set 
-    // and save it to the disk
-    private void ValidateDB()
-    {
-        bool isValid = true;
-        if( PlayerPrefs.HasKey( TOTAL_MONEY ) )
+        if( File.Exists( Application.persistentDataPath + "/" + SAVE_FILE ) )
         {
-            TotalMoney = PlayerPrefs.GetInt( TOTAL_MONEY );
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = File.Open( Application.persistentDataPath + 
+                "/" + SAVE_FILE, FileMode.Open, FileAccess.Read );
+            _data = ( GameData ) formatter.Deserialize( stream );
+            stream.Close();
+
+            Debug.Log( "SaveDataController.LoadDataFromDisk(): Data found at: " + 
+                Application.persistentDataPath + "/" + SAVE_FILE );
+            return _data;
         }
         else
         {
-            isValid = false;
-            TotalMoney = 0;
-        }
-        if( PlayerPrefs.HasKey( CURRENT_LEVEL ) )
-        {
-            CurrentLevel = PlayerPrefs.GetInt( CURRENT_LEVEL );
-        }
-        else
-        {
-            isValid = false;
-            CurrentLevel = 1;
-        }
-
-        if( PlayerPrefs.HasKey( HIGH_SCORES ) )
-        {
-            HighScores = PlayerPrefs.GetString( HIGH_SCORES );
-        }
-        else
-        {
-            isValid = false;
-            HighScores = "";
-        }
-
-        if( !isValid )
-        {
-            Debug.Log( "Data not found, Creating new dataset and saving data" );
-            PlayerPrefs.SetInt( TOTAL_MONEY, 0 );
-            PlayerPrefs.SetInt( CURRENT_LEVEL, 1 );
-            PlayerPrefs.SetString( HIGH_SCORES, "" );
-
+            // Set persistent data values
+            _data.TotalMoney = 0;
+            _data.CurrentLevel = 1;
+            _data.HighScores = "";
             SaveDataToDisk();
+
+            Debug.Log( "SaveDataController.LoadDataFromDisk(): " +
+                "No data file found, creating new one" );
         }
-        else
-        {
-            Debug.Log( "DB is good." );
-        }
+
+        return null;
+    }
+    
+    // Saves the data, in preparation to be written to disk
+    public void SaveData( GameData data )
+    {
+        _data = data;
     }
 
-    // This function writes the current cached data to the disk
-    // It is a relatively expensive operation
+    // Writes the saved data to disk
     public void SaveDataToDisk()
     {
-        Debug.Log( "Writing DB to disk" );
-        PlayerPrefs.Save();
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = File.Open( Application.persistentDataPath + "/" + 
+            SAVE_FILE, FileMode.OpenOrCreate );
+        formatter.Serialize( stream, _data );
+        stream.Close();
     }
 
-    // Clear all data in the database
-    private void ResetDataBase( bool isDeletingAll )
+    // Reset the current play session's data
+    // Do not reset high scores
+    public void ResetPlayData()
     {
-        if( isDeletingAll ) PlayerPrefs.DeleteAll();
-    }
-
-    // Delete a row from the database given its key
-    private void DeleteAKeyFromDB( string key )
-    {
-        PlayerPrefs.DeleteKey( key );
-    }
-
-    // Some useful member accessors
-    public int TotalMoney
-    {
-        get
-        {
-            return _totalMoney;
-        }
-        set
-        {
-            if( value >= 0 )
-            {
-                _totalMoney = value;
-                if( PlayerPrefs.HasKey( TOTAL_MONEY ) )
-                {
-                    PlayerPrefs.SetInt( TOTAL_MONEY, value );
-                }
-            }
-        }
-    }
-
-    public int CurrentLevel
-    {
-        get
-        {
-            return _currentLevel;
-        }
-        set
-        {
-            if( value > 0 && value <= NUM_LEVELS )
-            {
-                _currentLevel = value;
-                if( PlayerPrefs.HasKey( CURRENT_LEVEL ) )
-                {
-                    PlayerPrefs.SetInt( CURRENT_LEVEL, value );
-                }
-            }
-        }
+        LevelMoney = 0;
+        _data.TotalMoney = 0;
+        _data.CurrentLevel = 1;
+        SaveData( _data );
+        SaveDataToDisk();
     }
 
     public int LevelMoney
@@ -190,22 +118,6 @@ public class SaveDataController
             if( value >= 0 )
             {
                 _levelMoney = value;
-            }
-        }
-    }
-
-    public string HighScores
-    {
-        get
-        {
-            return _highScores;
-        }
-        set
-        {
-            _highScores = value;
-            if( PlayerPrefs.HasKey( HIGH_SCORES ) )
-            {
-                PlayerPrefs.SetString( HIGH_SCORES, value );
             }
         }
     }

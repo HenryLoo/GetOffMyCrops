@@ -13,6 +13,7 @@ public class TileData
         CropSeed,
         CropGrowing,
         CropMature,
+        Null,
         NumTileTypes
     }
 
@@ -23,7 +24,7 @@ public class TileData
     }
     
     // The duration in seconds for a plantable tile to become usable again
-    private const float PLANTABLE_COOLDOWN_DURATION = 3.0f;
+    private const float PLANTABLE_COOLDOWN_DURATION = 10.0f;
 
     // The duration in seconds for a crop to grow into its next state
     private const float CROP_GROWING_DURATION = 5.0f;
@@ -55,7 +56,10 @@ public class TileData
     // Get the tile at a given (x, z) tile location
     public TileType GetTile( TileCoordinate tilePos )
     {
-        return _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ];
+        int index = tilePos.CoordZ * _sizeX + tilePos.CoordX;
+        if( index >= _tiles.Length ) return TileType.Null;
+
+        return _tiles[ index ];
     }
 
     // Set the tile's type at a given (x, z) tile location

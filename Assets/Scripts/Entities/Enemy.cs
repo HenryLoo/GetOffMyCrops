@@ -258,24 +258,24 @@ public abstract class Enemy : MonoBehaviour, IEntity
         // Compare position on the X axis
         if( currentTilePos.CoordX < mapSize.CoordX - 1 - currentTilePos.CoordX )
         {
-            closestX = -1;
+            closestX = -2;
             distX = currentTilePos.CoordX;
         }
         else
         {
-            closestX = mapSize.CoordX;
+            closestX = mapSize.CoordX + 1;
             distX = mapSize.CoordX - 1 - currentTilePos.CoordX;
         }
 
         // Compare position on the Z axis
         if( currentTilePos.CoordZ < mapSize.CoordZ - 1 - currentTilePos.CoordZ )
         {
-            closestZ = -1;
+            closestZ = -2;
             distZ = currentTilePos.CoordZ;
         }
         else
         {
-            closestZ = mapSize.CoordZ;
+            closestZ = mapSize.CoordZ + 1;
             distZ = mapSize.CoordZ - 1 - currentTilePos.CoordZ;
         }
 
@@ -297,15 +297,15 @@ public abstract class Enemy : MonoBehaviour, IEntity
         TileCoordinate mapSize = gameController.TileMap.GetSize();
 
         // Reaching x-axis despawn zone
-        if( currentTilePos.CoordX < 0 ||
-            currentTilePos.CoordX > mapSize.CoordX - 1 )
+        if( currentTilePos.CoordX < -1 ||
+            currentTilePos.CoordX > mapSize.CoordX )
         {
             return true;
         }
 
         // Reaching z-axis despawn zone
-        if( currentTilePos.CoordZ < 0 ||
-            currentTilePos.CoordZ > mapSize.CoordZ - 1 )
+        if( currentTilePos.CoordZ < -1 ||
+            currentTilePos.CoordZ > mapSize.CoordZ )
         {
             return true;
         }

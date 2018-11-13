@@ -35,12 +35,16 @@ public class GameController : MonoBehaviour, IButtonAction
 	private delegate void GameControllerUpdate();
 	private GameControllerUpdate _updateEveryFrame;
 
+    // Reference to the SaveDataController
+    private SaveDataController _dataController;
+
     void Awake()
     {
         _levelTimer = new GameTimer();
 
         // Load the current level
-        _currentLevelNum = SaveDataController.GetInstance().CurrentLevel;
+        _dataController = SaveDataController.GetInstance();
+        _currentLevelNum = _dataController.LoadData().CurrentLevel;
         LoadLevel( _currentLevelNum );
     }
 
@@ -143,15 +147,16 @@ public class GameController : MonoBehaviour, IButtonAction
 			Debug.Log( "GameController.cs: timer expired" );
 			CleanUp();
 
+            // Save a snapshot to prepare for writing to disk
 			SaveData();
 
 			if ( _currentMoney < Level.MoneyGoal )
 			{
-				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.LOSE_MENU );
+                GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.LOSE_MENU );
 			}
 			else
-			{
-				GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
+            {
+                GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
 			}
 		}
 	}
@@ -231,11 +236,10 @@ public class GameController : MonoBehaviour, IButtonAction
 
 	private void SaveData()
 	{
-		SaveDataController.DataStruct saveData;
-        saveData.TotalMoney = 0;
-        saveData.LevelMoney = _currentMoney;
-		saveData.CurrentLevel = _currentLevelNum;
-		SaveDataController dataController = SaveDataController.GetInstance(); 
-		dataController.SaveDataSnapshot( saveData );
-	}
+        GameData saveData = _dataController.LoadData();
+        _dataController.LevelMoney = _currentMoney;
+        saveData.TotalMoney += _currentMoney;
+        saveData.CurrentLevel = _currentLevelNum;
+        _dataController.SaveData( saveData );
+    }
 }

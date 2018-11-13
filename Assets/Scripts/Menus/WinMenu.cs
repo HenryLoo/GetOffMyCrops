@@ -18,25 +18,45 @@ public class WinMenu : Menu, IButtonAction
     private readonly string EARNED1_MESSAGE = "You earned $";
     private readonly string EARNED2_MESSAGE = " in this level";
     private readonly string TOTAL_MONEY_MESSAGE = "Total: $";
+    private readonly string ALL_CLEARED_MESSAGE = "All levels cleared!";
 
     private SaveDataController _dataController;
-	private SaveDataController.DataStruct _data;
+    private GameData _data;
 
-	private Text _gameWinMessage;
+    private Text _gameWinMessage;
 	private Text _levelNumber;
 	private Text _currentLevelMoney;
 	private Text _totalMoney;
+    
+    private bool _hasClearedAllLevels = false;
 
 	// Use this for initialization
 	void Start ()
     {
         Debug.Log( "WinMenu.cs" );
 
-        GetDataFromDB();
-		InitTextBoxes();
-		SetTextBoxData();
+        GetDataFromController();
 
-		GameInput.AttachInput(
+        _hasClearedAllLevels = ( _data.CurrentLevel == SaveDataController.NUM_LEVELS );
+        InitTextBoxes();
+        SetTextBoxData();
+
+        if( _hasClearedAllLevels )
+        {
+            // Reset the total money so that it doesn't persist across 
+            // play sessions
+            _dataController.ScoreToSubmit = _data.TotalMoney;
+            _dataController.ResetPlayData();
+        }
+        else
+        {
+            // Save next level's number so the player can resume here
+            ++_data.CurrentLevel;
+            _dataController.SaveData( _data );
+            _dataController.SaveDataToDisk();
+        }
+
+        GameInput.AttachInput(
             actionClick: OnButtonClickAction,
             backClick: OnButtonClickBack,
             leftClick: OnButtonClickLeft, 
@@ -98,27 +118,18 @@ public class WinMenu : Menu, IButtonAction
     {
         // Move to next level
         Debug.Log( "Next button is selected" );
-        int nextLevel = _data.CurrentLevel + 1;
 
         // All levels have been cleared
-        if( nextLevel > SaveDataController.NUM_LEVELS )
+        if( _hasClearedAllLevels )
         {
-            // Reset the total money so that it doesn't persist across 
-            // play sessions
-            _dataController.ScoreToSubmit = _dataController.TotalMoney;
-            _dataController.TotalMoney = 0;
-            _dataController.CurrentLevel = 1;
-            _dataController.SaveDataToDisk();
-
             // Flag submit request to true to indicate that a score is being
             // submitted
-            SaveDataController.GetInstance().IsSubmitting = true;
+            _dataController.IsSubmitting = true;
             ChangeState( GameStateLoader.GAME_STATES.SCOREBOARD );
         }
         // Go to the next level
         else
         {
-            _dataController.CurrentLevel = nextLevel;
             ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
         }
     }
@@ -145,15 +156,15 @@ public class WinMenu : Menu, IButtonAction
 
 	private void SetTextBoxData()
 	{
-		_gameWinMessage.text = WIN_MESSAGE;
+		_gameWinMessage.text = _hasClearedAllLevels ? ALL_CLEARED_MESSAGE : WIN_MESSAGE;
 		_levelNumber.text = LEVEL_MESSAGE + _data.CurrentLevel.ToString();
-		_currentLevelMoney.text = EARNED1_MESSAGE + _data.LevelMoney.ToString() + EARNED2_MESSAGE;
+		_currentLevelMoney.text = EARNED1_MESSAGE + _dataController.LevelMoney.ToString() + EARNED2_MESSAGE;
 		_totalMoney.text = TOTAL_MONEY_MESSAGE + _data.TotalMoney.ToString();
 	}
 
-	private void GetDataFromDB()
+	private void GetDataFromController()
 	{
 		_dataController = SaveDataController.GetInstance();
-		_data = _dataController.GetDataSnapshot();
+		_data = _dataController.LoadData();
 	}
 }

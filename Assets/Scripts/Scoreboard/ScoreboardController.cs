@@ -19,6 +19,8 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
     // The name for empty score rows
     private const string PLACEHOLDER_LISTING = "Nobody";
 
+    GameData _data;
+
     // Use this for initialization
     void Start()
     {
@@ -62,7 +64,8 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
     private void LoadPlayerData()
     {
         // Get high scores from SaveDataController and deserialize the string
-        string scores = SaveDataController.GetInstance().HighScores;
+        _data = SaveDataController.GetInstance().LoadData();
+        string scores = _data.HighScores;
         string[] pairs = scores.Split( ';' );
         for( int i = 0; i < NUM_LISTINGS; ++i )
         {
@@ -146,8 +149,9 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             }
         }
 
+        _data.HighScores = serialized;
         SaveDataController save = SaveDataController.GetInstance();
-        save.HighScores = serialized;
+        save.SaveData( _data );
         save.SaveDataToDisk();
     }
 
