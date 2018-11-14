@@ -9,6 +9,7 @@ public class Player : MonoBehaviour, IEntity
     public const string MSG_NOT_PLANTABLE = "You can't plant here!";
     public const string MSG_NOT_MATURE = "This crop isn't mature yet!";
     public const string MSG_SCARE = "Get off my crops!!";
+    public const string MSG_SCARE_COOLDOWN = "I'm too tired...";
 
     // Reference to the GameController
     private GameController _gameController;
@@ -57,6 +58,10 @@ public class Player : MonoBehaviour, IEntity
     public const int SEED_BUY_PRICE = 5;
     public const int CROP_SELL_PRICE = 20;
 
+    // Cooldown timer for scare attack in seconds
+    private GameTimer _scareTimer;
+    private const float SCARE_COOLDOWN = 20;
+
     private delegate void PlayerUpdate();
     private PlayerUpdate _updateEveryFrame;
 
@@ -71,6 +76,8 @@ public class Player : MonoBehaviour, IEntity
         _updateEveryFrame = UpdateEveryFrame;
 
         _animator = GetComponent<Animator>();
+
+        _scareTimer = new GameTimer();
     }
 
     // Update is called once per frame
@@ -85,20 +92,15 @@ public class Player : MonoBehaviour, IEntity
 
     void UpdateEveryFrame()
     {
+        // Progress the scare cooldown timer
+        _scareTimer.Update();
+
         if( _movingLock )
         {
             KeepMoving();
         }
         else if( _scaring )
         {
-            // when use animation, lock scaring by timer 
-            //_animPassedTime += Time.deltaTime;
-            //if (_animPassedTime > animationCostTime) // animation finished, release lock
-            //{
-            //    _scaring = false;
-            //    _animPassedTime = 0;
-            //}
-
             // Perform the scaring animation
             DoScaringAnimation();
         }
@@ -245,12 +247,23 @@ public class Player : MonoBehaviour, IEntity
     {
         if( LockingInput() ) return;
 
+        // Don't scare if it is on cooldown
+        if( _scareTimer.IsStarted() && _scareTimer.GetTicks() < SCARE_COOLDOWN )
+        {
+            int remainingTime = ( int ) ( SCARE_COOLDOWN - _scareTimer.GetTicks() );
+            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN + " (" + remainingTime + " s)", 
+                transform, new Vector3( 0, 2, 0 ) );
+            return;
+        }
+
+        // Otherwise, proceed with scaring attack
         this._scaring = true;
         this.ScareAdjacentEnemies();
-
-        // TODO: add cooldown timer
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerScare );
+
+        // Start the cooldown timer
+        _scareTimer.StartTimer();
     }
 
     // Reset scaring variables after the scare animation has completed
@@ -343,6 +356,7 @@ public class Player : MonoBehaviour, IEntity
     {
         _movingLock = true;
         _updateEveryFrame = null;
+        _scareTimer.StopTimer();
     }
 
     // Get the player's position on the tile map
