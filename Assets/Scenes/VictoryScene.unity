@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 410504747}
   - component: {fileID: 410504746}
   - component: {fileID: 410504745}
+  - component: {fileID: 410504749}
   m_Layer: 5
   m_Name: VictoryScene
   m_TagString: Untagged
@@ -279,6 +280,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &410504749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 410504744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b676e75d3a8594b46a8553285381eae5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &868379716
 GameObject:
   m_ObjectHideFlags: 0
