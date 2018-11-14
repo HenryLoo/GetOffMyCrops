@@ -9,8 +9,11 @@ public enum SoundType
     PlayerScare,
     PlayerHarvest,
     RatSpawn,
-    PigSpawn,
     RatScared,
+    CrowSpawn,
+    CrowScared,
+    PigSpawn,
+    PigScared,
     UIWin,
     UIFeedback,
 }

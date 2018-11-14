@@ -94,6 +94,7 @@ public class EnemyPig : Enemy
 
             case EnemyState.Escaping:
                 animator.SetFloat( "Speed", ESCAPING_ANIMATION_SPEED );
+                SoundController.PlaySound( SoundType.PigScared );
                 break;
         }
     }

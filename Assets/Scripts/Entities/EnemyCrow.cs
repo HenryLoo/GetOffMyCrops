@@ -42,6 +42,7 @@ public class EnemyCrow : Enemy
         base.Start();
         
         _locomotionState = LocomotionState.FlyingUp;
+        SoundController.PlaySound( SoundType.CrowSpawn );
     }
 
     protected override void SetAnimationState()
@@ -49,7 +50,6 @@ public class EnemyCrow : Enemy
         switch( currentState )
         {
             case EnemyState.Moving:
-            case EnemyState.Escaping:
                 animator.SetTrigger( "Moving" );
                 animator.ResetTrigger( "Idle" );
                 break;
@@ -57,6 +57,12 @@ public class EnemyCrow : Enemy
             case EnemyState.Eating:
                 animator.SetTrigger( "Idle" );
                 animator.ResetTrigger( "Moving" );
+                break;
+                
+            case EnemyState.Escaping:
+                animator.SetTrigger( "Moving" );
+                animator.ResetTrigger( "Idle" );
+                SoundController.PlaySound( SoundType.CrowScared );
                 break;
         }
     }
