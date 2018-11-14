@@ -69,6 +69,9 @@ public class WinMenu : Menu, IButtonAction
         AddMenuOption( QUIT_BUTTON, OnQuitButtonSelect );
 
         SelectDefaultButton();
+
+        // Play win music
+        SoundController.PlayMusic( MusicType.Win );
     }
 	
 	// Update is called once per frame

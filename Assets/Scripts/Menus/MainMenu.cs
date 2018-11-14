@@ -28,6 +28,9 @@ public class MainMenu : Menu, IButtonAction
         AddMenuOption( SCOREBOARD_BUTTON, OnScoreboardButtonSelect );
         AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
 
+        // Play title music
+        SoundController.PlayMusic( MusicType.Title );
+
         SelectDefaultButton();
     }
 

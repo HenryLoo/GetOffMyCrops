@@ -54,6 +54,9 @@ public class LoseMenu : Menu, IButtonAction
         AddMenuOption( QUIT_BUTTON, OnQuitButtonSelect );
 
         SelectDefaultButton();
+
+        // Play lose music
+        SoundController.PlayMusic( MusicType.Lose );
     }
 	
 	// Update is called once per frame

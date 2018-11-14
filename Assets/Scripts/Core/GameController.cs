@@ -38,6 +38,15 @@ public class GameController : MonoBehaviour, IButtonAction
     // Reference to the SaveDataController
     private SaveDataController _dataController;
 
+    // List of music to play for each level
+    private readonly List<MusicType> _levelMusic = new List<MusicType>()
+    {
+        MusicType.Level1,
+        MusicType.Level2,
+        MusicType.Level3,
+        MusicType.Level4,
+    };
+
     void Awake()
     {
         _levelTimer = new GameTimer();
@@ -108,6 +117,9 @@ public class GameController : MonoBehaviour, IButtonAction
         Level = LevelData.CreateFromJson( levelJson.text );
         TileMap.InitTileMap( Level );
         EnemyController.Init();
+        
+        // Play level music
+        SoundController.PlayMusic( _levelMusic[ levelNum - 1 ] );
     }
 
     // Add to the current money value (or subtract by using negative values)

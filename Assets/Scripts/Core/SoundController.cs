@@ -15,11 +15,29 @@ public enum SoundType
     UIFeedback,
 }
 
+public enum MusicType
+{
+    Title,
+    Win,
+    Lose,
+    Level1,
+    Level2,
+    Level3,
+    Level4
+}
+
 [System.Serializable]
 public class SoundMapping
 {
     public SoundType Name;
     public AudioClip[] AudioClips;
+}
+
+[System.Serializable]
+public class MusicMapping
+{
+    public MusicType Name;
+    public AudioClip AudioClip;
 }
 
 [RequireComponent( typeof( AudioSource ) )]
@@ -28,8 +46,12 @@ public class SoundController : MonoBehaviour
     // List of sound mappings
     public List<SoundMapping> SoundEffectList;
 
-    // Drag a reference to the audio source which will play the sound effects
-    public AudioSource SoundSource;
+    // List of music mappings
+    public List<MusicMapping> MusicList;
+
+    // These audio sources will appear in the same order in the inspector
+    private AudioSource _soundSource;
+    private AudioSource _musicSource;
 
     // Singleton instance
     // Allows other scripts to call functions from SoundController
@@ -60,6 +82,15 @@ public class SoundController : MonoBehaviour
         // Set SoundController to DontDestroyOnLoad so that it won't be 
         // destroyed when reloading our scene.
         DontDestroyOnLoad( gameObject );
+    }
+
+    void Start()
+    {
+        // Load audio sources
+        // These audio sources will appear in the same order in the inspector
+        var audioSources = GetComponents<AudioSource>();
+        _soundSource = audioSources[ 0 ];
+        _musicSource = audioSources[ 1 ];
     }
 
     // Play a sound, given its type
@@ -96,10 +127,29 @@ public class SoundController : MonoBehaviour
         float randomPitch = Random.Range( LOWEST_PITCH, HIGHEST_PITCH );
 
         // Set the pitch of the audio source to the randomly chosen pitch
-        SoundSource.pitch = randomPitch;
+        _soundSource.pitch = randomPitch;
 
         // Play the clip
-        SoundSource.PlayOneShot( clips[ randomIndex ] );
+        _soundSource.PlayOneShot( clips[ randomIndex ] );
     }
 
+    // Play a music track if it is not already playing
+    public static void PlayMusic( MusicType type )
+    {
+        // Find the sound with the given name
+        foreach( MusicMapping mapping in Instance.MusicList )
+        {
+            Debug.Log( "SoundController.PlayMusic(): name: " + mapping.Name +
+                ", audio: " + mapping.AudioClip );
+            if( mapping.Name == type && mapping.AudioClip != null &&
+                Instance._musicSource.clip != mapping.AudioClip )
+            {
+                // Audio was found, so play it
+                Debug.Log( "Found audio to play: " + mapping.Name );
+                Instance._musicSource.clip = mapping.AudioClip;
+                Instance._musicSource.Play();
+                return;
+            }
+        }
+    }
 }

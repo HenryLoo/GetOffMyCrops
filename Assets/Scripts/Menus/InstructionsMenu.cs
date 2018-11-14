@@ -86,12 +86,12 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
 
     public void OnButtonClickAction()
     {
-        // No functionality
+        GoToMainMenu();
     }
 
     public void OnButtonClickSkill()
     {
-        // No functionality
+        GoToMainMenu();
     }
 
     public void OnButtonClickBack()
