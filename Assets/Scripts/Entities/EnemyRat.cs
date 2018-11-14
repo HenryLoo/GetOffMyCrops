@@ -10,11 +10,7 @@ public class EnemyRat : Enemy
     // Animation speed constants
     private const int MOVING_ANIMATION_SPEED = 3;
     private const int ESCAPING_ANIMATION_SPEED = 10;
-
-    // Threshold value for determining if this enemy is on a tile while 
-    // transitioning to that tile
-    private const float ON_TILE_THRESHOLD = 0.1f;
-
+    
     // Initialize rat specific variables
     protected override void InitEnemy()
     {
@@ -50,7 +46,6 @@ public class EnemyRat : Enemy
             case EnemyState.Escaping:
                 _animator.StopAnimation();
                 _animator.SetAnimationSpeed( ESCAPING_ANIMATION_SPEED );
-                MovementSpeed++;
                 SoundController.PlaySound( SoundType.RatScared );
                 break;
 
@@ -79,7 +74,7 @@ public class EnemyRat : Enemy
         // Keep moving if not blocked
         if( !isBlocked )
         {
-            Move();
+            MoveToNextTile();
         }
     }
 
@@ -105,39 +100,6 @@ public class EnemyRat : Enemy
 
     protected override void HandleEscaping()
     {
-        Move();
-    }
-
-    private void Move()
-    {
-        // Rotate the model to face direction of movement
-        OrientInDirection();
-
-        // Translate this rat's world coordinates toward the next tile
-        float step = MovementSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards( transform.position,
-            gameController.TileMap.GetPositionAtTile( targetNextPos ), step );
-
-        // Update current tile position once the rat has fully transitioned 
-        // onto the next tile
-        Vector3 targetPos = gameController.TileMap.GetPositionAtTile( targetNextPos );
-        if( Math.Abs( transform.position.x - targetPos.x ) < ON_TILE_THRESHOLD &&
-            Math.Abs( transform.position.z - targetPos.z ) < ON_TILE_THRESHOLD )
-        {
-            currentTilePos = targetNextPos;
-
-            // Set the next tile to move to if not at target yet
-            if( !currentTilePos.Equals( targetFinalPos ) )
-            {
-                MoveInDirection( currentDirection );
-
-                Debug.Log( "EnemyRat.Move(): Current position: (" +
-                    currentTilePos.CoordX + ", " + currentTilePos.CoordZ +
-                    "), Next position: (" + targetNextPos.CoordX + ", " +
-                    targetNextPos.CoordZ +
-                    "), Target position: (" + targetFinalPos.CoordX + ", " +
-                    targetFinalPos.CoordZ + ")" );
-            }
-        }
+        MoveToNextTile();
     }
 }

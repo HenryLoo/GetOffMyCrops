@@ -21,4 +21,10 @@ public static class HelperFunctions
         dist.CoordZ = b.CoordZ - a.CoordZ;
         return dist;
     }
+    
+    // Check if a value is within a range
+    public static bool IsWithinRange( float min, float max, float value )
+    {
+        return value <= max && value >= min;
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,10 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
     // The next tile to move to, on the path towards targetFinalPos
     protected TileCoordinate targetNextPos;
+
+    // Threshold value for determining if this enemy is on a tile while 
+    // transitioning to that tile
+    protected const float ON_TILE_THRESHOLD = 0.1f;
 
     // Handle timing for this enemy's current action
     // Example: delays, eating
@@ -387,6 +392,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     {
         Debug.Log( "Enemy.RunAway(): Switched to Escaping state" );
         currentState = EnemyState.Escaping;
+        MovementSpeed++;
 
         // Interrupt this enemy's current path
         targetNextPos = currentTilePos;
@@ -404,6 +410,44 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
     // Move the enemy based on its movement behaviour/AI
     protected abstract void HandleMoving();
+
+    // Move the enemy to its next tile along the path to the target tile
+    protected void MoveToNextTile()
+    {
+        // Rotate the model to face direction of movement
+        OrientInDirection();
+
+        // Translate this enemy's world coordinates toward the next tile,
+        // while retaining this enemy's height (y-position)
+        float step = MovementSpeed * Time.deltaTime;
+        Vector3 nextPos = gameController.TileMap.GetPositionAtTile( targetNextPos );
+        nextPos.y = transform.position.y;
+        transform.position = Vector3.MoveTowards( transform.position,
+           nextPos, step );
+
+        // Update current tile position once the rat has fully transitioned 
+        // onto the next tile, while retaining this enemy's height (y-position)
+        Vector3 targetPos = gameController.TileMap.GetPositionAtTile( targetNextPos );
+        targetPos.y = transform.position.y;
+        if( Math.Abs( transform.position.x - targetPos.x ) < ON_TILE_THRESHOLD &&
+            Math.Abs( transform.position.z - targetPos.z ) < ON_TILE_THRESHOLD )
+        {
+            currentTilePos = targetNextPos;
+
+            // Set the next tile to move to if not at target yet
+            if( !currentTilePos.Equals( targetFinalPos ) )
+            {
+                MoveInDirection( currentDirection );
+
+                Debug.Log( "Enemy.MoveToNextTile(): Current position: (" +
+                    currentTilePos.CoordX + ", " + currentTilePos.CoordZ +
+                    "), Next position: (" + targetNextPos.CoordX + ", " +
+                    targetNextPos.CoordZ +
+                    "), Target position: (" + targetFinalPos.CoordX + ", " +
+                    targetFinalPos.CoordZ + ")" );
+            }
+        }
+    }
 
     // Attempt to destroy the target crop
     protected abstract void HandleEating();

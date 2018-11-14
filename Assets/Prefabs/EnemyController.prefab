@@ -56,6 +56,6 @@ MonoBehaviour:
   - EnemyType: Rat
     Prefab: {fileID: 1795930821635288, guid: 2768b01c701f6894ca517ef30078b27d, type: 2}
   - EnemyType: Crow
-    Prefab: {fileID: 1060646150021740, guid: e1f6589253304d8499e748e2e337c449, type: 2}
+    Prefab: {fileID: 1643659188179888, guid: 7e436d0d2aff0cd4aaf2ea46c6e5abb0, type: 2}
   - EnemyType: Pig
     Prefab: {fileID: 1540346269243268, guid: 14df1870e035bee46929c4ff6f896b01, type: 2}
