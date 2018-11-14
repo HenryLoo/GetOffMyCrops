@@ -10,6 +10,7 @@ public static class GameStateLoader
     public enum GAME_STATES
     {
         MAIN_MENU = 1,
+        INSTRUCTIONS,
         GAMEPLAY,
         INIT_STATE,
 		WIN_MENU,
@@ -34,6 +35,10 @@ public static class GameStateLoader
             {
                 case GAME_STATES.MAIN_MENU:
                     Debug.Log( "Game is currently on main menu." );
+                    break;
+
+                case GAME_STATES.INSTRUCTIONS:
+                    Debug.Log("Game is currently on INSTRUCTIONS.");
                     break;
 
                 case GAME_STATES.GAMEPLAY:
@@ -78,6 +83,10 @@ public static class GameStateLoader
         {
             case GAME_STATES.MAIN_MENU:
                 _sceneLoader.LoadScene( GameSceneSwitcher.SCENE_POSITION.MAIN_MENU );
+                break;
+
+            case GAME_STATES.INSTRUCTIONS:
+                _sceneLoader.LoadScene(GameSceneSwitcher.SCENE_POSITION.INSTRUCTIONS);
                 break;
 
             case GAME_STATES.GAMEPLAY:

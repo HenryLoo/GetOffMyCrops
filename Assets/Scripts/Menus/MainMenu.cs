@@ -85,8 +85,7 @@ public class MainMenu : Menu, IButtonAction
     {
         // Load instructions
         Debug.Log( "Instructions button is selected" );
-
-        // TODO: implement instruction screen and link it.
+        ChangeState(GameStateLoader.GAME_STATES.INSTRUCTIONS);
     }
 
     private void OnScoreboardButtonSelect()

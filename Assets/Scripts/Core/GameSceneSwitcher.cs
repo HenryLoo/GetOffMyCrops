@@ -8,6 +8,7 @@ public class GameSceneSwitcher
     public enum SCENE_POSITION
     {
         MAIN_MENU,
+        INSTRUCTIONS,
         GAMEPLAY,
         WIN_MENU,
         LOSE_MENU,
@@ -17,6 +18,7 @@ public class GameSceneSwitcher
 
     public static string[] SCENE_LIST = {
         "Assets/Scenes/MenuScene.unity",
+        "Assets/Scenes/InstructionsScene.unity",
         "Assets/Scenes/GameScene.unity",
         "Assets/Scenes/WinScene.unity",
         "Assets/Scenes/LoseScene.unity",
