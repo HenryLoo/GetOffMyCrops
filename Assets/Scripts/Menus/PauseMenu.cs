@@ -9,7 +9,7 @@ public class PauseMenu : Menu
     public Image PausePanel;
 
     private readonly string RESUME_BUTTON = "ResumeButton";
-    private readonly string INSTRUCTIONS_BUTTON = "InstructionsButton";
+    private readonly string RESTART_BUTTON = "RestartButton";
     private readonly string QUIT_BUTTON = "QuitButton";
 
     // Use this for initialization
@@ -17,7 +17,7 @@ public class PauseMenu : Menu
     {
         // Initialize menu options
         AddMenuOption( RESUME_BUTTON, ResumeGame );
-        AddMenuOption( INSTRUCTIONS_BUTTON, ViewInstructions );
+        AddMenuOption( RESTART_BUTTON, RestartGame );
         AddMenuOption( QUIT_BUTTON, QuitGame );
 
         TogglePauseMenu( false );
@@ -50,9 +50,9 @@ public class PauseMenu : Menu
         GameController.SetIsPaused( false );
     }
 
-    void ViewInstructions()
+    void RestartGame()
     {
-        // TODO: implement instructions scene
+        ChangeState( GameStateLoader.GAME_STATES.GAMEPLAY );
     }
 
     void QuitGame()

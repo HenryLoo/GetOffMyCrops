@@ -3,82 +3,128 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InstructionsMenu : Menu, IButtonAction
-{ 
+public class InstructionsMenu : MonoBehaviour, IButtonAction
+{
+    public Image[] Tabs;
+    public Text[] TabTexts;
+    private const float SELECTED_ALPHA = 1;
+    private const float DESELECTED_ALPHA = 0.6f;
+    private readonly string[] TAB_NAMES = { "Story", "Goal", "Enemies", "Controls" };
 
-    public Text m_MyText;
+    public Text TextArea;
 
+    private const string NARRATIVE = "Our protagonist, the farmer, needs to fix his old house.\n\n" +
+        "Unfortunately, the repair fees are too high for his budget.\n\n" +
+        "Help the farmer to ship out enough crops to pay his bills!\n\n" +
+        "But watch out… there are plenty of critters running around who would love to eat your produce!";
+
+    private const string GOAL = "The goal of each level is to reach the minimum amount of money before the timer runs out.\n\n" +
+        "You will start with <b>$20</b> per level.\n\n" +
+        "It costs <b>$5</b> to plant a crop.\n" +
+        "<b>You can only plant on dirt tiles!</b>\n" +
+        "The planted crop will grow over time.\n\n" +
+        "If you harvest a mature crop, you will earn <b>$20</b>.\n\n";
+
+    private const string ENEMIES = "Wild animals will try to eat your crops.\n\n" +
+        "Defend your crops by blocking their path!\n\n" + 
+        "You can also scare nearby enemies by shouting at them!";
+
+    private const string CONTROLS = "Arrow keys - Move\n\n" +
+        "X - Plant crop, harvest mature crop\n\n" +
+        "Z - Shout at nearby enemies to scare them away\n\n" +
+        "Escape - Go back";
+    
+    private readonly string[] PAGES = new string[] { NARRATIVE, GOAL, ENEMIES, CONTROLS };
+    private int _currentPage = 0;
 
     void Start()
     {
-        m_MyText.text
-            = "The purpose of this game is to help Farmer Dale restore his broken down farm by raising seasonal crops and earning money. \n"
-            + "\n"
-            + "\n"
-            + "RULES:\n"
-            + "- Your overall money will increase as you progress through levels until you have finally met your end goal of raising enough funds to repair the farm.\n"
-            + "\n"
-            + "- In order to pass a level, you must meet the minimum profits for that season which will be displayed at the top left of the screen. \n"
-            + "\n"
-            + "- Each level of the game will have plantable soil on which you can plant crops to grow and harvest. \n"
-            + "\n"
-            + "- planting crops will cost you a set amount of money per seed.\n"
-            + "\n"
-            + "- when you harvest a crop you will recieve a large sum of money.\n"
-            + "\n"
-            + "- when a crop has just been harvested, the tile will be on cooldown for a small period of time before it can be planted on again. \n"
-            + "\n"
-            + "\n"
-            + "ENEMIES:\n"
-            + "\n"
-            + "Enemies will begin to appear as the game progresses and attempt to eat or destroy your crops while they are growing\n"
-            + "\n"
-            + "The player has the ability to scare away some enemies by either entering the same tile as the enemy, Or by blocking thier path as they are moving \n"
-            + "\n"
-            + "If the player happens to scare an enemy, they will attempt to flee off the map, generally.\n"
-            + "\n"
-            + "\n"
-            + "CONTROLS:\n"
-            + "\n"
-            + "1.\n"
-            + "2.\n"
-            + "3.\n"
-            ;
+        GameInput.AttachInput(
+            actionClick: OnButtonClickAction,
+            skillClick: OnButtonClickSkill,
+            backClick: OnButtonClickBack,
+            leftClick: OnButtonClickLeft,
+            rightClick: OnButtonClickRight,
+            downClick: OnButtonClickDown,
+            upClick: OnButtonClickUp );
+
+        // Set the initial page
+        TextArea.text = PAGES[ 0 ];
+
+        // Highlight selected tab
+        SelectTab();
     }
 
-
-    void IButtonAction.OnButtonClickUp()
+    void Update()
     {
-        throw new System.NotImplementedException();
+        GameInput.UpdateInput();
     }
 
-    void IButtonAction.OnButtonClickDown()
+    public void OnButtonClickLeft()
     {
-        throw new System.NotImplementedException();
+        // No functionality
     }
 
-    void IButtonAction.OnButtonClickLeft()
+    public void OnButtonClickRight()
     {
-        throw new System.NotImplementedException();
+        // No functionality
     }
 
-    void IButtonAction.OnButtonClickRight()
+    public void OnButtonClickUp()
     {
-        throw new System.NotImplementedException();
+        // Clamp minimum page to first page
+        int nextPage = _currentPage - 1 < 0 ? 0 : _currentPage - 1;
+        UpdateTab( nextPage );
     }
 
-    void IButtonAction.OnButtonClickAction()
+    public void OnButtonClickDown()
     {
-        throw new System.NotImplementedException();
+        // Clamp maximum page to last page
+        int nextPage = _currentPage + 1 >= PAGES.Length ? _currentPage : _currentPage + 1;
+        UpdateTab( nextPage );
     }
 
-    void IButtonAction.OnButtonClickSkill()
+    public void OnButtonClickAction()
     {
-        throw new System.NotImplementedException();
+        // No functionality
     }
 
-    void IButtonAction.OnButtonClickBack()
+    public void OnButtonClickSkill()
     {
-        ChangeState(GameStateLoader.GAME_STATES.MAIN_MENU);
+        // No functionality
+    }
+
+    public void OnButtonClickBack()
+    {
+        GoToMainMenu();
+    }
+
+    private void UpdateTab( int index )
+    {
+        // Deselect current tab
+        Color color = Tabs[ _currentPage ].color;
+        color.a = DESELECTED_ALPHA;
+        Tabs[ _currentPage ].color = color;
+        TabTexts[ _currentPage ].text = TAB_NAMES[ _currentPage ];
+
+        // Switch to new page
+        _currentPage = index;
+        TextArea.text = PAGES[ index ];
+
+        // Select the current tab
+        SelectTab();
+    }
+
+    private void SelectTab()
+    {
+        Color color = Tabs[ _currentPage ].color;
+        color.a = SELECTED_ALPHA;
+        Tabs[ _currentPage ].color = color;
+        TabTexts[ _currentPage ].text = "> " + TAB_NAMES[ _currentPage ];
+    }
+
+    private void GoToMainMenu()
+    {
+        GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.MAIN_MENU );
     }
 }

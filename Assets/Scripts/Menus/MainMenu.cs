@@ -17,7 +17,7 @@ public class MainMenu : Menu, IButtonAction
             actionClick: OnButtonClickAction,
             skillClick: OnButtonClickSkill,
             backClick: OnButtonClickBack,
-            leftClick: OnButtonClickLeft, 
+            leftClick: OnButtonClickLeft,
             rightClick: OnButtonClickRight,
             downClick: OnButtonClickDown,
             upClick: OnButtonClickUp );
@@ -52,7 +52,7 @@ public class MainMenu : Menu, IButtonAction
         SelectButton();
     }
 
-	public void OnButtonClickSkill()
+    public void OnButtonClickSkill()
     {
         // no functionality
     }
@@ -73,7 +73,7 @@ public class MainMenu : Menu, IButtonAction
         // Move selected button downwards
         UpdateButtonIndex( BUTTON_INDEX_DOWN );
     }
-    
+
     private void OnPlayButtonSelect()
     {
         // Load the game
@@ -85,7 +85,7 @@ public class MainMenu : Menu, IButtonAction
     {
         // Load instructions
         Debug.Log( "Instructions button is selected" );
-        ChangeState(GameStateLoader.GAME_STATES.INSTRUCTIONS);
+        ChangeState( GameStateLoader.GAME_STATES.INSTRUCTIONS );
     }
 
     private void OnScoreboardButtonSelect()
