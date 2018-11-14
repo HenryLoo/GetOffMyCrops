@@ -127,10 +127,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
             case EnemyState.Eating:
                 // Update whether this enemy has been blocked
-                if( CanBeBlocked )
-                {
-                    UpdateIsBlocked();
-                }
+                UpdateIsBlocked();
 
                 // Keep eating if not blocked
                 if( !isBlocked )
@@ -365,7 +362,7 @@ public abstract class Enemy : MonoBehaviour, IEntity
     }
 
     // Rotate this enemy to face its direction of movement
-    protected void OrientInDirection()
+    protected virtual void OrientInDirection()
     {
         switch( currentDirection )
         {

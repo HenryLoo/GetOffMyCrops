@@ -24,11 +24,10 @@ public class EnemyCrow : Enemy
     private const float EXIT_VECTOR_VARIATION = 0.5f;
     private const float ROTATION_ANGLE_UPDATE = 3f;
     private const float ROTATION_RADIUS = 0.1f;
-    private const float FLIGHT_UP_SPEED = 0.8f;
-    private const float FLIGHT_DOWN_SPEED = 1.6f;
     private const float TILE_CENTER_OFFSET = 0.5f;
     private const int HOVER_TIME_IN_SECONDS = 3;
     private const float FLYING_HEIGHT = 3.0f;
+    private const float FLYING_Y_SPEED = 2.5f;
 
     // Animation speed constants
     private const int MOVING_ANIMATION_SPEED = 5;
@@ -50,11 +49,14 @@ public class EnemyCrow : Enemy
         switch( currentState )
         {
             case EnemyState.Moving:
-
+            case EnemyState.Escaping:
+                animator.SetTrigger( "Moving" );
+                animator.ResetTrigger( "Idle" );
                 break;
 
-            case EnemyState.Escaping:
-
+            case EnemyState.Eating:
+                animator.SetTrigger( "Idle" );
+                animator.ResetTrigger( "Moving" );
                 break;
         }
     }
@@ -69,9 +71,11 @@ public class EnemyCrow : Enemy
                 actionTimer.StartTimer();
                 _locomotionState = LocomotionState.Hovering;
                 break;
+
             case LocomotionState.Hovering:
                 Hover();
                 break;
+
             case LocomotionState.FlyingDown:
                 FlyDown();
                 break;
@@ -81,12 +85,18 @@ public class EnemyCrow : Enemy
     // Move the enemy based on its movement behaviour/AI
     protected override void HandleMoving()
     {
-        Debug.Log( "HandleMoving: " + _locomotionState );
+        // If the target crop is removed early, just run away
+        if( !IsTargetACrop() )
+        {
+            RunAway();
+        }
+
         switch( _locomotionState )
         {
             case LocomotionState.FlyingUp:
                 FlyUp();
                 break;
+
             case LocomotionState.Flying:
                 MoveToNextTile();
                 break;
@@ -100,8 +110,8 @@ public class EnemyCrow : Enemy
         {
             return;
         }
-
-        Debug.Log( "EnemyCrow.HandleEating()" );
+        
+        SetAnimationState();
 
         // After crop is eaten or removed early, then run away
         if( actionTimer.GetTicks() >= EatingDuration || !IsTargetACrop() )
@@ -113,7 +123,6 @@ public class EnemyCrow : Enemy
             gameController.TileMap.SetTile( targetFinalPos, 
                 TileData.TileType.PlantableCooldown );
 
-            _locomotionState = LocomotionState.RunAwayUp;
             RunAway();
         }
     }
@@ -136,15 +145,20 @@ public class EnemyCrow : Enemy
     // Attempt to escape the map
     protected override void HandleEscaping()
     {
-        Debug.Log( "EnemyCrow.HandleEscaping(): " + _locomotionState );
         switch( _locomotionState )
         {
             case LocomotionState.RunAwayUp:
                 RunAwayFlyUp();
                 break;
+
             case LocomotionState.RunAwayOut:
-                //RunAwayFlyOut();
                 MoveToNextTile();
+                break;
+
+            default:
+                // If somehow got here from any other state, prepare to
+                // run away
+                _locomotionState = LocomotionState.RunAwayUp;
                 break;
         }
     }
@@ -198,7 +212,7 @@ public class EnemyCrow : Enemy
             transform.position.z );
 
         // Fly up
-        float displacementPerTime = FLIGHT_UP_SPEED * Time.deltaTime;
+        float displacementPerTime = FLYING_Y_SPEED * Time.deltaTime;
         transform.position = Vector3.MoveTowards( transform.position,
             vectorUp, displacementPerTime );
     }
@@ -217,7 +231,7 @@ public class EnemyCrow : Enemy
                 transform.position.z );
             
             // Fly down
-            float displacementPerTime = FLIGHT_DOWN_SPEED * Time.deltaTime;
+            float displacementPerTime = FLYING_Y_SPEED * Time.deltaTime;
             transform.position = Vector3.MoveTowards( transform.position, 
                 vectorDown, displacementPerTime );
         }
@@ -226,5 +240,28 @@ public class EnemyCrow : Enemy
     public LocomotionState GetLocomotionState()
     {
         return _locomotionState;
+    }
+
+    // Rotate this enemy to face its direction of movement
+    protected override void OrientInDirection()
+    {
+        switch( currentDirection )
+        {
+            case Direction.Up:
+                transform.rotation = Quaternion.Euler( 0, 180, 0 );
+                break;
+
+            case Direction.Down:
+                transform.rotation = Quaternion.Euler( 0, 0, 0 );
+                break;
+
+            case Direction.Left:
+                transform.rotation = Quaternion.Euler( 0, 90, 0 );
+                break;
+
+            case Direction.Right:
+                transform.rotation = Quaternion.Euler( 0, 270, 0 );
+                break;
+        }
     }
 }
