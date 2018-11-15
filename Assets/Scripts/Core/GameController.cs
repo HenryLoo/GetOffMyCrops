@@ -92,14 +92,14 @@ public class GameController : MonoBehaviour, IButtonAction
 			_PollEndGame();
 
             // TODO: debug controls, remove this later
-            if( Input.GetKeyDown( "a" ) )
-            {
-                _levelTimer.AddTicks( -10 );
-            }
-            else if( Input.GetKeyDown( "s" ) )
-            {
-                _levelTimer.AddTicks( 10 );
-            }
+            //if( Input.GetKeyDown( "a" ) )
+            //{
+            //    _levelTimer.AddTicks( -10 );
+            //}
+            //else if( Input.GetKeyDown( "s" ) )
+            //{
+            //    _levelTimer.AddTicks( 10 );
+            //}
         }
 
         GameInput.UpdateInput();
