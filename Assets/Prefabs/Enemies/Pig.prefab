@@ -1146,7 +1146,7 @@ MonoBehaviour:
   SpawnDelayDuration: 3
   EatingDuration: 0
   CanBeBlocked: 1
-  MovementSpeed: 0.5
+  MovementSpeed: 1.2
 --- !u!137 &137163500447435638
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

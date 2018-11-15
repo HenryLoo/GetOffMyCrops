@@ -1,11 +1,27 @@
 {
-    "LevelName":"Test Level",
-    "MoneyGoal":100,
-    "RemainingTime":90,
-    "TileLayoutFile":"level1_tiles",
-    "EntityLayoutFile":"level1_entities",
+    "LevelName": "Hide and Squeak",
+    "MoneyGoal": 150,
+    "RemainingTime": 90,
+    "TileLayoutFile": "level1_tiles",
+    "PlayerSpawn": { "CoordX": 3, "CoordZ": 4 },
     "EnemySpawnPatterns": [
-        { "EnemyType" : "Crow", "Amount" : 1, "WhenToSpawn" : 5 },
-        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 25 }
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 5 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 10 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 20 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 25 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 30 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 35 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 40 },
+        { "EnemyType" : "Rat", "Amount" : 2, "WhenToSpawn" : 45 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 50 },
+        { "EnemyType" : "Rat", "Amount" : 2, "WhenToSpawn" : 55 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 60 },
+        { "EnemyType" : "Rat", "Amount" : 2, "WhenToSpawn" : 65 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 70 },
+        { "EnemyType" : "Rat", "Amount" : 3, "WhenToSpawn" : 75 },
+        { "EnemyType" : "Rat", "Amount" : 1, "WhenToSpawn" : 78 },
+        { "EnemyType" : "Rat", "Amount" : 2, "WhenToSpawn" : 80 },
+        { "EnemyType" : "Rat", "Amount" : 2, "WhenToSpawn" : 82 },
+        { "EnemyType" : "Rat", "Amount" : 3, "WhenToSpawn" : 85 }
     ]
 }

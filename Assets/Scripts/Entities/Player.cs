@@ -8,8 +8,9 @@ public class Player : MonoBehaviour, IEntity
     public const string MSG_NOT_ENOUGH_MONEY = "Not enough money!";
     public const string MSG_NOT_PLANTABLE = "You can't plant here!";
     public const string MSG_NOT_MATURE = "This crop isn't mature yet!";
-    public const string MSG_SCARE = "Get off my crops!!";
+    public const string MSG_SCARE = "GET OFF MY CROPS!!";
     public const string MSG_SCARE_COOLDOWN = "I'm too tired...";
+    public const string MSG_MINISCARE = "Scram!";
 
     // Reference to the GameController
     private GameController _gameController;
@@ -30,7 +31,7 @@ public class Player : MonoBehaviour, IEntity
     private bool _scaring = false;
 
     // Duration of the scaring animation
-    public const float ScaringAnimationDuration = 1;
+    public const float ScaringAnimationDuration = 0.5f;
 
     // Log how many frames past since last animation
     private float _scaringAnimationTicks = 0;
@@ -186,6 +187,15 @@ public class Player : MonoBehaviour, IEntity
     {
         if( LockingInput() ) return;
 
+        // Player needs to get rid of enemies before they can interact with the tile
+        if( _gameController.TileMap.DoesTileHasEnemies( _tilePos ) )
+        {
+            PopupMessageCreator.PopupTip( MSG_MINISCARE, transform, new Vector3( 0, 2, 0 ) );
+            Enemy enemy = _gameController.TileMap.RemoveEnemyFromTile( _tilePos );
+            enemy.RunAway();
+            return;
+        }
+
         // If tile is plantable 
         TileData.TileType type = _tileMap.GetTile( _tilePos );
         switch( type )
@@ -277,18 +287,23 @@ public class Player : MonoBehaviour, IEntity
     // Scare all enemies adjacent to the player
     void ScareAdjacentEnemies()
     {
+        // TODO: Instead of only scaring adjacent enemies, try scaring all enemies
+        // on the screen... it might be more fun that way
+        // This is drawing inspiration from bomb mechanics in bullet-hell games,
+        // where you have a limited-use screen clear attack
+
         // Get all enemies
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         foreach( Enemy e in enemies )
         {
             // The enemy is on an adjacent tile to the player, then call 
             // its RunAway method
-            TileCoordinate dist = HelperFunctions.GetTileDistance( this.GetTilePosition(),
-                e.GetTilePosition() );
-            if( Math.Abs( dist.CoordX ) <= 1 && Math.Abs( dist.CoordZ ) <= 1 )
-            {
+            //TileCoordinate dist = HelperFunctions.GetTileDistance( this.GetTilePosition(),
+            //    e.GetTilePosition() );
+            //if( Math.Abs( dist.CoordX ) <= 1 && Math.Abs( dist.CoordZ ) <= 1 )
+            //{
                 e.RunAway();
-            }
+            //}
         }
     }
 
@@ -298,8 +313,8 @@ public class Player : MonoBehaviour, IEntity
 
         _scaringAnimationTicks += Time.deltaTime;
 
-        float firstJumpHeight = 0.5f;
-        float secondJumpHeight = 0.3f;
+        float firstJumpHeight = 1;
+        float secondJumpHeight = 0.8f;
 
         Vector3 ground = new Vector3( transform.position.x, 0, transform.position.z );
         Vector3 firstJumpPos = new Vector3( transform.position.x, firstJumpHeight, transform.position.z );
@@ -344,11 +359,6 @@ public class Player : MonoBehaviour, IEntity
                 this.ScareFinished();
             }
         }
-        //if (jumpCount == 1 && transform.position.y == 0) // jump once and return to ground
-        //{
-        //    jumpCount = 0;
-        //    transform.position = Vector3.MoveTowards(transform.position, new Vector3(0, 3, 0), step);
-        //}
     }
 
     // All the data that is being updated should be cleaned up here

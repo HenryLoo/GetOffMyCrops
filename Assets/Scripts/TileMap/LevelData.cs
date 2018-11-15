@@ -17,9 +17,8 @@ public class LevelData
     public Texture2D TileLayout;
     public string TileLayoutFile;
 
-    // Hold the map's entity layout
-    public Texture2D EntityLayout;
-    public string EntityLayoutFile;
+    // The player's spawn coordinates
+    public TileCoordinate PlayerSpawn;
 
     [System.Serializable]
     public struct EnemySpawnPattern
@@ -36,8 +35,6 @@ public class LevelData
         LevelData level = JsonUtility.FromJson<LevelData>( json );
         level.TileLayout = Resources.Load<Texture2D>( "Levels/" + 
             level.TileLayoutFile );
-        level.EntityLayout = Resources.Load<Texture2D>( "Levels/" + 
-            level.EntityLayoutFile );
         return level;
     }
 }

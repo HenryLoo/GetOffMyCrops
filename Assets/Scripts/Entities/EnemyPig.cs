@@ -29,17 +29,17 @@ public class EnemyPig : Enemy
         switch( currentDirection )
         {
             case Direction.Down:
-                SetTargetTile( new TileCoordinate( currentTilePos.CoordX, -1 ) );
+                SetTargetTile( new TileCoordinate( currentTilePos.CoordX, -2 ) );
                 break;
             case Direction.Up:
                 SetTargetTile( new TileCoordinate( currentTilePos.CoordX,
-                    gameController.TileMap.GetSizeZ() ) );
+                    gameController.TileMap.GetSizeZ() + 1 ) );
                 break;
             case Direction.Left:
-                SetTargetTile( new TileCoordinate( -1, currentTilePos.CoordZ ) );
+                SetTargetTile( new TileCoordinate( -2, currentTilePos.CoordZ ) );
                 break;
             case Direction.Right:
-                SetTargetTile( new TileCoordinate( gameController.TileMap.GetSizeX(),
+                SetTargetTile( new TileCoordinate( gameController.TileMap.GetSizeX() + 1,
                     currentTilePos.CoordZ ) );
                 break;
         }
@@ -58,13 +58,7 @@ public class EnemyPig : Enemy
             currentTilePos.CoordZ >= 0 && currentTilePos.CoordZ < gameController.TileMap.GetSizeZ() )
 
         {
-            TileData.TileType currentType = gameController.TileMap.GetTile( currentTilePos );
-            if( currentType == TileData.TileType.CropSeed ||
-                currentType == TileData.TileType.CropGrowing ||
-                currentType == TileData.TileType.CropMature )
-            {
-                gameController.TileMap.SetTile( currentTilePos, TileData.TileType.PlantableCooldown );
-            }
+            gameController.TileMap.RemoveCropFromTile( currentTilePos );
         }
 
         // If this pig has reached the end of the map, destroy it

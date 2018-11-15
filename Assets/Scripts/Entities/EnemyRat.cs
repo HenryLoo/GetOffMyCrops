@@ -57,10 +57,14 @@ public class EnemyRat : Enemy
 
     protected override void HandleOnTarget()
     {
+        Debug.Log( "EnemyRat.HandleOnTarget(): Switched to Eating state" );
+
         // Start eating the target crop if on top of it
         actionTimer.StartTimer();
         currentState = EnemyState.Eating;
-        Debug.Log( "EnemyRat.HandleOnTarget(): Switched to Eating state" );
+
+        // Add this rat to the list of enemies on the tile
+        gameController.TileMap.AddEnemyToTile( currentTilePos, this );
     }
 
     protected override void HandleMoving()
@@ -92,7 +96,7 @@ public class EnemyRat : Enemy
             actionTimer.StopTimer();
 
             // Set eaten crop's tile to be on cooldown
-            gameController.TileMap.SetTile( targetFinalPos, TileData.TileType.PlantableCooldown );
+            gameController.TileMap.RemoveCropFromTile( targetFinalPos );
 
             RunAway();
         }

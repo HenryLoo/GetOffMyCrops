@@ -14,10 +14,12 @@ public class TileMap : MonoBehaviour
 
     // Map colour from layout image to tile type
     public ColourToTile[] TileMappings;
-    public ColourToPrefab[] EntityMappings;
 
     // Hold the data for each tile on the map
     private TileData _mapData;
+
+    // The enemies on each tile on the map
+    private Queue<Enemy>[] _enemies;
 
     // Reference to the Player instance
     private Player _player;
@@ -46,6 +48,14 @@ public class TileMap : MonoBehaviour
     void Start()
     {
         _tileMapUpdate = UpdateTileData;
+
+        // Initialize list of enemies for each tile
+        int numTiles = Tileset.width * Tileset.height;
+        _enemies = new Queue<Enemy>[ numTiles ];
+        for( int i = 0; i < numTiles; ++i )
+        {
+            _enemies[ i ] = new Queue<Enemy>();
+        }
     }
 
     // This is called once per frame, at the end of all updates
@@ -102,9 +112,12 @@ public class TileMap : MonoBehaviour
             {
                 TileCoordinate tilePos = new TileCoordinate( x, z );
                 CreateTile( tilePos );
-                CreateEntity( tilePos );
             }
         }
+
+        GameObject player = CreateEntity( _levelData.PlayerSpawn, 
+            ( GameObject ) Resources.Load( "PlayerChar" ) );
+        _player = player.GetComponent<Player>();
     }
 
     // Parse the tile map's tile layout image and create the appropriate tile
@@ -123,30 +136,11 @@ public class TileMap : MonoBehaviour
         }
     }
 
-    // Parse the tile map's entity layout image and create the appropriate 
-    // entity
-    private void CreateEntity( TileCoordinate tilePos )
-    {
-        Color pixel = _levelData.EntityLayout.GetPixel( tilePos.CoordX,
-            tilePos.CoordZ );
-
-        foreach( ColourToPrefab mapping in EntityMappings )
-        {
-            if( mapping.Colour == pixel )
-            {
-                CreateEntity( tilePos, mapping.Prefab );
-                return;
-            }
-        }
-    }
-
     // Instantiate a prefab at a given (x, z) tile position
     public GameObject CreateEntity( TileCoordinate tilePos, GameObject prefab )
     {
         GameObject entity = Instantiate( prefab, GetPositionAtTile( tilePos ),
             Quaternion.identity, transform );
-
-        if( prefab.CompareTag( "Player" ) ) _player = entity.GetComponent<Player>();
 
         return entity;
     }
@@ -275,6 +269,19 @@ public class TileMap : MonoBehaviour
         CreateMesh();
     }
 
+    // Place a tile on cooldown and remove all enemies from its list
+    public void RemoveCropFromTile( TileCoordinate tilePos )
+    {
+        TileData.TileType type = _mapData.GetTile( tilePos );
+        if( type == TileData.TileType.CropSeed ||
+            type == TileData.TileType.CropGrowing ||
+            type == TileData.TileType.CropMature )
+        {
+            SetTile( tilePos, TileData.TileType.PlantableCooldown );
+            ClearEnemiesFromTile( tilePos );
+        }
+    }
+
     // Get the size of the map's x-axis in tiles
     public int GetSizeX()
     {
@@ -356,5 +363,34 @@ public class TileMap : MonoBehaviour
     public Player GetPlayer()
     {
         return _player;
+    }
+
+
+    // Add an enemy to the list of enemies for a tile
+    public void AddEnemyToTile( TileCoordinate tilePos, Enemy enemy )
+    {
+        int index = _mapData.GetTileIndex( tilePos );
+        _enemies[ index ].Enqueue( enemy );
+    }
+
+    // Remove the oldest enemy from the list of enemies for a tile
+    public Enemy RemoveEnemyFromTile( TileCoordinate tilePos )
+    {
+        int index = _mapData.GetTileIndex( tilePos );
+        return _enemies[ index ].Dequeue();
+    }
+
+    // Remove all enemies from the list of enemies for a tile
+    public void ClearEnemiesFromTile( TileCoordinate tilePos )
+    {
+        int index = _mapData.GetTileIndex( tilePos );
+        _enemies[ index ].Clear();
+    }
+
+    // Check if the tile has enemies on it
+    public bool DoesTileHasEnemies( TileCoordinate tilePos )
+    {
+        int index = _mapData.GetTileIndex( tilePos );
+        return _enemies[ index ].Count > 0;
     }
 }

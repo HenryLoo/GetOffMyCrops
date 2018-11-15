@@ -23,16 +23,19 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
         "It costs <b>$5</b> to plant a crop.\n" +
         "<b>You can only plant on dirt tiles!</b>\n" +
         "The planted crop will grow over time.\n\n" +
-        "If you harvest a mature crop, you will earn <b>$20</b>.\n\n";
+        "If you harvest a mature crop, you will earn <b>$20</b>.\n\n" +
+        "Try to make as much money as possible!";
 
     private const string ENEMIES = "Wild animals will try to eat your crops.\n\n" +
         "Defend your crops by blocking their path!\n\n" + 
-        "You can also scare nearby enemies by shouting at them!";
+        "You can also scare nearby enemies by shouting at them!\n\n" +
+        "If an enemy is busy eating a crop, it won't notice you.\n" +
+        "You'll need to stand on top of them and hit the <b>ACTION button</b> to remove them off the crop, one at a time!";
 
-    private const string CONTROLS = "Arrow keys - Move\n\n" +
-        "X - Plant crop, harvest mature crop\n\n" +
-        "Z - Shout at nearby enemies to scare them away\n\n" +
-        "Escape - Go back";
+    private const string CONTROLS = "<b>Arrow keys (MOVEMENT buttons)</b> - Move\n\n" +
+        "<b>X (ACTION button)</b> - Plant crop, harvest mature crop, remove enemy off a crop\n\n" +
+        "<b>Z (SKILL button)</b> - Shout loudly to scare away all enemies on the level (20s cooldown)\n\n" +
+        "<b>Escape (BACK button)</b> - Go back";
     
     private readonly string[] PAGES = new string[] { NARRATIVE, GOAL, ENEMIES, CONTROLS };
     private int _currentPage = 0;

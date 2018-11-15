@@ -254,4 +254,9 @@ public class GameController : MonoBehaviour, IButtonAction
         saveData.CurrentLevel = _currentLevelNum;
         _dataController.SaveData( saveData );
     }
+
+    public int GetCurrentLevelNumber()
+    {
+        return _currentLevelNum;
+    }
 }

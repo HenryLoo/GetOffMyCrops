@@ -5,7 +5,8 @@ public class UIController : MonoBehaviour
 {
     private UIMoneyMeter _moneyMeter;
     private UITimeMeter _timeMeter;
-    public Text LevelText;
+    public Text LevelNumber;
+    public Text LevelName;
 
     // Reference to the GameController
     public GameController GameController;
@@ -16,7 +17,7 @@ public class UIController : MonoBehaviour
         _moneyMeter = GetComponent<UIMoneyMeter>();
         _timeMeter = GetComponent<UITimeMeter>();
         
-        SetLevelText( GameController.Level.LevelName );
+        UpdateLevelText();
     }
 
     // Update is called once per frame
@@ -27,9 +28,10 @@ public class UIController : MonoBehaviour
     }
 
     // Sets the level's name
-    public void SetLevelText( string levelText )
+    public void UpdateLevelText()
     {
-        LevelText.text = levelText;
+        LevelNumber.text = "Level " + GameController.GetCurrentLevelNumber().ToString();
+        LevelName.text = GameController.Level.LevelName;
     }
 
     // Update the money meter to display the player's current money

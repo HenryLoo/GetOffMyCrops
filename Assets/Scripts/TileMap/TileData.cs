@@ -36,6 +36,8 @@ public class TileData
     // (0, 0) is the bottom-leftmost tile
     private int _sizeX, _sizeZ;
     private TileType[] _tiles;
+
+    // The timers for each tile on the map
     private GameTimer[] _timers;
 
     // TileMap's currently planted crops
@@ -56,8 +58,8 @@ public class TileData
     // Get the tile at a given (x, z) tile location
     public TileType GetTile( TileCoordinate tilePos )
     {
-        int index = tilePos.CoordZ * _sizeX + tilePos.CoordX;
-        if( index >= _tiles.Length ) return TileType.Null;
+        int index = GetTileIndex( tilePos );
+        if( index >= _tiles.Length || index < 0 ) return TileType.Null;
 
         return _tiles[ index ];
     }
@@ -75,13 +77,13 @@ public class TileData
             type == TileType.CropGrowing ||
             type == TileType.CropMature )
         {
-            _timers[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = new GameTimer();
+            _timers[ GetTileIndex( tilePos ) ] = new GameTimer();
         }
     }
 
     public void SetTile( TileCoordinate tilePos, TileType type )
     {
-        _tiles[ tilePos.CoordZ * _sizeX + tilePos.CoordX ] = type;
+        _tiles[ GetTileIndex( tilePos ) ] = type;
         _tileMap.UpdateCropArray(tilePos, type);
     }
 
@@ -121,8 +123,8 @@ public class TileData
     // that tile's timer has exceeded the given duration
     private void ChangeTileTypeFromTimer( TileCoordinate tilePos, 
         TileType type, float duration )
-    {        
-        int index = tilePos.CoordZ * _sizeX + tilePos.CoordX;
+    {
+        int index = GetTileIndex( tilePos );
         if( !_timers[ index ].IsStarted() )
         {
             _timers[ index ].StartTimer();
@@ -132,5 +134,11 @@ public class TileData
             _timers[ index ].StopTimer();
             _tileMap.SetTile( tilePos, type );
         }
+    }
+
+    // Calculate the tile index from its tile coordinates
+    public int GetTileIndex( TileCoordinate tilePos )
+    {
+        return tilePos.CoordZ * _sizeX + tilePos.CoordX;
     }
 }

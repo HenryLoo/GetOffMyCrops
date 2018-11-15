@@ -126,8 +126,7 @@ public class EnemyCrow : Enemy
             actionTimer.StopTimer();
 
             // Set eaten crop's tile to be on cooldown
-            gameController.TileMap.SetTile( targetFinalPos, 
-                TileData.TileType.PlantableCooldown );
+            gameController.TileMap.RemoveCropFromTile( targetFinalPos );
 
             RunAway();
         }
@@ -230,6 +229,9 @@ public class EnemyCrow : Enemy
             _locomotionState = LocomotionState.Eating;
             currentState = EnemyState.Eating;
             actionTimer.StartTimer();
+
+            // Add this crow to the list of enemies on the tile
+            gameController.TileMap.AddEnemyToTile( currentTilePos, this );
         }
         else
         {

@@ -127,13 +127,13 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
             case EnemyState.Eating:
                 // Update whether this enemy has been blocked
-                UpdateIsBlocked();
+                //UpdateIsBlocked();
 
                 // Keep eating if not blocked
-                if( !isBlocked )
-                {
+                //if( !isBlocked )
+                //{
                     HandleEating();
-                }
+                //}
 
                 break;
 

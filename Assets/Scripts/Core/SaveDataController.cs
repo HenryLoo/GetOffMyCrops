@@ -17,8 +17,6 @@ public class SaveDataController
     // Hold permanent data values
     private GameData _data;
 
-    public const int NUM_LEVELS = 2;
-
     // The name of the save file
     private static readonly string SAVE_FILE = "data.sav";
 

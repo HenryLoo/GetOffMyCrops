@@ -30,14 +30,16 @@ public class WinMenu : Menu, IButtonAction
     
     private bool _hasClearedAllLevels = false;
 
-	// Use this for initialization
-	void Start ()
+    public const int NUM_LEVELS = 4;
+
+    // Use this for initialization
+    void Start ()
     {
         Debug.Log( "WinMenu.cs" );
 
         GetDataFromController();
 
-        _hasClearedAllLevels = ( _data.CurrentLevel == SaveDataController.NUM_LEVELS );
+        _hasClearedAllLevels = ( _data.CurrentLevel == NUM_LEVELS );
         InitTextBoxes();
         SetTextBoxData();
 

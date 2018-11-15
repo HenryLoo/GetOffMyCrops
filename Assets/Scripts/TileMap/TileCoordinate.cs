@@ -1,4 +1,5 @@
 ﻿// Wrapper for (x, z) tile coordinates
+[System.Serializable]
 public struct TileCoordinate
 {
     public int CoordX, CoordZ;
