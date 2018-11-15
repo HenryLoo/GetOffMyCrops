@@ -365,7 +365,6 @@ public class TileMap : MonoBehaviour
         return _player;
     }
 
-
     // Add an enemy to the list of enemies for a tile
     public void AddEnemyToTile( TileCoordinate tilePos, Enemy enemy )
     {
@@ -385,6 +384,15 @@ public class TileMap : MonoBehaviour
     {
         int index = _mapData.GetTileIndex( tilePos );
         _enemies[ index ].Clear();
+    }
+
+    // Remove all enemies from the lists of enemies for all tiles
+    public void ClearEnemiesFromAllTiles()
+    {
+        for( int i = 0; i < Tileset.width * Tileset.height; ++i )
+        {
+            _enemies[ i ].Clear();
+        }
     }
 
     // Check if the tile has enemies on it

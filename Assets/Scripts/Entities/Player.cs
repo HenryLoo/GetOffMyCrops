@@ -244,7 +244,7 @@ public class Player : MonoBehaviour, IEntity
     void Harvest()
     {
         // Harvest the mature crop and increment money
-        _tileMap.SetTile( _tilePos, TileData.TileType.PlantableCooldown );
+        _tileMap.RemoveCropFromTile( _tilePos );
         _gameController.AddMoney( CROP_SELL_PRICE );
 
         PopupMessageCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
@@ -268,9 +268,12 @@ public class Player : MonoBehaviour, IEntity
 
         // Otherwise, proceed with scaring attack
         this._scaring = true;
-        this.ScareAdjacentEnemies();
+        this.ScareAllEnemies();
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerScare );
+
+        // Remove enemies from all tiles' list of enemies
+        _tileMap.ClearEnemiesFromAllTiles();
 
         // Start the cooldown timer
         _scareTimer.StartTimer();
@@ -284,8 +287,8 @@ public class Player : MonoBehaviour, IEntity
         this._scaringJumpCount = 0;
     }
 
-    // Scare all enemies adjacent to the player
-    void ScareAdjacentEnemies()
+    // Scare all enemies on the level
+    void ScareAllEnemies()
     {
         // TODO: Instead of only scaring adjacent enemies, try scaring all enemies
         // on the screen... it might be more fun that way
@@ -296,14 +299,7 @@ public class Player : MonoBehaviour, IEntity
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         foreach( Enemy e in enemies )
         {
-            // The enemy is on an adjacent tile to the player, then call 
-            // its RunAway method
-            //TileCoordinate dist = HelperFunctions.GetTileDistance( this.GetTilePosition(),
-            //    e.GetTilePosition() );
-            //if( Math.Abs( dist.CoordX ) <= 1 && Math.Abs( dist.CoordZ ) <= 1 )
-            //{
-                e.RunAway();
-            //}
+            e.RunAway();
         }
     }
 
