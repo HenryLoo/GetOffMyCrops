@@ -51,16 +51,16 @@ public class SaveDataController
     // Load the data file from disk and return it
     public GameData LoadDataFromDisk()
     {
-        if( File.Exists( Application.persistentDataPath + "/" + SAVE_FILE ) )
+        if( File.Exists( Application.dataPath + "/" + SAVE_FILE ) )
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = File.Open( Application.persistentDataPath + 
+            FileStream stream = File.Open( Application.dataPath + 
                 "/" + SAVE_FILE, FileMode.Open, FileAccess.Read );
             _data = ( GameData ) formatter.Deserialize( stream );
             stream.Close();
 
             Debug.Log( "SaveDataController.LoadDataFromDisk(): Data found at: " + 
-                Application.persistentDataPath + "/" + SAVE_FILE );
+                Application.dataPath + "/" + SAVE_FILE );
             return _data;
         }
         else
@@ -88,7 +88,7 @@ public class SaveDataController
     public void SaveDataToDisk()
     {
         BinaryFormatter formatter = new BinaryFormatter();
-        FileStream stream = File.Open( Application.persistentDataPath + "/" + 
+        FileStream stream = File.Open( Application.dataPath + "/" + 
             SAVE_FILE, FileMode.OpenOrCreate );
         formatter.Serialize( stream, _data );
         stream.Close();
