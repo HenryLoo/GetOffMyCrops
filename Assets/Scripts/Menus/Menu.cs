@@ -12,11 +12,15 @@ public abstract class Menu : MonoBehaviour
         public Action Function;
     }
 
-    protected static readonly int BUTTON_INDEX_UP = -1;
-    protected static readonly int BUTTON_INDEX_DOWN = 1;
+    // Navigation direction on the menu, either moving up or down
+    public enum NavDirection
+    {
+        Up,
+        Down
+    }
 
     private GameObject _currentlySelectedButton;
-    private int _currentButtonIndex;
+    protected int currentButtonIndex;
     private List<MenuOption> _options;
 
     protected Menu()
@@ -34,7 +38,7 @@ public abstract class Menu : MonoBehaviour
 
     protected void SelectButton()
     {
-        _options[ _currentButtonIndex ].Function();
+        _options[ currentButtonIndex ].Function();
     }
 
     protected void SelectDefaultButton()
@@ -44,17 +48,28 @@ public abstract class Menu : MonoBehaviour
         // active/inactive
         EventSystem.current.SetSelectedGameObject( null );
 
-        _currentButtonIndex = 0;
-        _options[ _currentButtonIndex ].Button.Select();
+        currentButtonIndex = 0;
+        _options[ currentButtonIndex ].Button.Select();
     }
 
-    protected void UpdateButtonIndex( int indexChange )
+    protected void UpdateButtonIndex( NavDirection dir )
     {
-        _currentButtonIndex += indexChange;
-
-        _currentButtonIndex = HelperFunctions.MathModulus( _currentButtonIndex, _options.Count );
-        Debug.Log( "Menu.cs: Button index = " + _currentButtonIndex );
-        _options[ _currentButtonIndex ].Button.Select();
+        switch( dir )
+        {
+            case NavDirection.Up:
+                // Clamp minimum index to first option
+                currentButtonIndex = currentButtonIndex - 1 < 0 ? 
+                    0 : currentButtonIndex - 1;
+                break;
+            case NavDirection.Down:
+                // Clamp maximum index to last option
+                currentButtonIndex = currentButtonIndex + 1 >= _options.Count ? 
+                    currentButtonIndex : currentButtonIndex + 1;
+                break;
+        }
+    
+        Debug.Log( "Menu.cs: Button index = " + currentButtonIndex );
+        _options[ currentButtonIndex ].Button.Select();
     }
     
     protected void ChangeState( GameStateLoader.GAME_STATES state )

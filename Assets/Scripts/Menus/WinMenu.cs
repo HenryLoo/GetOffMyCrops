@@ -105,13 +105,13 @@ public class WinMenu : Menu, IButtonAction
     public void OnButtonClickUp()
     {
         // Move selected button upwards
-        UpdateButtonIndex( BUTTON_INDEX_UP );
+        UpdateButtonIndex( NavDirection.Up );
     }
 
     public void OnButtonClickDown()
     {
         // Move selected button downwards
-        UpdateButtonIndex( BUTTON_INDEX_DOWN );
+        UpdateButtonIndex( NavDirection.Down );
     }
 
     public void OnButtonClickSkill()

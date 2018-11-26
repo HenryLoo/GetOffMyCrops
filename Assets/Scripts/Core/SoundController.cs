@@ -102,13 +102,12 @@ public class SoundController : MonoBehaviour
         // Find the sound with the given name
         foreach( SoundMapping mapping in Instance.SoundEffectList )
         {
-            Debug.Log( "SoundController.PlaySound(): name: " + mapping.Name +
-                ", audio: " + mapping.AudioClips );
             if( mapping.Name == type && mapping.AudioClips != null &&
                 mapping.AudioClips.Length > 0 )
             {
                 // Audio was found, so play it
-                Debug.Log( "Found audio to play: " + mapping.Name );
+                Debug.Log( "SoundController.PlaySound(): name: " + mapping.Name +
+                    ", audio: " + mapping.AudioClips );
                 Instance.RandomizeSfx( mapping.AudioClips );
                 return;
             }
@@ -142,13 +141,12 @@ public class SoundController : MonoBehaviour
         // Find the sound with the given name
         foreach( MusicMapping mapping in Instance.MusicList )
         {
-            Debug.Log( "SoundController.PlayMusic(): name: " + mapping.Name +
-                ", audio: " + mapping.AudioClip );
             if( mapping.Name == type && mapping.AudioClip != null &&
                 Instance._musicSource.clip != mapping.AudioClip )
             {
                 // Audio was found, so play it
-                Debug.Log( "Found audio to play: " + mapping.Name );
+                Debug.Log( "SoundController.PlayMusic(): name: " + mapping.Name +
+                    ", audio: " + mapping.AudioClip );
                 Instance._musicSource.clip = mapping.AudioClip;
                 Instance._musicSource.Play();
                 return;

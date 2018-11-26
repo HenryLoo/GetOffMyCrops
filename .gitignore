@@ -34,3 +34,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Save file
+Assets/data.sav
+Assets/data.sav.meta

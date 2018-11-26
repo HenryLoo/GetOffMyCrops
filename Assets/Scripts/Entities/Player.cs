@@ -53,7 +53,8 @@ public class Player : MonoBehaviour, IEntity
     private float _movementTime = 0;
 
     // Speed multiplier for movement
-    public int MovementSpeed = 3;
+    public int MovementSpeed = 6;
+    private const float MOVEMENT_HEIGHT = 3f;
 
     // Fixed money investment/return constants
     public const int SEED_BUY_PRICE = 5;
@@ -149,7 +150,7 @@ public class Player : MonoBehaviour, IEntity
 
         // Move along a Bezier curve
         _moveStartPos = transform.position;
-        _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * 1.5f;
+        _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * MOVEMENT_HEIGHT;
 
         SoundController.PlaySound( SoundType.PlayerJump );
     }

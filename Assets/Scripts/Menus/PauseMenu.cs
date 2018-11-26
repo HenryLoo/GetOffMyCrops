@@ -31,12 +31,12 @@ public class PauseMenu : Menu
 
     public void MoveSelectedUp()
     {
-        UpdateButtonIndex( BUTTON_INDEX_UP );
+        UpdateButtonIndex( NavDirection.Up );
     }
 
     public void MoveSelectedDown()
     {
-        UpdateButtonIndex( BUTTON_INDEX_DOWN );
+        UpdateButtonIndex( NavDirection.Down );
     }
 
     public void SelectOption()

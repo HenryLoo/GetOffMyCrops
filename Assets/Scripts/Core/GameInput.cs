@@ -25,25 +25,25 @@ public static class GameInput
     private static UpButtonClickHandler _onUpClick = null;
     private static DownButtonClickHandler _onDownClick = null;
 
-	private static bool isActionButtonDown = false;
-    private static bool isSkillButtonDown = false;
-    private static bool isBackButtonDown = false;
-    private static bool isRightButtonDown = false;
-    private static bool isLeftButtonDown = false;
-    private static bool isUpButtonDown = false;
-    private static bool isDownButtonDown = false;
-
-	private enum JOYSTICK_STATE
+    private enum KeyType
     {
-        NEUTRAL = 1,
-        UP,
-		DOWN,
-		LEFT,
-		RIGHT
+        Up,
+        Down,
+        Left,
+        Right,
+        Action,
+        Skill,
+        Back,
+        NumTypes
     }
 
-	private static JOYSTICK_STATE joystickState = JOYSTICK_STATE.NEUTRAL;
+    // Flags for if keys are being pressed
+    private static bool[] _isKeyPressed = new bool[ ( int ) KeyType.NumTypes ];
 
+    // Flags for if keys were pressed in the previous frame
+    private static bool[] _wasKeyPressed = new bool[ ( int ) KeyType.NumTypes ];
+
+    // Names of each input according to the editor's input manager
 	public static readonly string ACTION_BUTTON = "Action";
 	public static readonly string SKILL_BUTTON = "Skill";
 	public static readonly string BACK_BUTTON = "Cancel";
@@ -53,45 +53,58 @@ public static class GameInput
     // Update should be called once per frame if you are trying to capture input in your scene.
     public static void UpdateInput()
     {
-		computeJoyStickState();
-
-		isActionButtonDown = Input.GetButtonDown( ACTION_BUTTON );
-        isSkillButtonDown = Input.GetButtonDown( SKILL_BUTTON );
-        isBackButtonDown = Input.GetButtonDown( BACK_BUTTON );
-
-        if( isActionButtonDown && _onActionClick != null )
+        // Update previous key states
+        for( int i = 0; i < ( int ) KeyType.NumTypes; ++i )
         {
-            //Debug.Log( "Button clicked = " + ACTION_BUTTON );
+            _wasKeyPressed[ i ] = _isKeyPressed[ i ];
+        }
+
+        // Update key states
+        _isKeyPressed[ ( int ) KeyType.Left ] = Input.GetAxis( JOY_X ) < 0;
+        _isKeyPressed[ ( int ) KeyType.Right ] = Input.GetAxis( JOY_X ) > 0;
+        _isKeyPressed[ ( int ) KeyType.Up ] = Input.GetAxis( JOY_Y ) < 0;
+        _isKeyPressed[ ( int ) KeyType.Down ] = Input.GetAxis( JOY_Y ) > 0;
+        _isKeyPressed[ ( int ) KeyType.Action ] = Input.GetButtonDown( ACTION_BUTTON );
+        _isKeyPressed[ ( int ) KeyType.Skill ] = Input.GetButtonDown( SKILL_BUTTON );
+        _isKeyPressed[ ( int ) KeyType.Back ] = Input.GetButtonDown( BACK_BUTTON );
+
+        if( IsKeyPressed( KeyType.Action ) && _onActionClick != null )
+        {
+            Debug.Log( "Button clicked = " + ACTION_BUTTON );
             _onActionClick();
         }
-        else if( isSkillButtonDown && _onSkillClick != null )
+
+        if( IsKeyPressed( KeyType.Skill ) && _onSkillClick != null )
         {
-            //Debug.Log( "Button clicked = " + SKILL_BUTTON );
+            Debug.Log( "Button clicked = " + SKILL_BUTTON );
             _onSkillClick();
         }
-        else if( isBackButtonDown && _onBackClick != null )
+
+        if( IsKeyPressed( KeyType.Back ) && _onBackClick != null )
         {
-            //Debug.Log( "Button clicked = " + BACK_BUTTON );
+            Debug.Log( "Button clicked = " + BACK_BUTTON );
             _onBackClick();
         }
-        else if( isRightButtonDown && _onRightClick != null )
+
+        if( IsKeyPressed( KeyType.Right ) && _onRightClick != null )
         {
-            //Debug.Log( "Button clicked = Right" );
+            Debug.Log( "Button clicked = Right" );
             _onRightClick();
         }
-        else if( isLeftButtonDown && _onLeftClick != null )
+        else if( IsKeyPressed( KeyType.Left ) && _onLeftClick != null )
         {
-            //Debug.Log( "Button clicked = Left" );
+            Debug.Log( "Button clicked = Left" );
             _onLeftClick();
         }
-        else if( isUpButtonDown && _onUpClick != null )
+
+        if( IsKeyPressed( KeyType.Up ) && _onUpClick != null )
         {
-            //Debug.Log( "Button clicked = Up" );
+            Debug.Log( "Button clicked = Up" );
             _onUpClick();
         }
-        else if( isDownButtonDown && _onDownClick != null )
+        else if( IsKeyPressed( KeyType.Down ) && _onDownClick != null )
         {
-            //Debug.Log( "Button clicked = Down" );
+            Debug.Log( "Button clicked = Down" );
             _onDownClick();
         }
     }
@@ -126,44 +139,11 @@ public static class GameInput
         _onUpClick = null;
         _onDownClick = null;
     }
-	
-	private static void computeJoyStickState()
-	{
-		if ( Input.GetAxis( JOY_X ) < 0 && joystickState != JOYSTICK_STATE.LEFT )
-		{
-			joystickState = JOYSTICK_STATE.LEFT;
-			isLeftButtonDown = true;
-		}
-		else if ( Input.GetAxis( JOY_X ) > 0 && joystickState != JOYSTICK_STATE.RIGHT )
-		{
-			joystickState = JOYSTICK_STATE.RIGHT;
-			isRightButtonDown = true;
-		}
-		else if ( Input.GetAxis( JOY_Y ) < 0 && joystickState != JOYSTICK_STATE.UP )
-		{
-			joystickState = JOYSTICK_STATE.UP;
-			isUpButtonDown = true;
-		}
-		else if ( Input.GetAxis( JOY_Y ) > 0 && joystickState != JOYSTICK_STATE.DOWN )
-		{
-			joystickState = JOYSTICK_STATE.DOWN;
-			isDownButtonDown = true;
-		}
-		else if ( Input.GetAxis( JOY_Y ) == 0 && Input.GetAxis( JOY_X ) == 0 )
-		{
-			joystickState = JOYSTICK_STATE.NEUTRAL;
-			isRightButtonDown = false;
-			isLeftButtonDown = false;
-			isUpButtonDown = false;
-			isDownButtonDown = false;
-		}
-		else
-		{
-			//reset buttons
-			isRightButtonDown = false;
-			isLeftButtonDown = false;
-			isUpButtonDown = false;
-			isDownButtonDown = false;
-		}
-	}
+
+    // Check if a key is being pressed once (not held down)
+    private static bool IsKeyPressed( KeyType key )
+    {
+        int checkedKey = ( int ) key;
+        return (_isKeyPressed[ checkedKey ] && !_wasKeyPressed[ checkedKey ] );
+    }
 }
