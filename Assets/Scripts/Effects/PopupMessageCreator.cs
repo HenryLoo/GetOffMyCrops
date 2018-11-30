@@ -9,6 +9,7 @@ public class PopupMessageCreator : MonoBehaviour
     private static readonly Vector3 DEFAULT_OFFSET = new Vector3( 0, 2, 0 );
 
     // Message constants
+    private static readonly int MESSAGE_SIZE_VERYLARGE = 32;
     private static readonly int MESSAGE_SIZE_LARGE = 18;
     private static readonly int MESSAGE_SIZE_MEDIUM = 14;
     private static readonly Vector3 MESSAGE_COLOUR_MSG = new Vector3( 1, 1, 1 );
@@ -23,9 +24,10 @@ public class PopupMessageCreator : MonoBehaviour
     }
 
     private static GameObject InstantiateMessage( int size, Vector3 colour, 
-        Vector3 outlineColour )
+        Vector3 outlineColour, bool isCountdown = false )
     {
-        GameObject popupMessage = ( GameObject ) Instantiate( Resources.Load( "PopupMessage" ) );
+        string prefabType = isCountdown ? "CountdownMessage" : "PopupMessage";
+        GameObject popupMessage = ( GameObject ) Instantiate( Resources.Load( prefabType ) );
         PopupText popup = popupMessage.GetComponent<PopupText>();
         popup.SetFontSize( size );
         popup.SetFontColour( colour );
@@ -80,6 +82,16 @@ public class PopupMessageCreator : MonoBehaviour
         GameObject msg = InstantiateMessage( MESSAGE_SIZE_MEDIUM, 
             MESSAGE_COLOUR_MONEY, MESSAGE_OUTLINE_MONEY );
         ShowPopup( msg, text, transform, offset );
+    }
+
+    // Show countdown text
+    public static void PopupCountdown( string text, Transform transform )
+    {
+        Initialize();
+
+        GameObject msg = InstantiateMessage( MESSAGE_SIZE_VERYLARGE, MESSAGE_COLOUR_MSG,
+            MESSAGE_OUTLINE_MSG, true );
+        ShowPopup( msg, text, transform, DEFAULT_OFFSET );
     }
 
     private static void ShowPopup( GameObject textObj, string text, Transform transform, Vector3 offset )

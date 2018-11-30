@@ -86,8 +86,10 @@ public class Player : MonoBehaviour, IEntity
     void Update()
     {
         // If the game is paused, then pause character animations and movement
+        // Keep showing the animation if the game is just counting down
         bool isPaused = _gameController.GetIsPaused();
-        _animator.enabled = !isPaused;
+        bool isCountingDown = _gameController.GetIsCountingDown();
+        _animator.enabled = !isPaused | isCountingDown;
 
         if( _updateEveryFrame != null && !isPaused ) _updateEveryFrame();
     }

@@ -14,8 +14,9 @@ public enum SoundType
     CrowScared,
     PigSpawn,
     PigScared,
-    UIWin,
-    UIFeedback,
+    CountdownBlip,
+    CountdownStart,
+    Interlude
 }
 
 public enum MusicType
@@ -97,7 +98,7 @@ public class SoundController : MonoBehaviour
     }
 
     // Play a sound, given its type
-    public static void PlaySound( SoundType type )
+    public static void PlaySound( SoundType type, bool isRandomPitch = true )
     {
         // Find the sound with the given name
         foreach( SoundMapping mapping in Instance.SoundEffectList )
@@ -108,7 +109,7 @@ public class SoundController : MonoBehaviour
                 // Audio was found, so play it
                 Debug.Log( "SoundController.PlaySound(): name: " + mapping.Name +
                     ", audio: " + mapping.AudioClips );
-                Instance.RandomizeSfx( mapping.AudioClips );
+                Instance.RandomizeSfx( isRandomPitch, mapping.AudioClips );
                 return;
             }
         }
@@ -119,17 +120,18 @@ public class SoundController : MonoBehaviour
 
     // Randomly choose a sound from a set of audio clips and slightly 
     // adjust their pitch
-    private void RandomizeSfx( params AudioClip[] clips )
+    private void RandomizeSfx( bool isRandomPitch, params AudioClip[] clips )
     {
         // Generate a random number between 0 and the length of the 
         // array of clips passed in
         int randomIndex = Random.Range( 0, clips.Length );
 
         // Choose a random pitch to play the clip at
-        float randomPitch = Random.Range( LOWEST_PITCH, HIGHEST_PITCH );
+        float pitch = isRandomPitch ?
+            Random.Range( LOWEST_PITCH, HIGHEST_PITCH ) : 1;
 
         // Set the pitch of the audio source to the randomly chosen pitch
-        _soundSource.pitch = randomPitch;
+        _soundSource.pitch = pitch;
 
         // Play the clip
         _soundSource.PlayOneShot( clips[ randomIndex ] );
@@ -152,5 +154,11 @@ public class SoundController : MonoBehaviour
                 return;
             }
         }
+    }
+
+    // Stop the current music track
+    public static void StopMusic()
+    {
+        Instance._musicSource.Stop();
     }
 }

@@ -247,6 +247,15 @@ MonoBehaviour:
   - Name: 9
     AudioClips:
     - {fileID: 8300000, guid: 56e048842ef62564bae155ef5a7a9974, type: 3}
+  - Name: 10
+    AudioClips:
+    - {fileID: 8300000, guid: cb94309708c96894e969ba11eb8d3adb, type: 3}
+  - Name: 11
+    AudioClips:
+    - {fileID: 8300000, guid: 9d8adb7bb71265048b21161f80d9bbb8, type: 3}
+  - Name: 12
+    AudioClips:
+    - {fileID: 8300000, guid: ee5114bcb21d5984ab60cd4b129d1ee9, type: 3}
   MusicList:
   - Name: 0
     AudioClip: {fileID: 8300000, guid: 1b8c7a31d650ccb4cb61ac52d85327a1, type: 3}

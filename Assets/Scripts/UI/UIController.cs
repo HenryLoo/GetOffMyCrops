@@ -5,6 +5,8 @@ public class UIController : MonoBehaviour
 {
     private UIMoneyMeter _moneyMeter;
     private UITimeMeter _timeMeter;
+
+    public Animator LevelInfo;
     public Text LevelNumber;
     public Text LevelName;
 
@@ -17,7 +19,9 @@ public class UIController : MonoBehaviour
         _moneyMeter = GetComponent<UIMoneyMeter>();
         _timeMeter = GetComponent<UITimeMeter>();
         
+        // Show the level number and name at the beginning of each level
         UpdateLevelText();
+        LevelInfo.Play( "LevelInfo" );
     }
 
     // Update is called once per frame

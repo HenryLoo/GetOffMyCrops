@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +32,9 @@ public class GameController : MonoBehaviour, IButtonAction
     // Flag for if the game is paused
     private bool _isPaused;
 
+    // Flag for if the game is counting down to start the level
+    private bool _isCountingDown;
+
 	// Delegate to handle cleanup on scene destroy
 	private delegate void GameControllerUpdate();
 	private GameControllerUpdate _updateEveryFrame;
@@ -61,10 +65,12 @@ public class GameController : MonoBehaviour, IButtonAction
     void Start()
     {
 		Debug.Log( "GameController.cs" );
-        _isPaused = false;
 
-        // Reset the timer
-        _levelTimer.StartTimer();
+        // Stop any music being played
+        SoundController.StopMusic();
+
+        // Start the game paused before the countdown
+        _isPaused = true;
 		_updateEveryFrame = UpdateEveryFrame;
 
         GameInput.AttachInput(
@@ -75,6 +81,57 @@ public class GameController : MonoBehaviour, IButtonAction
            rightClick: OnButtonClickRight,
            downClick: OnButtonClickDown,
            upClick: OnButtonClickUp );
+
+        // Start the countdown sequence
+        StartCountdown();
+    }
+
+    // Start the countdown sequence
+    void StartCountdown()
+    {
+        _isCountingDown = true;
+        StartCoroutine( ShowCountdownSequence() );
+    }
+
+    // Countdown at the beginning of a level
+    // Unpause the game at the end of the countdown
+    IEnumerator ShowCountdownSequence()
+    {
+        SoundController.PlaySound( SoundType.Interlude, false );
+        yield return StartCoroutine( StartCountdownWait() );
+        yield return StartCoroutine( ShowCountdownMsg( "3...", 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( "2...", 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( "1...", 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( "PLANT!", 1, true ) );
+
+        // Unpause the game
+        _isPaused = false;
+
+        // Reset the timer
+        _levelTimer.StartTimer();
+
+        // Countdown has finished
+        _isCountingDown = false;
+
+        // Play level music
+        SoundController.PlayMusic( _levelMusic[ _currentLevelNum - 1 ] );
+    }
+
+    IEnumerator StartCountdownWait()
+    {
+        yield return new WaitForSeconds( 4.5f );
+    }
+
+    // Show the countdown message
+    IEnumerator ShowCountdownMsg( string msg, float delay, bool isStart )
+    {
+        // Play a different sound depending on if this is the start or 
+        // countdown number message
+        SoundType sound = isStart ? SoundType.CountdownStart : SoundType.CountdownBlip;
+        SoundController.PlaySound( sound, false );
+
+        PopupMessageCreator.PopupCountdown( msg, TileMap.GetPlayer().transform );
+        yield return new WaitForSeconds( delay );
     }
 
     // Update is called once per frame
@@ -84,8 +141,8 @@ public class GameController : MonoBehaviour, IButtonAction
     }
 
 	void UpdateEveryFrame()
-	{
-		if( !_isPaused )
+    {
+        if( !_isPaused )
         {
             _levelTimer.Update();
             TileMap.UpdateEveryFrame();
@@ -102,7 +159,11 @@ public class GameController : MonoBehaviour, IButtonAction
             //}
         }
 
-        GameInput.UpdateInput();
+        // Lock input if counting down
+        if( !_isCountingDown )
+        {
+            GameInput.UpdateInput();
+        }
 	}
 
     public void LoadLevel( int levelNum )
@@ -117,9 +178,6 @@ public class GameController : MonoBehaviour, IButtonAction
         Level = LevelData.CreateFromJson( levelJson.text );
         TileMap.InitTileMap( Level );
         EnemyController.Init();
-        
-        // Play level music
-        SoundController.PlayMusic( _levelMusic[ levelNum - 1 ] );
     }
 
     // Add to the current money value (or subtract by using negative values)
@@ -152,7 +210,13 @@ public class GameController : MonoBehaviour, IButtonAction
         _isPaused = isPaused;
     }
 
-	private void _PollEndGame()
+    // Get the flag for if the game is counting down to start the level
+    public bool GetIsCountingDown()
+    {
+        return _isCountingDown;
+    }
+
+    private void _PollEndGame()
 	{
 		if ( _levelTimer.GetTicks() >= Level.RemainingTime )
 		{
