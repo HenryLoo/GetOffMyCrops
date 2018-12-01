@@ -7,5 +7,5 @@ public class GameData
 {
     public int TotalMoney;
     public int CurrentLevel;
-    public string HighScores;
+    public List<ListingValues> HighScores;
 };

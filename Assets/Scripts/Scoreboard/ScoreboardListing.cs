@@ -7,14 +7,9 @@ public struct ScoreboardListing
     public Text Score;
 }
 
+[System.Serializable]
 public struct ListingValues
 {
     public string Name;
     public int Score;
-
-    public ListingValues( string name, int score )
-    {
-        Name = name;
-        Score = score;
-    }
 }

@@ -68,7 +68,7 @@ public class SaveDataController
             // Set persistent data values
             _data.TotalMoney = 0;
             _data.CurrentLevel = 1;
-            _data.HighScores = "";
+            _data.HighScores = new List<ListingValues>();
             SaveDataToDisk();
 
             Debug.Log( "SaveDataController.LoadDataFromDisk(): " +

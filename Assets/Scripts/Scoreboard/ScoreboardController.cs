@@ -3,46 +3,66 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScoreboardController : MonoBehaviour, IButtonAction
-{    
+{
+    // Reference to panels
+    public GameObject Submission;
+    public GameObject HighScores;
+
+    // Reference to the name submission slots
+    public GameObject[] NameSlots;
+    public Text[] NameLetters;
+
     // The list of score row elements
     public ScoreboardListing[] ScoreboardListings;
-
-    // The list of highscores, already sorted by decreasing order
-    private List<ListingValues> _listingValues;
 
     // The number of listings to show on the scoreboard
     // This should just be 10
     private const int NUM_LISTINGS = 10;
+    
+    // Hold the index of the currently selected name slot
+    private int _selectedNameSlot;
 
-    // The name for empty score rows
-    private const string PLACEHOLDER_LISTING = "Nobody";
+    // Hold the letter indexes of each name slot
+    private int[] _slotLetters;
+
+    // Name slot constants
+    private const float SELECTED_SLOT_ALPHA = 1;
+    private const float DESELECTED_SLOT_ALPHA = 0.5f;
+    private const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+
+    // Submitted score colour
+    private readonly Color SUBMITTED_SCORE_COLOUR = new Color( 0, 0.75f, 1 );
 
     GameData _data;
 
     // Use this for initialization
     void Start()
     {
-        _listingValues = new List<ListingValues>();
-
         // Get all existing scores
-        LoadPlayerData();
+        _data = SaveDataController.GetInstance().LoadData();
 
         // Handle score submit
         if( SaveDataController.GetInstance().IsSubmitting )
         {
-            int score = SaveDataController.GetInstance().ScoreToSubmit;
-            // TODO: replace the placeholder "Player" name
-            ListingValues listing = new ListingValues( "Player", score );
-            SubmitScore( listing );
+            // Hide the high scores
+            HighScores.SetActive( false );
 
-            // Done with submit request
-            SaveDataController.GetInstance().IsSubmitting = false;
+            // Enable name submission
+            _selectedNameSlot = 0;
+            _slotLetters = new int[ NameSlots.Length ];
+            UpdateNameSlots();
         }
+        else
+        {
+            // Hide the name submission
+            Submission.SetActive( false );
 
-        // Display all the scores
-        UpdateScoreboard();
+            // Display all the scores
+            UpdateScoreboard();
+        }
 
         // Press any key to return to main menu
         GameInput.AttachInput(
@@ -54,123 +74,203 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             upClick: OnButtonClickUp );
     }
 
+    // Update the selected states of each slot
+    private void UpdateNameSlots()
+    {
+        for( int i = 0; i < NameSlots.Length; ++i )
+        {
+            GameObject slot = NameSlots[ i ];
+            Image slotImage = slot.GetComponent<Image>();
+            float alpha = ( i == _selectedNameSlot ) ? SELECTED_SLOT_ALPHA : 
+                DESELECTED_SLOT_ALPHA;
+            slotImage.color = new Color( slotImage.color.r, slotImage.color.g, 
+                slotImage.color.b, alpha );
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         GameInput.UpdateInput();
     }
 
-    // Load the player names and scores from the database
-    private void LoadPlayerData()
-    {
-        // Get high scores from SaveDataController and deserialize the string
-        _data = SaveDataController.GetInstance().LoadData();
-        string scores = _data.HighScores;
-        string[] pairs = scores.Split( ';' );
-        for( int i = 0; i < NUM_LISTINGS; ++i )
-        {
-            // Fill in empty rows with "nobody"
-            if( i >= pairs.Length || pairs[ i ] == "" )
-            {
-                _listingValues.Add( new ListingValues( PLACEHOLDER_LISTING, 0 ) );
-                continue;
-            }
-
-            // Otherwise, actually create the row for the score
-            string[] values = pairs[ i ].Split( ':' );
-            int score = 0;
-            int.TryParse( values[ 1 ], out score );
-            _listingValues.Add( new ListingValues( values[ 0 ], score ) );
-        }
-    }
-
     // Update the scoreboard with the loaded player values
-    public void UpdateScoreboard()
+    private void UpdateScoreboard()
     {
-        for( int i = 0; i < NUM_LISTINGS; ++i )
+        for( int i = 0; i < _data.HighScores.Count; ++i )
         {
-            ScoreboardListings[ i ].Name.text = _listingValues[ i ].Name;
-            ScoreboardListings[ i ].Score.text = _listingValues[ i ].Score.ToString();
+            string rank = ( i + 1 ).ToString();
+            ScoreboardListings[ i ].Name.text = rank + ". " + _data.HighScores[ i ].Name;
+            ScoreboardListings[ i ].Score.text = _data.HighScores[ i ].Score.ToString();
         }
     }
 
+    // Switch scenes to the main menu
     private void ReturnToMainMenu()
     {
         GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.MAIN_MENU );
     }
 
+    // Update the letter of a name slot
+    private void UpdateSlotLetter( int letterIndex )
+    {
+        _slotLetters[ _selectedNameSlot ] = letterIndex;
+        NameLetters[ _selectedNameSlot ].text = LETTERS[ letterIndex ].ToString();
+    }
+
     public void OnButtonClickUp()
     {
+        // If submitting name, move to previous letter
+        if( SaveDataController.GetInstance().IsSubmitting )
+        {
+            int letterIndex = _slotLetters[ _selectedNameSlot ] - 1;
+            if( letterIndex < 0 ) letterIndex = LETTERS.Length - 1;
+            UpdateSlotLetter( letterIndex );
+            return;
+        }
+
         ReturnToMainMenu();
     }
 
     public void OnButtonClickDown()
     {
+        // If submitting name, move to next letter
+        if( SaveDataController.GetInstance().IsSubmitting )
+        {
+            int letterIndex = _slotLetters[ _selectedNameSlot ] + 1;
+            if( letterIndex >= LETTERS.Length ) letterIndex = 0;
+            UpdateSlotLetter( letterIndex );
+            return;
+        }
+
         ReturnToMainMenu();
     }
 
     public void OnButtonClickLeft()
     {
+        // If submitting name, move one slot to the left
+        if( SaveDataController.GetInstance().IsSubmitting )
+        {
+            _selectedNameSlot = Mathf.Max( 0, _selectedNameSlot - 1 );
+            UpdateNameSlots();
+            return;
+        }
+
         ReturnToMainMenu();
     }
 
     public void OnButtonClickRight()
     {
+        // If submitting name, move one slot to the right
+        if( SaveDataController.GetInstance().IsSubmitting )
+        {
+            _selectedNameSlot = Mathf.Min( NameSlots.Length - 1, _selectedNameSlot + 1 );
+            UpdateNameSlots();
+            return;
+        }
+
         ReturnToMainMenu();
     }
 
     public void OnButtonClickAction()
     {
+        // If submitting name, submit the score
+        if( SaveDataController.GetInstance().IsSubmitting )
+        {
+            int rank = SubmitScore();
+
+            // Enable the high scores
+            Submission.SetActive( false );
+            HighScores.SetActive( true );
+
+            // If submitted score was high enough to be on high scores,
+            // then highlight it
+            if( rank < NUM_LISTINGS )
+            {
+                ScoreboardListings[ rank ].Name.color = SUBMITTED_SCORE_COLOUR;
+                ScoreboardListings[ rank ].Score.color = SUBMITTED_SCORE_COLOUR;
+            }
+
+            // Update the scoreboard to show the newly submitted score
+            UpdateScoreboard();
+
+            return;
+        }
+
         ReturnToMainMenu();
     }
 
     public void OnButtonClickSkill()
     {
-        ReturnToMainMenu();
+        if( !SaveDataController.GetInstance().IsSubmitting ) ReturnToMainMenu();
     }
 
     public void OnButtonClickBack()
     {
-        ReturnToMainMenu();
+        if( !SaveDataController.GetInstance().IsSubmitting ) ReturnToMainMenu();
     }
 
     private void SaveScores()
     {
-        // Serialize the scores and save them
-        string serialized = "";
-        for( int i = 0; i < _listingValues.Count; ++i )
-        {
-            serialized += ( _listingValues[ i ].Name + ":" +
-                _listingValues[ i ].Score.ToString() );
-
-            if( i < _listingValues.Count - 1 )
-            {
-                serialized += ";";
-            }
-        }
-
-        _data.HighScores = serialized;
+        //_data.HighScores = serialized;
         SaveDataController save = SaveDataController.GetInstance();
         save.SaveData( _data );
         save.SaveDataToDisk();
     }
 
-    private void SubmitScore( ListingValues listing )
+    private string GetSubmittedName()
     {
-        // Insert this score in appropriate order
-        for( int i = 0; i < _listingValues.Count; ++i )
+        string name = "";
+        foreach( Text letter in NameLetters )
         {
-            if( listing.Score > _listingValues[ i ].Score )
+            name += letter.text;
+        }
+
+        return name;
+    }
+
+    // Submit the score and return the index of the submitted score
+    // This index corresponds to the "rank" of the score in the high scores list
+    private int SubmitScore()
+    {
+        ListingValues listing;
+        listing.Name = GetSubmittedName();
+        listing.Score = SaveDataController.GetInstance().ScoreToSubmit;
+
+        // Insert this score in appropriate order
+        bool isInserted = false;
+        int rank = 0;
+        for( int i = 0; i < _data.HighScores.Count; ++i )
+        {
+            if( listing.Score > _data.HighScores[ i ].Score )
             {
-                _listingValues.Insert( i, listing );
+                _data.HighScores.Insert( i, listing );
+                isInserted = true;
+                rank = i;
                 break;
             }
         }
 
-        // Remove the lowest score
-        _listingValues.RemoveAt( _listingValues.Count - 1 );
+        // If the listing hasn't been added yet, just push to the back of 
+        // the list
+        if( !isInserted )
+        {
+            _data.HighScores.Add( listing );
+            rank = _data.HighScores.Count - 1;
+        }
+
+        // Remove the lowest score if there too many listings
+        if( _data.HighScores.Count > NUM_LISTINGS )
+        {
+            _data.HighScores.RemoveAt( _data.HighScores.Count - 1 );
+        }
 
         // Save the score using SaveDataController
         SaveScores();
+
+        // Done with submit request
+        SaveDataController.GetInstance().IsSubmitting = false;
+
+        return rank;
     }
 }
