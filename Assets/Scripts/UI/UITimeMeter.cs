@@ -36,6 +36,7 @@ public class UITimeMeter : MonoBehaviour
         }
 
         float timeRemaining = maxTime - currentTime;
+        if( timeRemaining < 0 ) timeRemaining = 0;
         string minutes = Mathf.Floor( timeRemaining / 60 ).ToString( "00" );
         string seconds = ( timeRemaining % 60 ).ToString( "00" );
         TimeText.text = minutes + ":" + seconds;

@@ -95,7 +95,7 @@ public class GameController : MonoBehaviour, IButtonAction
 
     // Countdown at the beginning of a level
     // Unpause the game at the end of the countdown
-    IEnumerator ShowCountdownSequence()
+    private IEnumerator ShowCountdownSequence()
     {
         SoundController.PlaySound( SoundType.Interlude, false );
         yield return StartCoroutine( StartCountdownWait() );
@@ -117,13 +117,13 @@ public class GameController : MonoBehaviour, IButtonAction
         SoundController.PlayMusic( _levelMusic[ _currentLevelNum - 1 ] );
     }
 
-    IEnumerator StartCountdownWait()
+    private IEnumerator StartCountdownWait()
     {
         yield return new WaitForSeconds( 4.5f );
     }
 
     // Show the countdown message
-    IEnumerator ShowCountdownMsg( string msg, float delay, bool isStart )
+    private IEnumerator ShowCountdownMsg( string msg, float delay, bool isStart )
     {
         // Play a different sound depending on if this is the start or 
         // countdown number message
@@ -149,14 +149,14 @@ public class GameController : MonoBehaviour, IButtonAction
 			_PollEndGame();
 
             // TODO: debug controls, remove this later
-            //if( Input.GetKeyDown( "a" ) )
-            //{
-            //    _levelTimer.AddTicks( -10 );
-            //}
-            //else if( Input.GetKeyDown( "s" ) )
-            //{
-            //    _levelTimer.AddTicks( 10 );
-            //}
+            if( Input.GetKeyDown( "a" ) )
+            {
+                _levelTimer.AddTicks( -10 );
+            }
+            else if( Input.GetKeyDown( "s" ) )
+            {
+                _levelTimer.AddTicks( 10 );
+            }
         }
 
         // Lock input if counting down
@@ -218,24 +218,32 @@ public class GameController : MonoBehaviour, IButtonAction
 
     private void _PollEndGame()
 	{
-		if ( _levelTimer.GetTicks() >= Level.RemainingTime )
+		if( !_levelTimer.IsPaused() && 
+            _levelTimer.GetTicks() >= Level.RemainingTime )
 		{
 			Debug.Log( "GameController.cs: timer expired" );
-			CleanUp();
+            _levelTimer.PauseTimer();
 
             // Save a snapshot to prepare for writing to disk
 			SaveData();
-
-			if ( _currentMoney < Level.MoneyGoal )
-			{
-                GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.LOSE_MENU );
-			}
-			else
-            {
-                GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
-			}
-		}
+            StartCoroutine( MoveToEndGameMenu() );
+        }
 	}
+
+    private IEnumerator MoveToEndGameMenu()
+    {
+        yield return ShowCountdownMsg( "Finish!", 3, true );
+        CleanUp();
+
+        if( _currentMoney < Level.MoneyGoal )
+        {
+            GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.LOSE_MENU );
+        }
+        else
+        {
+            GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
+        }
+    }
 
 	private void CleanUp()
 	{

@@ -66,6 +66,12 @@ public class GameTimer
         return _isStarted;
     }
 
+    // Check if the timer is paused
+    public bool IsPaused()
+    {
+        return _isPaused;
+    }
+
     // Return the recorded duration of time
     public float GetTicks()
     {

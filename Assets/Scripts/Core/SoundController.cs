@@ -16,7 +16,8 @@ public enum SoundType
     PigScared,
     CountdownBlip,
     CountdownStart,
-    Interlude
+    Interlude,
+    Coin
 }
 
 public enum MusicType
