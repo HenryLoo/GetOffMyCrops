@@ -127,13 +127,13 @@ public abstract class Enemy : MonoBehaviour, IEntity
 
             case EnemyState.Eating:
                 // Update whether this enemy has been blocked
-                //UpdateIsBlocked();
+                UpdateIsBlocked();
 
                 // Keep eating if not blocked
-                //if( !isBlocked )
-                //{
+                if( !isBlocked )
+                {
                     HandleEating();
-                //}
+                }
 
                 break;
 
@@ -184,16 +184,14 @@ public abstract class Enemy : MonoBehaviour, IEntity
         // Get distance to player
         TileCoordinate dist = HelperFunctions.GetTileDistance( currentTilePos,
             gameController.TileMap.GetPlayer().GetTilePosition() );
+        TileCoordinate nextDist = HelperFunctions.GetTileDistance( targetNextPos,
+            gameController.TileMap.GetPlayer().GetTilePosition() );
 
         // If this enemy is being blocked by the player, then run away
         // If the enemy is eating, then it can only be blocked when the 
         // player is directly on top of it
-        if( ( currentState != EnemyState.Eating && 
-            ( ( dist.CoordX == 1 && dist.CoordZ == 0 && currentDirection == Direction.Right )
-            || ( dist.CoordX == -1 && dist.CoordZ == 0 && currentDirection == Direction.Left )
-            || ( dist.CoordX == 0 && dist.CoordZ == 1 && currentDirection == Direction.Up )
-            || ( dist.CoordX == 0 && dist.CoordZ == -1 && currentDirection == Direction.Down ) ) ) ||
-            ( currentState == EnemyState.Eating && dist.CoordX == 0 && dist.CoordZ == 0 ) )
+        if( ( dist.CoordX == 0 && dist.CoordZ == 0 ) ||
+            ( nextDist.CoordX == 0 && nextDist.CoordZ == 0 ) )
         {
             isBlocked = true;
             RunAway();

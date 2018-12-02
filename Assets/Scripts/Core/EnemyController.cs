@@ -155,13 +155,14 @@ public class EnemyController : MonoBehaviour
     private void SpawnEnemy( GameObject prefab, int amount )
     {
         // Only spawn the enemy if there are crops available to target
-        if( GameController.TileMap.currentPlantedCrops.Count == 0 ) return;
+        List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = GameController.TileMap.GetCurrentPlantedCrops();
+        if( currentPlantedCrops.Count == 0 ) return;
 
         for( int i = 0; i < amount; ++i )
         {
             // Choose a random crop for the enemy to target
-            int randomTilePicked = _randomNum.Next( GameController.TileMap.currentPlantedCrops.Count );
-            TileCoordinate targetCrop = GameController.TileMap.currentPlantedCrops[ randomTilePicked ].Key;
+            int randomTilePicked = _randomNum.Next( currentPlantedCrops.Count );
+            TileCoordinate targetCrop = currentPlantedCrops[ randomTilePicked ].Key;
 
             // Instantiate the enemy and set its target crop
             TileCoordinate spawnPos = new TileCoordinate();

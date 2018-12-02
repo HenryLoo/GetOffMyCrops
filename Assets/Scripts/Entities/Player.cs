@@ -5,12 +5,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IEntity
 {
-    public const string MSG_NOT_ENOUGH_MONEY = "Not enough money!";
     public const string MSG_NOT_PLANTABLE = "You can't plant here!";
     public const string MSG_NOT_MATURE = "This crop isn't mature yet!";
     public const string MSG_SCARE = "GET OFF MY CROPS!!";
     public const string MSG_SCARE_COOLDOWN = "I'm too tired...";
-    public const string MSG_MINISCARE = "Scram!";
+    //public const string MSG_MINISCARE = "Scram!";
 
     // Reference to the GameController
     private GameController _gameController;
@@ -56,8 +55,7 @@ public class Player : MonoBehaviour, IEntity
     public int MovementSpeed = 6;
     private const float MOVEMENT_HEIGHT = 3f;
 
-    // Fixed money investment/return constants
-    public const int SEED_BUY_PRICE = 5;
+    // The amount of money earned for harvesting a crop
     public const int CROP_SELL_PRICE = 20;
 
     // Cooldown timer for scare attack in seconds
@@ -88,8 +86,8 @@ public class Player : MonoBehaviour, IEntity
         // If the game is paused, then pause character animations and movement
         // Keep showing the animation if the game is just counting down
         bool isPaused = _gameController.GetIsPaused();
-        bool isCountingDown = _gameController.GetIsCountingDown();
-        _animator.enabled = !isPaused | isCountingDown;
+        bool isLevelStarted = _gameController.GetIsLevelStarted();
+        _animator.enabled = !isPaused | !isLevelStarted;
 
         if( _updateEveryFrame != null && !isPaused ) _updateEveryFrame();
     }
@@ -191,13 +189,13 @@ public class Player : MonoBehaviour, IEntity
         if( LockingInput() ) return;
 
         // Player needs to get rid of enemies before they can interact with the tile
-        if( _gameController.TileMap.DoesTileHasEnemies( _tilePos ) )
-        {
-            PopupMessageCreator.PopupTip( MSG_MINISCARE, transform, new Vector3( 0, 2, 0 ) );
-            Enemy enemy = _gameController.TileMap.RemoveEnemyFromTile( _tilePos );
-            enemy.RunAway();
-            return;
-        }
+        //if( _gameController.TileMap.DoesTileHasEnemies( _tilePos ) )
+        //{
+        //    PopupMessageCreator.PopupTip( MSG_MINISCARE, transform, new Vector3( 0, 2, 0 ) );
+        //    Enemy enemy = _gameController.TileMap.RemoveEnemyFromTile( _tilePos );
+        //    enemy.RunAway();
+        //    return;
+        //}
 
         // If tile is plantable 
         TileData.TileType type = _tileMap.GetTile( _tilePos );
@@ -222,36 +220,31 @@ public class Player : MonoBehaviour, IEntity
 
     // Plant a crop on the tile that the player is standing on, if that tile’s 
     // type is plantable
-    // Decreases the player’s money by a small amount as an initial investment
     void Plant()
     {
-        // If not enough money
-        if( _gameController.GetCurrentMoney() < SEED_BUY_PRICE )
-        {
-            PopupMessageCreator.PopupTip( MSG_NOT_ENOUGH_MONEY, transform );
-            return;
-        }
-
-        // Plant the seed and deduct money by investment cost
+        // Plant the seed
         _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
-        _gameController.AddMoney( -SEED_BUY_PRICE );
-        PopupMessageCreator.PopupMoney( "-$" + SEED_BUY_PRICE, transform );
         SoundController.PlaySound( SoundType.PlayerPlant );
     }
 
     // Remove a mature crop from the tile that the player is standing on.
-    // Increment the current money by a fixed amount (larger than the initial 
-    // investment cost)
+    // Increment the current money by a fixed amount
     // If an enemy is in the process of eating that crop, then that enemy runs 
     // away (toward the edge of the map)
     void Harvest()
     {
         // Harvest the mature crop and increment money
-        _tileMap.RemoveCropFromTile( _tilePos );
-        _gameController.AddMoney( CROP_SELL_PRICE );
+        _tileMap.RemoveCropFromTile( _tilePos, _gameController, false );
+        int combo = _gameController.GetCombo();
+        int totalSellPrice = CROP_SELL_PRICE + combo;
+        _gameController.AddMoney( totalSellPrice );
 
-        PopupMessageCreator.PopupMoney( "+$" + CROP_SELL_PRICE, transform, new Vector3( 0, 2, 0 ) );
+        PopupMessageCreator.PopupMoney( "+$" + totalSellPrice, 
+            transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerHarvest );
+
+        // Increment combo count
+        _gameController.IncrementCombo();
     }
 
     // Interrupts an enemy if that enemy is in the process of eating a crop
@@ -276,7 +269,7 @@ public class Player : MonoBehaviour, IEntity
         SoundController.PlaySound( SoundType.PlayerScare );
 
         // Remove enemies from all tiles' list of enemies
-        _tileMap.ClearEnemiesFromAllTiles();
+        //_tileMap.ClearEnemiesFromAllTiles();
 
         // Start the cooldown timer
         _scareTimer.StartTimer();

@@ -58,7 +58,7 @@ public class EnemyPig : Enemy
             currentTilePos.CoordZ >= 0 && currentTilePos.CoordZ < gameController.TileMap.GetSizeZ() )
 
         {
-            gameController.TileMap.RemoveCropFromTile( currentTilePos );
+            gameController.TileMap.RemoveCropFromTile( currentTilePos, gameController );
         }
 
         // If this pig has reached the end of the map, destroy it

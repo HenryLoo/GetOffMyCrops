@@ -18,9 +18,6 @@ public class TileMap : MonoBehaviour
     // Hold the data for each tile on the map
     private TileData _mapData;
 
-    // The enemies on each tile on the map
-    private Queue<Enemy>[] _enemies;
-
     // Reference to the Player instance
     private Player _player;
 
@@ -39,7 +36,7 @@ public class TileMap : MonoBehaviour
     private TileMapDelegate _tileMapUpdate;
 
     // TileMap's currently planted crops
-    public List<KeyValuePair<TileCoordinate, TileData.TileType>> currentPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
+    private List<KeyValuePair<TileCoordinate, TileData.TileType>> _currentedPlantedCrops = new List<KeyValuePair<TileCoordinate, TileData.TileType>>();
 
     // Z-distance to offset the camera from the player
     private const float CAMERA_Z_OFFSET = -2.31f;
@@ -48,14 +45,6 @@ public class TileMap : MonoBehaviour
     void Start()
     {
         _tileMapUpdate = UpdateTileData;
-
-        // Initialize list of enemies for each tile
-        int numTiles = Tileset.width * Tileset.height;
-        _enemies = new Queue<Enemy>[ numTiles ];
-        for( int i = 0; i < numTiles; ++i )
-        {
-            _enemies[ i ] = new Queue<Enemy>();
-        }
     }
 
     // This is called once per frame, at the end of all updates
@@ -269,8 +258,9 @@ public class TileMap : MonoBehaviour
         CreateMesh();
     }
 
-    // Place a tile on cooldown and remove all enemies from its list
-    public void RemoveCropFromTile( TileCoordinate tilePos )
+    // Place a tile on cooldown
+    public void RemoveCropFromTile( TileCoordinate tilePos, 
+        GameController controller, bool isResetCombo = true )
     {
         TileData.TileType type = _mapData.GetTile( tilePos );
         if( type == TileData.TileType.CropSeed ||
@@ -278,7 +268,7 @@ public class TileMap : MonoBehaviour
             type == TileData.TileType.CropMature )
         {
             SetTile( tilePos, TileData.TileType.PlantableCooldown );
-            ClearEnemiesFromTile( tilePos );
+            if( isResetCombo ) controller.ResetCombo();
         }
     }
 
@@ -316,12 +306,12 @@ public class TileMap : MonoBehaviour
         return tilePos;
     }
 
-    // adds o9r removes crop tiles in an array list of all currently growing tiles
+    // Adds or removes crop tiles in an array list of all currently growing tiles
     public void UpdateCropArray( TileCoordinate tilePos, TileData.TileType type )
     {
         if( type == TileData.TileType.CropSeed )
         {
-            currentPlantedCrops.Add( new KeyValuePair<TileCoordinate, TileData.TileType>( tilePos, type ) );
+            _currentedPlantedCrops.Add( new KeyValuePair<TileCoordinate, TileData.TileType>( tilePos, type ) );
             //Debug.Log("ADDED TILE TO CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
         }
         else if( type == TileData.TileType.PlantableCooldown )
@@ -329,7 +319,7 @@ public class TileMap : MonoBehaviour
             int curIndex = -1;
             int removeIndex = -1;
             bool removeCrop = false;
-            foreach( var crop in currentPlantedCrops )
+            foreach( var crop in _currentedPlantedCrops )
             {
                 curIndex++;
                 if( crop.Key.Equals( tilePos ) )
@@ -340,11 +330,12 @@ public class TileMap : MonoBehaviour
             }
             if( removeCrop )
             {
-                currentPlantedCrops.RemoveAt( removeIndex );
+                _currentedPlantedCrops.RemoveAt( removeIndex );
                 //Debug.Log("REMOVED TILE FROM CROP ARRAY x:" + tilePos.CoordX + " z:" + tilePos.CoordZ + " Type: " + type);
             }
         }
-        foreach( var crop in currentPlantedCrops )
+
+        foreach( var crop in _currentedPlantedCrops )
         {
             //Debug.Log("CROPS IN ARRAY: x:" + crop.Key.CoordX + " z:" + crop.Key.CoordZ + " Type: " + crop.Value);
         }
@@ -355,7 +346,6 @@ public class TileMap : MonoBehaviour
         _tileMapUpdate = null;
         foreach( Transform child in transform )
         {
-            //GameObject.DestroyImmediate( child.gameObject );
             GameObject.Destroy( child.gameObject );
         }
     }
@@ -365,40 +355,8 @@ public class TileMap : MonoBehaviour
         return _player;
     }
 
-    // Add an enemy to the list of enemies for a tile
-    public void AddEnemyToTile( TileCoordinate tilePos, Enemy enemy )
+    public List<KeyValuePair<TileCoordinate, TileData.TileType>> GetCurrentPlantedCrops()
     {
-        int index = _mapData.GetTileIndex( tilePos );
-        _enemies[ index ].Enqueue( enemy );
-    }
-
-    // Remove the oldest enemy from the list of enemies for a tile
-    public Enemy RemoveEnemyFromTile( TileCoordinate tilePos )
-    {
-        int index = _mapData.GetTileIndex( tilePos );
-        return _enemies[ index ].Dequeue();
-    }
-
-    // Remove all enemies from the list of enemies for a tile
-    public void ClearEnemiesFromTile( TileCoordinate tilePos )
-    {
-        int index = _mapData.GetTileIndex( tilePos );
-        _enemies[ index ].Clear();
-    }
-
-    // Remove all enemies from the lists of enemies for all tiles
-    public void ClearEnemiesFromAllTiles()
-    {
-        for( int i = 0; i < Tileset.width * Tileset.height; ++i )
-        {
-            _enemies[ i ].Clear();
-        }
-    }
-
-    // Check if the tile has enemies on it
-    public bool DoesTileHasEnemies( TileCoordinate tilePos )
-    {
-        int index = _mapData.GetTileIndex( tilePos );
-        return _enemies[ index ].Count > 0;
+        return _currentedPlantedCrops;
     }
 }

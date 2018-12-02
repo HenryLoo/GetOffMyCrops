@@ -27,7 +27,7 @@ public class EnemyCrow : Enemy
     private const float TILE_CENTER_OFFSET = 0.5f;
     private const int HOVER_TIME_IN_SECONDS = 3;
     private const float FLYING_HEIGHT = 3.0f;
-    private const float FLYING_Y_SPEED = 2.5f;
+    private const float FLYING_Y_SPEED = 5.0f;
 
     // Animation speed constants
     private const int MOVING_ANIMATION_SPEED = 5;
@@ -126,7 +126,7 @@ public class EnemyCrow : Enemy
             actionTimer.StopTimer();
 
             // Set eaten crop's tile to be on cooldown
-            gameController.TileMap.RemoveCropFromTile( targetFinalPos );
+            gameController.TileMap.RemoveCropFromTile( targetFinalPos, gameController );
 
             RunAway();
         }
@@ -231,7 +231,7 @@ public class EnemyCrow : Enemy
             actionTimer.StartTimer();
 
             // Add this crow to the list of enemies on the tile
-            gameController.TileMap.AddEnemyToTile( currentTilePos, this );
+            //gameController.TileMap.AddEnemyToTile( currentTilePos, this );
         }
         else
         {

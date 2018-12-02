@@ -8,10 +8,13 @@ public class UIMoneyMeter : MonoBehaviour
     public Slider MoneyValue;
     public Text MoneyText;
 
+    public Text ComboBonus;
+    private readonly string COMBO_TEXT = "Combo Bonus: +$";
+
     // Use this for initialization
     void Start()
     {
-
+        ComboBonus.enabled = false;
     }
 
     // Update is called once per frame
@@ -20,7 +23,7 @@ public class UIMoneyMeter : MonoBehaviour
 
     }
 
-    public void UpdateMoneyMeter( float currentMoney, float moneyGoal )
+    public void UpdateMoneyMeter( float currentMoney, float moneyGoal, int combo )
     {
         if( currentMoney >= moneyGoal )
         {
@@ -38,5 +41,16 @@ public class UIMoneyMeter : MonoBehaviour
         }
 
         MoneyText.text = "$" + currentMoney + " / $" + moneyGoal;
+
+        // Update the combo bonus
+        if( combo > 0 )
+        {
+            ComboBonus.enabled = true;
+            ComboBonus.text = COMBO_TEXT + combo;
+        }
+        else
+        {
+            ComboBonus.enabled = false;
+        }
     }
 }

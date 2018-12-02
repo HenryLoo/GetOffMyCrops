@@ -1,6 +1,6 @@
 {
     "LevelName": "Hide and Squeak",
-    "MoneyGoal": 150,
+    "MoneyGoal": 360,
     "RemainingTime": 90,
     "TileLayoutFile": "level1_tiles",
     "PlayerSpawn": { "CoordX": 3, "CoordZ": 4 },

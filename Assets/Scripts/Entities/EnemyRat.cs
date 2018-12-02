@@ -64,7 +64,7 @@ public class EnemyRat : Enemy
         currentState = EnemyState.Eating;
 
         // Add this rat to the list of enemies on the tile
-        gameController.TileMap.AddEnemyToTile( currentTilePos, this );
+        //gameController.TileMap.AddEnemyToTile( currentTilePos, this );
     }
 
     protected override void HandleMoving()
@@ -96,7 +96,7 @@ public class EnemyRat : Enemy
             actionTimer.StopTimer();
 
             // Set eaten crop's tile to be on cooldown
-            gameController.TileMap.RemoveCropFromTile( targetFinalPos );
+            gameController.TileMap.RemoveCropFromTile( targetFinalPos, gameController );
 
             RunAway();
         }

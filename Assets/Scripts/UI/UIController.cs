@@ -42,7 +42,7 @@ public class UIController : MonoBehaviour
     public void UpdateMoneyMeter()
     {
         _moneyMeter.UpdateMoneyMeter( GameController.GetCurrentMoney(),
-            GameController.Level.MoneyGoal );
+            GameController.Level.MoneyGoal, GameController.GetCombo() );
     }
 
     // Update the time meter to display the current level's remaining time

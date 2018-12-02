@@ -24,10 +24,10 @@ public class TileData
     }
     
     // The duration in seconds for a plantable tile to become usable again
-    private const float PLANTABLE_COOLDOWN_DURATION = 10.0f;
+    private const float PLANTABLE_COOLDOWN_DURATION = 20.0f;
 
     // The duration in seconds for a crop to grow into its next state
-    private const float CROP_GROWING_DURATION = 5.0f;
+    private const float CROP_GROWING_DURATION = 15.0f;
 
     // Hold a reference to the tile map
     private TileMap _tileMap;

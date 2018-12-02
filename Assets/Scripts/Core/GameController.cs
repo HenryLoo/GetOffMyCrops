@@ -26,14 +26,13 @@ public class GameController : MonoBehaviour, IButtonAction
     // The index of the current level
     private int _currentLevelNum = 1;
 
-    // The starting amount of money
-    private const int STARTING_MONEY = 20;
-
     // Flag for if the game is paused
     private bool _isPaused;
 
-    // Flag for if the game is counting down to start the level
-    private bool _isCountingDown;
+    // Flag for if the game is progressing
+    // This should be false when the game is counting down to start
+    // or if the level timer has reached 0
+    private bool _isLevelStarted;
 
 	// Delegate to handle cleanup on scene destroy
 	private delegate void GameControllerUpdate();
@@ -43,13 +42,25 @@ public class GameController : MonoBehaviour, IButtonAction
     private SaveDataController _dataController;
 
     // List of music to play for each level
-    private readonly List<MusicType> _levelMusic = new List<MusicType>()
+    private readonly List<MusicType> LEVEL_MUSIC = new List<MusicType>()
     {
         MusicType.Level1,
         MusicType.Level2,
         MusicType.Level3,
         MusicType.Level4,
     };
+
+    // Countdown strings
+    private readonly string COUNTDOWN_3 = "3...";
+    private readonly string COUNTDOWN_2 = "2...";
+    private readonly string COUNTDOWN_1 = "1...";
+    private readonly string COUNTDOWN_START = "PLANT!";
+    private readonly string COUNTDOWN_END = "Finish!";
+
+    // Hold the current number of successfully harvested crops
+    // in a row
+    // The combo count is reset if enemies eat a crop
+    private int _combo = 0;
 
     void Awake()
     {
@@ -89,7 +100,7 @@ public class GameController : MonoBehaviour, IButtonAction
     // Start the countdown sequence
     void StartCountdown()
     {
-        _isCountingDown = true;
+        _isLevelStarted = false;
         StartCoroutine( ShowCountdownSequence() );
     }
 
@@ -99,10 +110,10 @@ public class GameController : MonoBehaviour, IButtonAction
     {
         SoundController.PlaySound( SoundType.Interlude, false );
         yield return StartCoroutine( StartCountdownWait() );
-        yield return StartCoroutine( ShowCountdownMsg( "3...", 1, false ) );
-        yield return StartCoroutine( ShowCountdownMsg( "2...", 1, false ) );
-        yield return StartCoroutine( ShowCountdownMsg( "1...", 1, false ) );
-        yield return StartCoroutine( ShowCountdownMsg( "PLANT!", 1, true ) );
+        yield return StartCoroutine( ShowCountdownMsg( COUNTDOWN_3, 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( COUNTDOWN_2, 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( COUNTDOWN_1, 1, false ) );
+        yield return StartCoroutine( ShowCountdownMsg( COUNTDOWN_START, 1, true ) );
 
         // Unpause the game
         _isPaused = false;
@@ -111,10 +122,10 @@ public class GameController : MonoBehaviour, IButtonAction
         _levelTimer.StartTimer();
 
         // Countdown has finished
-        _isCountingDown = false;
+        _isLevelStarted = true;
 
         // Play level music
-        SoundController.PlayMusic( _levelMusic[ _currentLevelNum - 1 ] );
+        SoundController.PlayMusic( LEVEL_MUSIC[ _currentLevelNum - 1 ] );
     }
 
     private IEnumerator StartCountdownWait()
@@ -160,7 +171,7 @@ public class GameController : MonoBehaviour, IButtonAction
         }
 
         // Lock input if counting down
-        if( !_isCountingDown )
+        if( _isLevelStarted )
         {
             GameInput.UpdateInput();
         }
@@ -169,7 +180,7 @@ public class GameController : MonoBehaviour, IButtonAction
     public void LoadLevel( int levelNum )
     {
         // Reset current money
-        _currentMoney = STARTING_MONEY;
+        _currentMoney = 0;
 
         // Load the level JSON
         TextAsset levelJson = ( TextAsset ) Resources.Load( "Levels/level"
@@ -210,10 +221,10 @@ public class GameController : MonoBehaviour, IButtonAction
         _isPaused = isPaused;
     }
 
-    // Get the flag for if the game is counting down to start the level
-    public bool GetIsCountingDown()
+    // Get the flag for if the game is progressing
+    public bool GetIsLevelStarted()
     {
-        return _isCountingDown;
+        return _isLevelStarted;
     }
 
     private void _PollEndGame()
@@ -232,7 +243,8 @@ public class GameController : MonoBehaviour, IButtonAction
 
     private IEnumerator MoveToEndGameMenu()
     {
-        yield return ShowCountdownMsg( "Finish!", 3, true );
+        _isLevelStarted = false;
+        yield return ShowCountdownMsg( COUNTDOWN_END, 3, true );
         CleanUp();
 
         if( _currentMoney < Level.MoneyGoal )
@@ -318,6 +330,7 @@ public class GameController : MonoBehaviour, IButtonAction
         }
     }
 
+    // Prepare to save data to disk
 	private void SaveData()
 	{
         GameData saveData = _dataController.LoadData();
@@ -327,8 +340,27 @@ public class GameController : MonoBehaviour, IButtonAction
         _dataController.SaveData( saveData );
     }
 
+    // Get the current level's number
     public int GetCurrentLevelNumber()
     {
         return _currentLevelNum;
+    }
+
+    // Get the combo count
+    public int GetCombo()
+    {
+        return _combo;
+    }
+
+    // Increment the combo count by 1
+    public void IncrementCombo()
+    {
+        ++_combo;
+    }
+
+    // Reset the combo count to 0
+    public void ResetCombo()
+    {
+        _combo = 0;
     }
 }
