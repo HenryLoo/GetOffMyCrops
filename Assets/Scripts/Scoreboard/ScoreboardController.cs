@@ -100,8 +100,8 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
         for( int i = 0; i < _data.HighScores.Count; ++i )
         {
             string rank = ( i + 1 ).ToString();
-            ScoreboardListings[ i ].Name.text = rank + ". " + _data.HighScores[ i ].Name;
-            ScoreboardListings[ i ].Score.text = _data.HighScores[ i ].Score.ToString();
+            ScoreboardListings[ i ].Name.text = rank + ".       " + _data.HighScores[ i ].Name;
+            ScoreboardListings[ i ].Score.text = "$ "+_data.HighScores[ i ].Score.ToString();
         }
     }
 
