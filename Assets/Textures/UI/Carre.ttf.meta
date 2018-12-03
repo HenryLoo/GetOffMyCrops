@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: be04758ad244ce242bf86bf097dd5831
+timeCreated: 1543800181
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Carre
+  fontNames:
+  - Carre
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
