@@ -125,7 +125,7 @@ public class GameController : MonoBehaviour, IButtonAction
         _isLevelStarted = true;
 
         // Play level music
-        SoundController.PlayMusic( LEVEL_MUSIC[ _currentLevelNum - 1 ] );
+        SoundController.PlayMusic( LEVEL_MUSIC[ _currentLevelNum - 1 ], true );
     }
 
     private IEnumerator StartCountdownWait()

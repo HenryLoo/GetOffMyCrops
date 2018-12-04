@@ -17,7 +17,9 @@ public enum SoundType
     CountdownBlip,
     CountdownStart,
     Interlude,
-    Coin
+    Coin,
+    UIClick,
+    UIAction
 }
 
 public enum MusicType
@@ -142,13 +144,13 @@ public class SoundController : MonoBehaviour
     }
 
     // Play a music track if it is not already playing
-    public static void PlayMusic( MusicType type )
+    public static void PlayMusic( MusicType type, bool isResetting = false )
     {
         // Find the sound with the given name
         foreach( MusicMapping mapping in Instance.MusicList )
         {
             if( mapping.Name == type && mapping.AudioClip != null &&
-                Instance._musicSource.clip != mapping.AudioClip )
+                ( Instance._musicSource.clip != mapping.AudioClip || isResetting ) )
             {
                 // Audio was found, so play it
                 Debug.Log( "SoundController.PlayMusic(): name: " + mapping.Name +

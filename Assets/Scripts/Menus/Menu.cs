@@ -39,6 +39,7 @@ public abstract class Menu : MonoBehaviour
     protected void SelectButton()
     {
         _options[ currentButtonIndex ].Function();
+        SoundController.PlaySound( SoundType.UIAction, false );
     }
 
     protected void SelectDefaultButton()
@@ -60,11 +61,13 @@ public abstract class Menu : MonoBehaviour
                 // Clamp minimum index to first option
                 currentButtonIndex = currentButtonIndex - 1 < 0 ? 
                     0 : currentButtonIndex - 1;
+                SoundController.PlaySound( SoundType.UIClick, false );
                 break;
             case NavDirection.Down:
                 // Clamp maximum index to last option
                 currentButtonIndex = currentButtonIndex + 1 >= _options.Count ? 
                     currentButtonIndex : currentButtonIndex + 1;
+                SoundController.PlaySound( SoundType.UIClick, false );
                 break;
         }
     
