@@ -19,7 +19,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4215375581755248}
-  - component: {fileID: 82398421444743488}
   - component: {fileID: 82459566475823234}
   - component: {fileID: 114873558515264562}
   m_Layer: 0
@@ -42,86 +41,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &82398421444743488
-AudioSource:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1354486137951230}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 0.7
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
 --- !u!82 &82459566475823234
 AudioSource:
   m_ObjectHideFlags: 1
@@ -218,47 +137,61 @@ MonoBehaviour:
     AudioClips:
     - {fileID: 8300000, guid: 9d58fb7eeb218f746a6951a42b240743, type: 3}
     - {fileID: 8300000, guid: 77353429989a5e64a8d3f422e7f4b169, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 1
     AudioClips:
     - {fileID: 8300000, guid: 48b582fc23565db4194c182f0e1ae545, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 2
     AudioClips:
     - {fileID: 8300000, guid: 4cf6be8d6cfe78545adbaebbe06feb97, type: 3}
     - {fileID: 8300000, guid: 961d0cd2886ac064ab42afc88c1249c7, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 3
     AudioClips:
     - {fileID: 8300000, guid: 7e8cf8838cb11d74d8438849078904a6, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 4
     AudioClips:
     - {fileID: 8300000, guid: cbcccb554ddc78d40ac1a3c7dc4b9be9, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 5
     AudioClips:
     - {fileID: 8300000, guid: 6429a0e01446ec54daeb86984c73c773, type: 3}
     - {fileID: 8300000, guid: 69c432abb466dce418a2a7a568450b7b, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 6
     AudioClips:
     - {fileID: 8300000, guid: 55b447918f6c3d249b4ba92f12f8558b, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 7
     AudioClips:
     - {fileID: 8300000, guid: 5573d5f174471d54fbf036eaae5d7737, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 8
     AudioClips:
     - {fileID: 8300000, guid: 777ee5fb80c9dc6438fe11bf3ba3789e, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 9
     AudioClips:
     - {fileID: 8300000, guid: 56e048842ef62564bae155ef5a7a9974, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 10
     AudioClips:
     - {fileID: 8300000, guid: cb94309708c96894e969ba11eb8d3adb, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 11
     AudioClips:
     - {fileID: 8300000, guid: 9d8adb7bb71265048b21161f80d9bbb8, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 12
     AudioClips:
     - {fileID: 8300000, guid: ee5114bcb21d5984ab60cd4b129d1ee9, type: 3}
+    AudioSource: {fileID: 0}
   - Name: 13
     AudioClips:
     - {fileID: 8300000, guid: 008b8125ae0e246428fc9ff0ec764081, type: 3}
+    AudioSource: {fileID: 0}
   MusicList:
   - Name: 0
     AudioClip: {fileID: 8300000, guid: 1b8c7a31d650ccb4cb61ac52d85327a1, type: 3}

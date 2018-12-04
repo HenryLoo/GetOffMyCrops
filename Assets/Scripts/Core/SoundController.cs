@@ -36,6 +36,7 @@ public class SoundMapping
 {
     public SoundType Name;
     public AudioClip[] AudioClips;
+    public AudioSource AudioSource;
 }
 
 [System.Serializable]
@@ -54,8 +55,7 @@ public class SoundController : MonoBehaviour
     // List of music mappings
     public List<MusicMapping> MusicList;
 
-    // These audio sources will appear in the same order in the inspector
-    private AudioSource _soundSource;
+    // The audio source to play music from
     private AudioSource _musicSource;
 
     // Singleton instance
@@ -92,10 +92,12 @@ public class SoundController : MonoBehaviour
     void Start()
     {
         // Load audio sources
-        // These audio sources will appear in the same order in the inspector
-        var audioSources = GetComponents<AudioSource>();
-        _soundSource = audioSources[ 0 ];
-        _musicSource = audioSources[ 1 ];
+        _musicSource = GetComponent<AudioSource>();
+
+        foreach( SoundMapping mapping in SoundEffectList )
+        {
+            mapping.AudioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     // Play a sound, given its type
@@ -110,7 +112,7 @@ public class SoundController : MonoBehaviour
                 // Audio was found, so play it
                 Debug.Log( "SoundController.PlaySound(): name: " + mapping.Name +
                     ", audio: " + mapping.AudioClips );
-                Instance.RandomizeSfx( isRandomPitch, mapping.AudioClips );
+                Instance.RandomizeSfx( isRandomPitch, mapping );
                 return;
             }
         }
@@ -121,21 +123,22 @@ public class SoundController : MonoBehaviour
 
     // Randomly choose a sound from a set of audio clips and slightly 
     // adjust their pitch
-    private void RandomizeSfx( bool isRandomPitch, params AudioClip[] clips )
+    private void RandomizeSfx( bool isRandomPitch, SoundMapping mapping )
     {
         // Generate a random number between 0 and the length of the 
         // array of clips passed in
-        int randomIndex = Random.Range( 0, clips.Length );
+        int randomIndex = Random.Range( 0, mapping.AudioClips.Length );
 
         // Choose a random pitch to play the clip at
         float pitch = isRandomPitch ?
             Random.Range( LOWEST_PITCH, HIGHEST_PITCH ) : 1;
 
         // Set the pitch of the audio source to the randomly chosen pitch
-        _soundSource.pitch = pitch;
+        mapping.AudioSource.pitch = pitch;
 
         // Play the clip
-        _soundSource.PlayOneShot( clips[ randomIndex ] );
+        mapping.AudioSource.clip = mapping.AudioClips[ randomIndex ];
+        mapping.AudioSource.Play();
     }
 
     // Play a music track if it is not already playing
