@@ -11,8 +11,8 @@ public class UIMoneyMeter : MonoBehaviour
     public Text ComboBonus;
     private readonly string COMBO_TEXT = "Combo Bonus: +$";
 
-    public Image star;
-    public float goalPosition = 0.7f;
+    public Image Star;
+    private const float GOAL_POSITION = 0.7f;
 
     // Use this for initialization
     void Start()
@@ -28,19 +28,19 @@ public class UIMoneyMeter : MonoBehaviour
 
     public void UpdateMoneyMeter( float currentMoney, float moneyGoal, int combo )
     {
-        
+
         if( currentMoney >= moneyGoal )
         {
             // If current money exceeds the goal, cap the meter at full
-            float fullOver = goalPosition + (1f - goalPosition)*((currentMoney - moneyGoal)/ currentMoney);
+            float fullOver = GOAL_POSITION + ( 1f - GOAL_POSITION ) * ( ( currentMoney - moneyGoal ) / currentMoney );
 
             MoneyValue.value = fullOver;
 
-            if(star.color.a <1)
-            { 
-                Color tempColor = star.color;
-                tempColor.a = 1f;
-                star.color = tempColor;
+            if( Star.color.a < 1 )
+            {
+                Color tempColour = Star.color;
+                tempColour.a = 1f;
+                Star.color = tempColour;
             }
         }
         else if( currentMoney <= 0 )
@@ -50,7 +50,7 @@ public class UIMoneyMeter : MonoBehaviour
         }
         else
         {
-            MoneyValue.value = ( float ) currentMoney / moneyGoal * goalPosition;
+            MoneyValue.value = ( float ) currentMoney / moneyGoal * GOAL_POSITION;
         }
 
         MoneyText.text = "$" + currentMoney + " / $" + moneyGoal;
