@@ -65,12 +65,16 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
 
     public void OnButtonClickLeft()
     {
-        // No functionality
+        // Clamp minimum page to first page
+        int nextPage = _currentPage - 1 < 0 ? 0 : _currentPage - 1;
+        UpdateTab(nextPage);
     }
 
     public void OnButtonClickRight()
     {
-        // No functionality
+        // Clamp maximum page to last page
+        int nextPage = _currentPage + 1 >= PAGES.Length ? _currentPage : _currentPage + 1;
+        UpdateTab(nextPage);
     }
 
     public void OnButtonClickUp()
