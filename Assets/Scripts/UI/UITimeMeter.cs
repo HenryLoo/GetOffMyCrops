@@ -26,7 +26,7 @@ public class UITimeMeter : MonoBehaviour
     {
         float timeRemaining = maxTime - currentTime;
         if( timeRemaining < 0 ) timeRemaining = 0;
-        string minutes = Mathf.Floor( timeRemaining / 60 ).ToString( "00" );
+        string minutes = Mathf.Floor( ( timeRemaining + 1 ) / 60 ).ToString( "00" );
 
         // Ceil: 0.9-0.1 shows 1, only 0.0 shows 0
         string seconds = ( Mathf.Ceil( timeRemaining ) % 60 ).ToString( "00" );

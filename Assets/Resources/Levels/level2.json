@@ -1,6 +1,6 @@
 {
     "LevelName": "Fowl Play",
-    "MoneyGoal": 550,
+    "MoneyGoal": 400,
     "RemainingTime": 100,
     "TileLayoutFile": "level2_tiles",
     "PlayerSpawn": { "CoordX": 5, "CoordZ": 4 },

@@ -456,4 +456,10 @@ public abstract class Enemy : MonoBehaviour, IEntity
         actionTimer.StopTimer();
         Destroy( gameObject );
     }
+
+    // Get the enemy's current state
+    public EnemyState GetCurrentState()
+    {
+        return currentState;
+    }
 }

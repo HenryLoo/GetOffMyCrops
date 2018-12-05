@@ -1,6 +1,6 @@
 {
     "LevelName": "Cheese and Swine",
-    "MoneyGoal": 700,
+    "MoneyGoal": 550,
     "RemainingTime": 100,
     "TileLayoutFile": "level3_tiles",
     "PlayerSpawn": { "CoordX": 5, "CoordZ": 7 },

@@ -1,6 +1,6 @@
 {
     "LevelName": "Heavywheat Champion",
-    "MoneyGoal": 800,
+    "MoneyGoal": 650,
     "RemainingTime": 100,
     "TileLayoutFile": "level4_tiles",
     "PlayerSpawn": { "CoordX": 5, "CoordZ": 7 },

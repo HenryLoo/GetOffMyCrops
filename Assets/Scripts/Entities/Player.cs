@@ -188,15 +188,6 @@ public class Player : MonoBehaviour, IEntity
     {
         if( LockingInput() ) return;
 
-        // Player needs to get rid of enemies before they can interact with the tile
-        //if( _gameController.TileMap.DoesTileHasEnemies( _tilePos ) )
-        //{
-        //    PopupMessageCreator.PopupTip( MSG_MINISCARE, transform, new Vector3( 0, 2, 0 ) );
-        //    Enemy enemy = _gameController.TileMap.RemoveEnemyFromTile( _tilePos );
-        //    enemy.RunAway();
-        //    return;
-        //}
-
         // If tile is plantable 
         TileData.TileType type = _tileMap.GetTile( _tilePos );
         switch( type )
@@ -268,9 +259,6 @@ public class Player : MonoBehaviour, IEntity
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerScare );
 
-        // Remove enemies from all tiles' list of enemies
-        //_tileMap.ClearEnemiesFromAllTiles();
-
         // Start the cooldown timer
         _scareTimer.StartTimer();
     }
@@ -286,16 +274,14 @@ public class Player : MonoBehaviour, IEntity
     // Scare all enemies on the level
     void ScareAllEnemies()
     {
-        // TODO: Instead of only scaring adjacent enemies, try scaring all enemies
-        // on the screen... it might be more fun that way
-        // This is drawing inspiration from bomb mechanics in bullet-hell games,
-        // where you have a limited-use screen clear attack
-
         // Get all enemies
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         foreach( Enemy e in enemies )
         {
-            e.RunAway();
+            if( e.GetCurrentState() != Enemy.EnemyState.Escaping )
+            {
+                e.RunAway();
+            }
         }
     }
 

@@ -122,6 +122,5 @@ MonoBehaviour:
     TileType: 4
   - Colour: {r: 0, g: 0, b: 1, a: 1}
     TileType: 5
-  EntityMappings:
-  - Colour: {r: 1, g: 1, b: 0, a: 1}
-    Prefab: {fileID: 100022, guid: 2c972239f8d58d944a0e1cff0da4ac22, type: 2}
+  ShadowObject: {fileID: 1821875253070564, guid: 8007aea18aa50b646a899aaa3c827afe,
+    type: 2}
