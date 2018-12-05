@@ -196,13 +196,11 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
 
             return;
         }
-
-        ReturnToMainMenu();
     }
 
     public void OnButtonClickSkill()
     {
-        if( !SaveDataController.GetInstance().IsSubmitting ) ReturnToMainMenu();
+        // No functionality
     }
 
     public void OnButtonClickBack()
