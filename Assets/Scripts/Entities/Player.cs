@@ -68,6 +68,8 @@ public class Player : MonoBehaviour, IEntity
 
     private GameObject _jumpEffectObject;
     private ParticleSystem _jumpEffectParticles;
+    private GameObject _scareEffectObject;
+    private ParticleSystem _scareEffectParticles;
 
     // Use this for initialization
     void Start()
@@ -83,6 +85,7 @@ public class Player : MonoBehaviour, IEntity
 
         _scareTimer = new GameTimer();
         InitJumpEffect();
+        InitScareEffect();
     }
 
     // Update is called once per frame
@@ -264,7 +267,7 @@ public class Player : MonoBehaviour, IEntity
         this.ScareAllEnemies();
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerScare );
-
+        _scareEffectParticles.Emit( JUMP_EMISSION );
         // Start the cooldown timer
         _scareTimer.StartTimer();
     }
@@ -351,6 +354,7 @@ public class Player : MonoBehaviour, IEntity
         _updateEveryFrame = null;
         _scareTimer.StopTimer();
         GameObject.Destroy( _jumpEffectObject );
+        GameObject.Destroy( _scareEffectObject );
     }
 
     // Get the player's position on the tile map
@@ -365,5 +369,13 @@ public class Player : MonoBehaviour, IEntity
         _jumpEffectObject = Instantiate( Resources.Load("ParticlesPlayerJump"), pos, Quaternion.Euler( 90, 0, 0 ), transform ) as GameObject;
         _jumpEffectParticles = _jumpEffectObject.GetComponent<ParticleSystem>();
         _jumpEffectParticles.Stop();
+    }
+
+    private void InitScareEffect()
+    {
+        Vector3 pos = new Vector3( transform.position.x, 0.2f, transform.position.z );
+        _scareEffectObject = Instantiate( Resources.Load("ParticlesPlayerScare"), pos, Quaternion.Euler( 90, 0, 0 ), transform ) as GameObject;
+        _scareEffectParticles = _scareEffectObject.GetComponent<ParticleSystem>();
+        _scareEffectParticles.Stop();
     }
 }
