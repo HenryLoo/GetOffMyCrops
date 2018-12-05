@@ -286,7 +286,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 361496365}
   m_Script: {fileID: 11500000, guid: 06339a27dd41eeb4aa6d812f25da3d5e, type: 3}
---- !u!1001 &531888208
+--- !u!1001 &1054171427
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -383,12 +383,27 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 95264392396969924, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 38ba9d8233be61a4a97794a71e91d03b, type: 2}
     - target: {fileID: 114203203313283032, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
       propertyPath: GameController
       value: 
       objectReference: {fileID: 361496366}
-    - target: {fileID: 95264392396969924, guid: 05be9328f77d33747b4c5050aa395ba0,
+    - target: {fileID: 95516495967306918, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 38ba9d8233be61a4a97794a71e91d03b, type: 2}
+    - target: {fileID: 95551511618588810, guid: 05be9328f77d33747b4c5050aa395ba0,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 38ba9d8233be61a4a97794a71e91d03b, type: 2}
+    - target: {fileID: 95096476714913906, guid: 05be9328f77d33747b4c5050aa395ba0,
         type: 2}
       propertyPath: m_Controller
       value: 
@@ -415,7 +430,7 @@ Prefab:
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114910752403819910, guid: 05be9328f77d33747b4c5050aa395ba0,
     type: 2}
-  m_PrefabInternal: {fileID: 531888208}
+  m_PrefabInternal: {fileID: 1054171427}
   m_Script: {fileID: 11500000, guid: 0c84c0f13ea424140bc98147b6e280da, type: 3}
 --- !u!1 &1645595759
 GameObject:

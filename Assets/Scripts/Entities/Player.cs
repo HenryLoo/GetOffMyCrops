@@ -95,7 +95,17 @@ public class Player : MonoBehaviour, IEntity
     void UpdateEveryFrame()
     {
         // Progress the scare cooldown timer
-        _scareTimer.Update();
+        if( _scareTimer.IsStarted() )
+        {
+            if( _scareTimer.GetTicks() < SCARE_COOLDOWN )
+            {
+                _scareTimer.Update();
+            }
+            else
+            {
+                _scareTimer.StopTimer();
+            }
+        }
 
         if( _movingLock )
         {
@@ -247,8 +257,7 @@ public class Player : MonoBehaviour, IEntity
         // Don't scare if it is on cooldown
         if( _scareTimer.IsStarted() && _scareTimer.GetTicks() < SCARE_COOLDOWN )
         {
-            int remainingTime = ( int ) ( SCARE_COOLDOWN - _scareTimer.GetTicks() );
-            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN + " (" + remainingTime + " s)", 
+            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN, 
                 transform, new Vector3( 0, 2, 0 ) );
             return;
         }
@@ -351,5 +360,13 @@ public class Player : MonoBehaviour, IEntity
     public TileCoordinate GetTilePosition()
     {
         return _tilePos;
+    }
+
+    // Get the remaining cooldown for the scare skill
+    public float GetScareCooldown()
+    {
+        float cooldown = _scareTimer.IsStarted() ?
+            SCARE_COOLDOWN - _scareTimer.GetTicks() : 0;
+        return cooldown;
     }
 }
