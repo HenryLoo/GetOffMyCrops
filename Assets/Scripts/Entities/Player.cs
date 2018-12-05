@@ -61,9 +61,15 @@ public class Player : MonoBehaviour, IEntity
     // Cooldown timer for scare attack in seconds
     private GameTimer _scareTimer;
     private const float SCARE_COOLDOWN = 20;
+    private const int JUMP_EMISSION = 25;
 
     private delegate void PlayerUpdate();
     private PlayerUpdate _updateEveryFrame;
+
+    private GameObject _jumpEffectObject;
+    private ParticleSystem _jumpEffectParticles;
+    private GameObject _scareEffectObject;
+    private ParticleSystem _scareEffectParticles;
 
     // Use this for initialization
     void Start()
@@ -78,6 +84,8 @@ public class Player : MonoBehaviour, IEntity
         _animator = GetComponent<Animator>();
 
         _scareTimer = new GameTimer();
+        InitJumpEffect();
+        InitScareEffect();
     }
 
     // Update is called once per frame
@@ -161,7 +169,7 @@ public class Player : MonoBehaviour, IEntity
         // Move along a Bezier curve
         _moveStartPos = transform.position;
         _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * MOVEMENT_HEIGHT;
-
+        _jumpEffectParticles.Clear();
         SoundController.PlaySound( SoundType.PlayerJump );
     }
 
@@ -185,6 +193,7 @@ public class Player : MonoBehaviour, IEntity
         {
             // Unlock input reading after reaching target position
             _movingLock = false;
+            if( _jumpEffectParticles != null ) _jumpEffectParticles.Emit( JUMP_EMISSION );
 
             // Snap to the proper position
             transform.position = _moveTargetPos;
@@ -240,7 +249,7 @@ public class Player : MonoBehaviour, IEntity
         int totalSellPrice = CROP_SELL_PRICE + combo;
         _gameController.AddMoney( totalSellPrice );
 
-        PopupMessageCreator.PopupMoney( "+$" + totalSellPrice, 
+        PopupMessageCreator.PopupMoney( "+$" + totalSellPrice,
             transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerHarvest );
 
@@ -257,7 +266,7 @@ public class Player : MonoBehaviour, IEntity
         // Don't scare if it is on cooldown
         if( _scareTimer.IsStarted() && _scareTimer.GetTicks() < SCARE_COOLDOWN )
         {
-            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN, 
+            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN,
                 transform, new Vector3( 0, 2, 0 ) );
             return;
         }
@@ -267,7 +276,7 @@ public class Player : MonoBehaviour, IEntity
         this.ScareAllEnemies();
         PopupMessageCreator.PopupMessage( MSG_SCARE, transform, new Vector3( 0, 2, 0 ) );
         SoundController.PlaySound( SoundType.PlayerScare );
-
+        _scareEffectParticles.Emit( JUMP_EMISSION );
         // Start the cooldown timer
         _scareTimer.StartTimer();
     }
@@ -297,7 +306,6 @@ public class Player : MonoBehaviour, IEntity
     // Perform the scaring animation
     void DoScaringAnimation()
     {
-
         _scaringAnimationTicks += Time.deltaTime;
 
         float firstJumpHeight = 1;
@@ -354,6 +362,8 @@ public class Player : MonoBehaviour, IEntity
         _movingLock = true;
         _updateEveryFrame = null;
         _scareTimer.StopTimer();
+        GameObject.Destroy( _jumpEffectObject );
+        GameObject.Destroy( _scareEffectObject );
     }
 
     // Get the player's position on the tile map
@@ -368,5 +378,21 @@ public class Player : MonoBehaviour, IEntity
         float cooldown = _scareTimer.IsStarted() ?
             SCARE_COOLDOWN - _scareTimer.GetTicks() : 0;
         return cooldown;
+    }
+
+    private void InitJumpEffect()
+    {
+        Vector3 pos = new Vector3( transform.position.x, 0.2f, transform.position.z );
+        _jumpEffectObject = Instantiate( Resources.Load( "ParticlesPlayerJump" ), pos, Quaternion.Euler( 90, 0, 0 ), transform ) as GameObject;
+        _jumpEffectParticles = _jumpEffectObject.GetComponent<ParticleSystem>();
+        _jumpEffectParticles.Stop();
+    }
+
+    private void InitScareEffect()
+    {
+        Vector3 pos = new Vector3( transform.position.x, 0.2f, transform.position.z );
+        _scareEffectObject = Instantiate( Resources.Load( "ParticlesPlayerScare" ), pos, Quaternion.Euler( 90, 0, 0 ), transform ) as GameObject;
+        _scareEffectParticles = _scareEffectObject.GetComponent<ParticleSystem>();
+        _scareEffectParticles.Stop();
     }
 }
