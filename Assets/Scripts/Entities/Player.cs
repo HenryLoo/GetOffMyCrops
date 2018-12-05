@@ -61,9 +61,13 @@ public class Player : MonoBehaviour, IEntity
     // Cooldown timer for scare attack in seconds
     private GameTimer _scareTimer;
     private const float SCARE_COOLDOWN = 20;
+    private const int JUMP_EMISSION = 25;
 
     private delegate void PlayerUpdate();
     private PlayerUpdate _updateEveryFrame;
+
+    private GameObject _jumpEffectObject;
+    private ParticleSystem _jumpEffectParticles;
 
     // Use this for initialization
     void Start()
@@ -78,6 +82,7 @@ public class Player : MonoBehaviour, IEntity
         _animator = GetComponent<Animator>();
 
         _scareTimer = new GameTimer();
+        InitJumpEffect();
     }
 
     // Update is called once per frame
@@ -151,7 +156,7 @@ public class Player : MonoBehaviour, IEntity
         // Move along a Bezier curve
         _moveStartPos = transform.position;
         _moveMidPos = _moveStartPos + ( _moveTargetPos - _moveStartPos ) / 2 + Vector3.up * MOVEMENT_HEIGHT;
-
+        _jumpEffectParticles.Clear();
         SoundController.PlaySound( SoundType.PlayerJump );
     }
 
@@ -175,6 +180,7 @@ public class Player : MonoBehaviour, IEntity
         {
             // Unlock input reading after reaching target position
             _movingLock = false;
+            if ( _jumpEffectParticles != null ) _jumpEffectParticles.Emit( JUMP_EMISSION );
 
             // Snap to the proper position
             transform.position = _moveTargetPos;
@@ -288,7 +294,6 @@ public class Player : MonoBehaviour, IEntity
     // Perform the scaring animation
     void DoScaringAnimation()
     {
-
         _scaringAnimationTicks += Time.deltaTime;
 
         float firstJumpHeight = 1;
@@ -345,11 +350,20 @@ public class Player : MonoBehaviour, IEntity
         _movingLock = true;
         _updateEveryFrame = null;
         _scareTimer.StopTimer();
+        GameObject.Destroy( _jumpEffectObject );
     }
 
     // Get the player's position on the tile map
     public TileCoordinate GetTilePosition()
     {
         return _tilePos;
+    }
+
+    private void InitJumpEffect()
+    {
+        Vector3 pos = new Vector3( transform.position.x, 0.2f, transform.position.z );
+        _jumpEffectObject = Instantiate( Resources.Load("ParticlesPlayerJump"), pos, Quaternion.Euler( 90, 0, 0 ), transform ) as GameObject;
+        _jumpEffectParticles = _jumpEffectObject.GetComponent<ParticleSystem>();
+        _jumpEffectParticles.Stop();
     }
 }

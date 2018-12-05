@@ -106,6 +106,10 @@ public class SoundController : MonoBehaviour
     public static void PlaySound( SoundType type, bool isRandomPitch = true )
     {
         // Find the sound with the given name
+        if ( isInvlaid() )
+        {
+            return;
+        }
         foreach( SoundMapping mapping in Instance.SoundEffectList )
         {
             if( mapping.Name == type && mapping.AudioClips != null &&
@@ -146,6 +150,10 @@ public class SoundController : MonoBehaviour
     // Play a music track if it is not already playing
     public static void PlayMusic( MusicType type, bool isResetting = false )
     {
+        if ( isInvlaid() )
+        {
+            return;
+        }
         // Find the sound with the given name
         foreach( MusicMapping mapping in Instance.MusicList )
         {
@@ -165,6 +173,15 @@ public class SoundController : MonoBehaviour
     // Stop the current music track
     public static void StopMusic()
     {
+        if ( isInvlaid() )
+        {
+            return;
+        }
         Instance._musicSource.Stop();
+    }
+
+    private static bool isInvlaid()
+    {
+        return Instance == null;
     }
 }
