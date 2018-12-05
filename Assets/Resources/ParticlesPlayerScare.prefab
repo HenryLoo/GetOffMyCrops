@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4177941904498350}
   - component: {fileID: 198942220207761552}
   - component: {fileID: 199166270040507080}
+  - component: {fileID: 114618274350063706}
   m_Layer: 0
   m_Name: ParticlesPlayerScare
   m_TagString: Untagged
@@ -41,6 +42,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114618274350063706
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1328255744496658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e18d25f105d934ca253d7a2a571e04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NumParticles: 15
 --- !u!198 &198942220207761552
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -48,9 +61,9 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1328255744496658}
   serializedVersion: 5
-  lengthInSec: 2
+  lengthInSec: 0.5
   simulationSpeed: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -105,7 +118,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -146,7 +159,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 30
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -188,7 +201,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.9904904, g: 0.9925389, b: 0.9852941, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.29411766}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -250,7 +263,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 10
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -650,7 +663,7 @@ ParticleSystem:
     randomDirectionAmount: 0
     sphericalDirectionAmount: 0
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -989,7 +1002,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       serializedVersion: 2
       minMaxState: 1
@@ -1447,7 +1460,7 @@ ParticleSystem:
     enabled: 0
     multiplier: 1
   ClampVelocityModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
