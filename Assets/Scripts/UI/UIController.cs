@@ -10,6 +10,10 @@ public class UIController : MonoBehaviour
     public Text LevelNumber;
     public Text LevelName;
 
+    // Delegate to handle cleanup on scene destroy
+    private delegate void UIControllerUpdate();
+    private UIControllerUpdate _updateEveryFrame;
+
     // Reference to the GameController
     public GameController GameController;
 
@@ -18,14 +22,26 @@ public class UIController : MonoBehaviour
     {
         _moneyMeter = GetComponent<UIMoneyMeter>();
         _timeMeter = GetComponent<UITimeMeter>();
-        
+
         // Show the level number and name at the beginning of each level
         UpdateLevelText();
         LevelInfo.Play( "LevelInfo" );
+
+        _updateEveryFrame = UpdateWrapper;
     }
 
     // Update is called once per frame
     void Update()
+    {
+        if( _updateEveryFrame != null ) _updateEveryFrame();
+    }
+
+    private void OnDestroy()
+    {
+        CleanUp();
+    }
+
+    void UpdateWrapper()
     {
         UpdateMoneyMeter();
         UpdateTimeMeter();
@@ -50,5 +66,10 @@ public class UIController : MonoBehaviour
     {
         _timeMeter.UpdateTimeMeter( GameController.GetTimer().GetTicks(),
             GameController.Level.RemainingTime );
+    }
+
+    private void CleanUp()
+    {
+        _updateEveryFrame = null;
     }
 }

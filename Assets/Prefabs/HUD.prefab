@@ -798,8 +798,7 @@ MonoBehaviour:
   MoneyValue: {fileID: 114728976235154764}
   MoneyText: {fileID: 114728812339181372}
   ComboBonus: {fileID: 114636858460148054}
-  star: {fileID: 114944866189609746}
-  goalPosition: 0.7
+  Star: {fileID: 114944866189609746}
 --- !u!114 &114174148742278814
 MonoBehaviour:
   m_ObjectHideFlags: 1
