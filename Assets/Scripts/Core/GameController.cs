@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour, IButtonAction
 {
+    // Reference to the camera
+    public Camera Camera;
+
     // Reference to the TileMap instance
     public TileMap TileMap;
 
@@ -244,7 +247,8 @@ public class GameController : MonoBehaviour, IButtonAction
     private IEnumerator MoveToEndGameMenu()
     {
         _isLevelStarted = false;
-        yield return ShowCountdownMsg( COUNTDOWN_END, 3, true );
+        yield return ShowCountdownMsg( COUNTDOWN_END, 2, true );
+        yield return StartFadingOut();
         CleanUp();
 
         if( _currentMoney < Level.MoneyGoal )
@@ -255,6 +259,13 @@ public class GameController : MonoBehaviour, IButtonAction
         {
             GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.WIN_MENU );
         }
+    }
+
+    private IEnumerator StartFadingOut()
+    {
+        Camera.GetComponent<FadeEffect>().StartFadingOut();
+        SoundController.FadeOutMusic();
+        yield return new WaitForSeconds( 2 );
     }
 
 	private void CleanUp()

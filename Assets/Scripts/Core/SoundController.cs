@@ -65,10 +65,14 @@ public class SoundController : MonoBehaviour
     public static SoundController Instance = null;
 
     // The lowest a sound effect will be randomly pitched
-    private readonly float LOWEST_PITCH = .95f;
+    private const float LOWEST_PITCH = .95f;
 
     // The highest a sound effect will be randomly pitched
-    private readonly float HIGHEST_PITCH = 1.05f;
+    private const float HIGHEST_PITCH = 1.05f;
+
+    private static bool _isFadingOutMusic = false;
+    private const float MUSIC_VOLUME = 0.6f;
+    private const float MUSIC_FADE_AMOUNT = 0.5f;
 
     void Awake()
     {
@@ -95,6 +99,7 @@ public class SoundController : MonoBehaviour
     {
         // Load audio sources
         _musicSource = GetComponent<AudioSource>();
+        _musicSource.volume = MUSIC_VOLUME;
 
         foreach( SoundMapping mapping in SoundEffectList )
         {
@@ -102,11 +107,25 @@ public class SoundController : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        // Fade out music volume if appropriate
+        if( _isFadingOutMusic )
+        {
+            Instance._musicSource.volume -= MUSIC_FADE_AMOUNT * Time.deltaTime;
+            if( Instance._musicSource.volume <= 0 )
+            {
+                _isFadingOutMusic = false;
+                StopMusic();
+            }
+        }
+    }
+
     // Play a sound, given its type
     public static void PlaySound( SoundType type, bool isRandomPitch = true )
     {
         // Find the sound with the given name
-        if ( isInvlaid() )
+        if ( IsInvalid() )
         {
             return;
         }
@@ -150,7 +169,7 @@ public class SoundController : MonoBehaviour
     // Play a music track if it is not already playing
     public static void PlayMusic( MusicType type, bool isResetting = false )
     {
-        if ( isInvlaid() )
+        if ( IsInvalid() )
         {
             return;
         }
@@ -165,6 +184,10 @@ public class SoundController : MonoBehaviour
                     ", audio: " + mapping.AudioClip );
                 Instance._musicSource.clip = mapping.AudioClip;
                 Instance._musicSource.Play();
+
+                // Reset music volume
+                _isFadingOutMusic = false;
+                Instance._musicSource.volume = MUSIC_VOLUME;
                 return;
             }
         }
@@ -173,14 +196,19 @@ public class SoundController : MonoBehaviour
     // Stop the current music track
     public static void StopMusic()
     {
-        if ( isInvlaid() )
+        if ( IsInvalid() )
         {
             return;
         }
         Instance._musicSource.Stop();
     }
 
-    private static bool isInvlaid()
+    public static void FadeOutMusic()
+    {
+        _isFadingOutMusic = true;
+    }
+
+    private static bool IsInvalid()
     {
         return Instance == null;
     }

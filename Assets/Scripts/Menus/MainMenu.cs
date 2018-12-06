@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 // This script should be attached to the main menu.
 public class MainMenu : Menu, IButtonAction
@@ -7,6 +8,9 @@ public class MainMenu : Menu, IButtonAction
     private readonly string INSTRUCTIONS_BUTTON = "InstructionsButton";
     private readonly string SCOREBOARD_BUTTON = "ScoreboardButton";
     private readonly string EXIT_BUTTON = "ExitButton";
+
+    public Text PlayText;
+    private readonly string CONTINUE_TEXT = "Continue";
 
     // Reference to the help text objects
     public GameObject HelpTextDesktop;
@@ -40,6 +44,13 @@ public class MainMenu : Menu, IButtonAction
         // Show the appropriate help text for the platform
         if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
         else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
+
+        // Set play button to read "Continue" if the player is not on the first level
+        GameData data = SaveDataController.GetInstance().LoadData();
+        if( data.CurrentLevel > 1 )
+        {
+            PlayText.text = CONTINUE_TEXT + " (Lv. " + data.CurrentLevel + ")";
+        }
     }
 
     // Update is called once per frame

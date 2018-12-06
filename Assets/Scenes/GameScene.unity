@@ -264,6 +264,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
         type: 2}
+      propertyPath: Camera
+      value: 
+      objectReference: {fileID: 1662545706}
+    - target: {fileID: 114737573776042912, guid: 82ef8cf4b02e81742a54235dfdc0edb9,
+        type: 2}
       propertyPath: TileMap
       value: 
       objectReference: {fileID: 1981563078}
@@ -509,6 +514,7 @@ GameObject:
   - component: {fileID: 1662545705}
   - component: {fileID: 1662545704}
   - component: {fileID: 1662545703}
+  - component: {fileID: 1662545708}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -586,6 +592,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 75, y: 0, z: 0}
+--- !u!114 &1662545708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1662545702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50554a0b4510ad04294ebcf232e19485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FadeTexture: {fileID: 2800000, guid: 5ba94e208f8acba4890726a7e4587245, type: 3}
 --- !u!1001 &1904269904
 Prefab:
   m_ObjectHideFlags: 0

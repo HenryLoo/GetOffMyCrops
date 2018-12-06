@@ -532,6 +532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba9c6732be3d23b4aaaad60b4e83a92f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayText: {fileID: 114563909971698270}
   HelpTextDesktop: {fileID: 1456026708792314}
   HelpTextPS4: {fileID: 1207536384431842}
 --- !u!114 &114164536371993346
