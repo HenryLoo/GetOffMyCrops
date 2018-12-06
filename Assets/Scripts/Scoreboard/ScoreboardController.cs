@@ -15,9 +15,13 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
     public GameObject[] NameSlots;
     public Text[] NameLetters;
 
+    public Text ScoreValueText;
+
     // Reference to the help text objects
-    public GameObject HelpTextDesktop;
-    public GameObject HelpTextPS4;
+    public GameObject ScoreboardDesktop;
+    public GameObject ScoreboardPS4;
+    public GameObject SubmissionDesktop;
+    public GameObject SubmissionPS4;
 
     // The list of score row elements
     public ScoreboardListing[] ScoreboardListings;
@@ -58,6 +62,9 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             _selectedNameSlot = 0;
             _slotLetters = new int[ NameSlots.Length ];
             UpdateNameSlots();
+
+            // Set the score text
+            ScoreValueText.text = "$ " + SaveDataController.GetInstance().ScoreToSubmit.ToString();
         }
         else
         {
@@ -78,8 +85,16 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             upClick: OnButtonClickUp );
 
         // Show the appropriate help text for the platform
-        if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
-        else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
+        if( HelperFunctions.IsRunningOnDesktop() )
+        {
+            ScoreboardDesktop.SetActive( true );
+            SubmissionDesktop.SetActive( true );
+        }
+        else if( HelperFunctions.IsRunningOnPS4() )
+        {
+            ScoreboardPS4.SetActive( true );
+            SubmissionPS4.SetActive( true );
+        }
     }
 
     // Update the selected states of each slot
@@ -134,6 +149,7 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             int letterIndex = _slotLetters[ _selectedNameSlot ] - 1;
             if( letterIndex < 0 ) letterIndex = LETTERS.Length - 1;
             UpdateSlotLetter( letterIndex );
+            SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
 
@@ -148,6 +164,7 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             int letterIndex = _slotLetters[ _selectedNameSlot ] + 1;
             if( letterIndex >= LETTERS.Length ) letterIndex = 0;
             UpdateSlotLetter( letterIndex );
+            SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
 
@@ -161,6 +178,7 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
         {
             _selectedNameSlot = Mathf.Max( 0, _selectedNameSlot - 1 );
             UpdateNameSlots();
+            SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
 
@@ -174,6 +192,7 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
         {
             _selectedNameSlot = Mathf.Min( NameSlots.Length - 1, _selectedNameSlot + 1 );
             UpdateNameSlots();
+            SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
 
@@ -185,6 +204,7 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
         // If submitting name, submit the score
         if( SaveDataController.GetInstance().IsSubmitting )
         {
+            SoundController.PlaySound( SoundType.UIAction, false );
             int rank = SubmitScore();
 
             // Enable the high scores

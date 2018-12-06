@@ -1025,7 +1025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Press \u2190 or \u2192 to switch tab\nPress Esc to return to Main Menu"
+  m_Text: "Press \u2194 to switch tabs\nPress Esc to return to Main Menu"
 --- !u!114 &114599149847157584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1071,7 +1071,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Press \u2190 or \u2192 to switch tab\nPress      to return to Main Menu"
+  m_Text: "Press \u2194 to switch tabs\nPress      to return to Main Menu"
 --- !u!114 &114844535542214792
 MonoBehaviour:
   m_ObjectHideFlags: 1
