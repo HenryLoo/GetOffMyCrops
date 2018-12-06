@@ -12,6 +12,7 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
     private readonly string[] TAB_NAMES = { "Story", "Goal", "Enemies", "Controls" };
 
     public Text TextArea;
+    public Image ImageArea;
 
     private const string NARRATIVE = "Our protagonist, the farmer, needs to fix his old house.\n\n" +
         "Unfortunately, the repair fees are too high for his budget.\n\n" +
@@ -19,26 +20,23 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
         "But watch out… there are plenty of critters running around who would love to eat your produce!";
 
     private const string GOAL = "The goal of each level is to reach the minimum amount of money before the timer runs out.\n\n" +
-        "You will start with <b>$20</b> per level.\n\n" +
-        "It costs <b>$5</b> to plant a crop.\n" +
         "<b>You can only plant on dirt tiles!</b>\n" +
         "The planted crop will grow over time.\n\n" +
-        "If you harvest a mature crop, you will earn <b>$20</b>.\n\n" +
+        "If you harvest a mature crop, you will earn <b>$20</b>.\n" +
+        "If you successfully harvest multiple crops in a row, you will receive <b>bonus money</b>!\n\n" +
         "Try to make as much money as possible!";
 
     private const string ENEMIES = "Wild animals will try to eat your crops.\n\n" +
-        "Defend your crops by blocking their path!\n\n" + 
-        "You can also scare nearby enemies by shouting at them!\n\n" +
-        "If an enemy is busy eating a crop, it won't notice you.\n" +
-        "You'll need to stand on top of them and hit the <b>ACTION button</b> to remove them off the crop, one at a time!";
-
-    private const string CONTROLS = "<b>Arrow keys (MOVEMENT buttons)</b> - Move\n\n" +
-        "<b>X (ACTION button)</b> - Plant crop, harvest mature crop, remove enemy off a crop\n\n" +
-        "<b>Z (SKILL button)</b> - Shout loudly to scare away all enemies on the level (20s cooldown)\n\n" +
-        "<b>Escape (BACK button)</b> - Go back";
+        "Defend your crops by blocking their path.\n\n" +
+        "Enemies will also run away if they lose sight of their target.\n\n" +
+        "In a pinch, you can scare away all enemies by shouting!\n\n";
     
-    private readonly string[] PAGES = new string[] { NARRATIVE, GOAL, ENEMIES, CONTROLS };
+    private readonly string[] PAGES = new string[] { NARRATIVE, GOAL, ENEMIES, "" };
     private int _currentPage = 0;
+
+    // Hold page images depending on the platform
+    public Sprite[] PageDesktopImages;
+    public Sprite[] PagePS4Images;
 
     // Reference to the help text objects
     public GameObject HelpTextDesktop;
@@ -58,6 +56,9 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
         // Set the initial page
         TextArea.text = PAGES[ 0 ];
 
+        // Update the page's image
+        UpdatePageImage();
+
         // Highlight selected tab
         SelectTab();
 
@@ -75,6 +76,7 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
     {
         // Clamp minimum page to first page
         int nextPage = _currentPage - 1 < 0 ? 0 : _currentPage - 1;
+        SoundController.PlaySound( SoundType.UIClick, false );
         UpdateTab(nextPage);
     }
 
@@ -82,6 +84,7 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
     {
         // Clamp maximum page to last page
         int nextPage = _currentPage + 1 >= PAGES.Length ? _currentPage : _currentPage + 1;
+        SoundController.PlaySound( SoundType.UIClick, false );
         UpdateTab(nextPage);
     }
 
@@ -122,6 +125,9 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
         _currentPage = index;
         TextArea.text = PAGES[ index ];
 
+        // Update the page's image
+        UpdatePageImage();
+
         // Select the current tab
         SelectTab();
     }
@@ -137,5 +143,31 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
     private void GoToMainMenu()
     {
         GameStateLoader.SwitchState( GameStateLoader.GAME_STATES.MAIN_MENU );
+    }
+
+    // Show image if there is one for this page
+    private void UpdatePageImage()
+    {
+        // Get the page image depending on platform
+        Sprite pageImage = null;
+        if( HelperFunctions.IsRunningOnDesktop() )
+        {
+            pageImage = PageDesktopImages[ _currentPage ];
+        }
+        else if( HelperFunctions.IsRunningOnPS4() )
+        {
+            pageImage = PagePS4Images[ _currentPage ];
+        }
+
+        // If there is a image, then show it
+        if( pageImage != null )
+        {
+            ImageArea.enabled = true;
+            ImageArea.sprite = pageImage;
+        }
+        else
+        {
+            ImageArea.enabled = false;
+        }
     }
 }

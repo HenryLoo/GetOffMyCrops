@@ -61,6 +61,12 @@ public class Player : MonoBehaviour, IEntity
     private GameTimer _scareTimer;
     private const float SCARE_COOLDOWN = 20;
 
+    // Flag for if a popup text effect is already playing
+    private bool isPopupPlaying = false;
+
+    // The delay between each popup text effect in seconds
+    private const float POPUP_DELAY = 0.7f;
+
     private delegate void PlayerUpdate();
     private PlayerUpdate _updateEveryFrame;
 
@@ -212,30 +218,31 @@ public class Player : MonoBehaviour, IEntity
                 break;
             case TileData.TileType.Ground:
             case TileData.TileType.PlantableCooldown:
-                OneAtATimePopupTip(MSG_NOT_PLANTABLE);
+                ShowPopupWithDelay( MSG_NOT_PLANTABLE );
                 break;
             case TileData.TileType.CropSeed:
             case TileData.TileType.CropGrowing:
-                OneAtATimePopupTip(MSG_NOT_MATURE);
+                ShowPopupWithDelay( MSG_NOT_MATURE );
                 break;
         }
     }
 
-    private bool popupIsVisible = false;
-    private void OneAtATimePopupTip(string Message)
+    // Show a popup text effect if one hasn't been played recently
+    private void ShowPopupWithDelay( string Message )
     {
-        if (!popupIsVisible)
+        if( !isPopupPlaying )
         {
-            PopupMessageCreator.PopupTip(Message, transform);
-            popupIsVisible = true;
-            StartCoroutine("UpdatePopupIsVisibleAfterDelay");
+            PopupMessageCreator.PopupTip( Message, transform );
+            isPopupPlaying = true;
+            StartCoroutine( "WaitAfterPopup" );
         }
-        
     }
-    IEnumerator UpdatePopupIsVisibleAfterDelay()
+
+    // Wait a bit after a popup is played, before allowing another to be played
+    IEnumerator WaitAfterPopup()
     {
-        yield return new WaitForSeconds(0.7f);
-        popupIsVisible = false;
+        yield return new WaitForSeconds( POPUP_DELAY );
+        isPopupPlaying = false;
     }
 
     // Plant a crop on the tile that the player is standing on, if that tile’s 
@@ -276,10 +283,7 @@ public class Player : MonoBehaviour, IEntity
         // Don't scare if it is on cooldown
         if( _scareTimer.IsStarted() && _scareTimer.GetTicks() < SCARE_COOLDOWN )
         {
-            OneAtATimePopupTip(MSG_SCARE_COOLDOWN);
-            // TODO: double check if this added overload Vector is neccesary, i see no visible difference. if its needed i will change this method. 
-            //PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN,
-            //transform, new Vector3( 0, 2, 0 ) );
+            ShowPopupWithDelay( MSG_SCARE_COOLDOWN );
             return;
         }
 
@@ -367,7 +371,7 @@ public class Player : MonoBehaviour, IEntity
             transform.position = Vector3.Lerp( secondJumpPos, ground, _scaringAnimationTicks / moveTime );
             if( y < 0.05 )
             {
-                this.ScareFinished();
+                ScareFinished();
             }
         }
     }
