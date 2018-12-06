@@ -8,6 +8,10 @@ public class MainMenu : Menu, IButtonAction
     private readonly string SCOREBOARD_BUTTON = "ScoreboardButton";
     private readonly string EXIT_BUTTON = "ExitButton";
 
+    // Reference to the help text objects
+    public GameObject HelpTextDesktop;
+    public GameObject HelpTextPS4;
+
     // Use this for initialization
     void Start()
     {
@@ -28,10 +32,14 @@ public class MainMenu : Menu, IButtonAction
         AddMenuOption( SCOREBOARD_BUTTON, OnScoreboardButtonSelect );
         AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
 
+        SelectDefaultButton();
+
         // Play title music
         SoundController.PlayMusic( MusicType.Title );
 
-        SelectDefaultButton();
+        // Show the appropriate help text for the platform
+        if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
+        else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
     }
 
     // Update is called once per frame

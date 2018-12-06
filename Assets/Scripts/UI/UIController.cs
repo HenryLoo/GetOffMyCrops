@@ -23,6 +23,12 @@ public class UIController : MonoBehaviour
 
     // Reference to the GameController
     public GameController GameController;
+    
+    // Reference to the skill/action hint objects
+    public GameObject SkillHintDesktop;
+    public GameObject SkillHintPS4;
+    public GameObject ActionHintDesktop;
+    public GameObject ActionHintPS4;
 
     // Use this for initialization
     void Start()
@@ -35,6 +41,18 @@ public class UIController : MonoBehaviour
         LevelInfo.Play( "LevelInfo" );
 
         _updateEveryFrame = UpdateWrapper;
+
+        // Show the appropriate skill/action hint for the platform
+        if( HelperFunctions.IsRunningOnDesktop() )
+        {
+            SkillHintDesktop.SetActive( true );
+            ActionHintDesktop.SetActive( true );
+        }
+        else if( HelperFunctions.IsRunningOnPS4() )
+        {
+            SkillHintPS4.SetActive( true );
+            ActionHintPS4.SetActive( true );
+        }
     }
 
     // Update is called once per frame

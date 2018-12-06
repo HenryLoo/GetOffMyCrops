@@ -15,6 +15,10 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
     public GameObject[] NameSlots;
     public Text[] NameLetters;
 
+    // Reference to the help text objects
+    public GameObject HelpTextDesktop;
+    public GameObject HelpTextPS4;
+
     // The list of score row elements
     public ScoreboardListing[] ScoreboardListings;
 
@@ -72,6 +76,10 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             rightClick: OnButtonClickRight,
             downClick: OnButtonClickDown,
             upClick: OnButtonClickUp );
+
+        // Show the appropriate help text for the platform
+        if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
+        else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
     }
 
     // Update the selected states of each slot

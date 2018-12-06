@@ -27,4 +27,21 @@ public static class HelperFunctions
     {
         return value <= max && value >= min;
     }
+
+    // Check if game is running on desktop
+    public static bool IsRunningOnDesktop()
+    {
+        return ( Application.platform == RuntimePlatform.OSXEditor ||
+            Application.platform == RuntimePlatform.OSXPlayer ||
+            Application.platform == RuntimePlatform.WindowsEditor ||
+            Application.platform == RuntimePlatform.WindowsPlayer ||
+            Application.platform == RuntimePlatform.LinuxEditor ||
+            Application.platform == RuntimePlatform.LinuxPlayer );
+    }
+
+    // Check if game is running on PS4
+    public static bool IsRunningOnPS4()
+    {
+        return Application.platform == RuntimePlatform.PS4;
+    }
 }

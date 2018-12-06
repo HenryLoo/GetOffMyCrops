@@ -40,6 +40,10 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
     private readonly string[] PAGES = new string[] { NARRATIVE, GOAL, ENEMIES, CONTROLS };
     private int _currentPage = 0;
 
+    // Reference to the help text objects
+    public GameObject HelpTextDesktop;
+    public GameObject HelpTextPS4;
+
     void Start()
     {
         GameInput.AttachInput(
@@ -56,6 +60,10 @@ public class InstructionsMenu : MonoBehaviour, IButtonAction
 
         // Highlight selected tab
         SelectTab();
+
+        // Show the appropriate help text for the platform
+        if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
+        else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
     }
 
     void Update()
