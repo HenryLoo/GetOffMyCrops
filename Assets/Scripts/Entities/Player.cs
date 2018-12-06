@@ -212,13 +212,30 @@ public class Player : MonoBehaviour, IEntity
                 break;
             case TileData.TileType.Ground:
             case TileData.TileType.PlantableCooldown:
-                PopupMessageCreator.PopupTip( MSG_NOT_PLANTABLE, transform );
+                OneAtATimePopupTip(MSG_NOT_PLANTABLE);
                 break;
             case TileData.TileType.CropSeed:
             case TileData.TileType.CropGrowing:
-                PopupMessageCreator.PopupTip( MSG_NOT_MATURE, transform );
+                OneAtATimePopupTip(MSG_NOT_MATURE);
                 break;
         }
+    }
+
+    private bool popupIsVisible = false;
+    private void OneAtATimePopupTip(string Message)
+    {
+        if (!popupIsVisible)
+        {
+            PopupMessageCreator.PopupTip(Message, transform);
+            popupIsVisible = true;
+            StartCoroutine("UpdatePopupIsVisibleAfterDelay");
+        }
+        
+    }
+    IEnumerator UpdatePopupIsVisibleAfterDelay()
+    {
+        yield return new WaitForSeconds(0.7f);
+        popupIsVisible = false;
     }
 
     // Plant a crop on the tile that the player is standing on, if that tile’s 
@@ -259,8 +276,10 @@ public class Player : MonoBehaviour, IEntity
         // Don't scare if it is on cooldown
         if( _scareTimer.IsStarted() && _scareTimer.GetTicks() < SCARE_COOLDOWN )
         {
-            PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN,
-                transform, new Vector3( 0, 2, 0 ) );
+            OneAtATimePopupTip(MSG_SCARE_COOLDOWN);
+            // TODO: double check if this added overload Vector is neccesary, i see no visible difference. if its needed i will change this method. 
+            //PopupMessageCreator.PopupTip( MSG_SCARE_COOLDOWN,
+            //transform, new Vector3( 0, 2, 0 ) );
             return;
         }
 
