@@ -535,6 +535,7 @@ MonoBehaviour:
   PlayText: {fileID: 114563909971698270}
   HelpTextDesktop: {fileID: 1456026708792314}
   HelpTextPS4: {fileID: 1207536384431842}
+  ExitButton: {fileID: 1047245797817544}
 --- !u!114 &114164536371993346
 MonoBehaviour:
   m_ObjectHideFlags: 1

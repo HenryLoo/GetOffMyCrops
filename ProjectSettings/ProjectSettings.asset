@@ -231,6 +231,36 @@ PlayerSettings:
       m_Icon: {fileID: 2800000, guid: f211392ecfa55f0409fcb457e6696986, type: 3}
       m_Width: 512
       m_Height: 512
+  - m_BuildTarget: Standalone
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 07b62b43baff9aa4c91ea691c4a80f95, type: 3}
+      m_Width: 1024
+      m_Height: 1024
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 449dd34225bdff04bbfb3ec8bea59c03, type: 3}
+      m_Width: 512
+      m_Height: 512
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 1c45c13e242f0b6459b1cae899be320e, type: 3}
+      m_Width: 256
+      m_Height: 256
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: eecaeafa09c486c489fc52f07ae27497, type: 3}
+      m_Width: 128
+      m_Height: 128
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 2d1ea5e345777004fbe43ed5357bc3ca, type: 3}
+      m_Width: 48
+      m_Height: 48
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: b173124db8e2f3548a6e27f1452d73c9, type: 3}
+      m_Width: 32
+      m_Height: 32
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 7a98351f09b8cd046bae626f5d7c6d43, type: 3}
+      m_Width: 16
+      m_Height: 16
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsAPIs: []
   m_BuildTargetVRSettings: []

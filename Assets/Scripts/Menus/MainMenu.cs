@@ -15,6 +15,8 @@ public class MainMenu : Menu, IButtonAction
     // Reference to the help text objects
     public GameObject HelpTextDesktop;
     public GameObject HelpTextPS4;
+    
+    public GameObject ExitButton;
 
     // Use this for initialization
     void Start()
@@ -34,7 +36,6 @@ public class MainMenu : Menu, IButtonAction
         AddMenuOption( PLAY_BUTTON, OnPlayButtonSelect );
         AddMenuOption( INSTRUCTIONS_BUTTON, OnInstructionsButtonSelect );
         AddMenuOption( SCOREBOARD_BUTTON, OnScoreboardButtonSelect );
-        AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
 
         SelectDefaultButton();
 
@@ -42,8 +43,20 @@ public class MainMenu : Menu, IButtonAction
         SoundController.PlayMusic( MusicType.Title );
 
         // Show the appropriate help text for the platform
-        if( HelperFunctions.IsRunningOnDesktop() ) HelpTextDesktop.SetActive( true );
-        else if( HelperFunctions.IsRunningOnPS4() ) HelpTextPS4.SetActive( true );
+        if( HelperFunctions.IsRunningOnDesktop() )
+        {
+            HelpTextDesktop.SetActive( true );
+
+            // Add the exit button for desktop
+            AddMenuOption( EXIT_BUTTON, OnExitButtonSelect );
+        }
+        else if( HelperFunctions.IsRunningOnPS4() )
+        {
+            HelpTextPS4.SetActive( true );
+
+            // Remove the exit button for the PS4
+            ExitButton.SetActive( false );
+        }
 
         // Set play button to read "Continue" if the player is not on the first level
         GameData data = SaveDataController.GetInstance().LoadData();
