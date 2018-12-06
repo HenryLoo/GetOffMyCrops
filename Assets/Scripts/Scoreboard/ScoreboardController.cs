@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -85,12 +84,12 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             upClick: OnButtonClickUp );
 
         // Show the appropriate help text for the platform
-        if( HelperFunctions.IsRunningOnDesktop() )
+        if( HelperFunctions.IsRunningOnPS4() )
         {
             ScoreboardDesktop.SetActive( true );
             SubmissionDesktop.SetActive( true );
         }
-        else if( HelperFunctions.IsRunningOnPS4() )
+        else if( HelperFunctions.IsRunningOnDesktop() )
         {
             ScoreboardPS4.SetActive( true );
             SubmissionPS4.SetActive( true );

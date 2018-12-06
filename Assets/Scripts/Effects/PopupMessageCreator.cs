@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PopupMessageCreator : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class PopupMessageCreator : MonoBehaviour
 
         GameObject msg = InstantiateMessage( MESSAGE_SIZE_LARGE, MESSAGE_COLOUR_MSG,
             MESSAGE_OUTLINE_MSG );
+        msg.GetComponentInChildren<Text>().fontStyle = FontStyle.Bold;
         ShowPopup( msg, text, transform, offset );
     }
 

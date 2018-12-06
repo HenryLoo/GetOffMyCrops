@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 224892105166766832}
   - component: {fileID: 222356161093751832}
   - component: {fileID: 114944558286593348}
+  - component: {fileID: 114381362558347506}
   m_Layer: 5
   m_Name: TB_LevelMoney
   m_TagString: Untagged
@@ -91,6 +92,7 @@ GameObject:
   - component: {fileID: 224668798786809386}
   - component: {fileID: 222155709615762392}
   - component: {fileID: 114021585531589346}
+  - component: {fileID: 114869998482241240}
   m_Layer: 5
   m_Name: TB_TotalMoney
   m_TagString: Untagged
@@ -124,6 +126,7 @@ GameObject:
   - component: {fileID: 224024797365514810}
   - component: {fileID: 222646851571258474}
   - component: {fileID: 114096513950774568}
+  - component: {fileID: 114387697634103322}
   m_Layer: 5
   m_Name: TB_CurrentLevel
   m_TagString: Untagged
@@ -174,6 +177,7 @@ GameObject:
   - component: {fileID: 224834029837504304}
   - component: {fileID: 222870286141111072}
   - component: {fileID: 114425514037379678}
+  - component: {fileID: 114492979567286074}
   m_Layer: 5
   m_Name: TB_GameMessage
   m_TagString: Untagged
@@ -481,6 +485,34 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114381362558347506
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1250968071001030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
+--- !u!114 &114387697634103322
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1571672510131208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114416438381071982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -555,6 +587,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: All levels cleared!
+--- !u!114 &114492979567286074
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1750537448207018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114521943122595100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -653,6 +699,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a31e99a3f5d4f84eaadb684e3d85a8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114869998482241240
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1521457720268216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114944558286593348
 MonoBehaviour:
   m_ObjectHideFlags: 1

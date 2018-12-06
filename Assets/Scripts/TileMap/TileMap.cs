@@ -115,33 +115,34 @@ public class TileMap : MonoBehaviour
         Debug.Log( "width:" + _levelData.TileLayout.width );
 
         // Create left map border shadow
+        float HalfTileSize = _tileSize / 2;
         GameObject leftShadow = Instantiate( ShadowObject );
         leftShadow.transform.localScale = new Vector3( 1, _levelData.TileLayout.height, 1 );
-        leftShadow.transform.position = new Vector3( 0.5f, SHADOW_Y_OFFSET,
+        leftShadow.transform.position = new Vector3( HalfTileSize, SHADOW_Y_OFFSET,
             _levelData.TileLayout.height / 2.0f );
         leftShadow.transform.parent = transform;
 
         // Create right map border shadow
         GameObject rightShadow = Instantiate( ShadowObject );
         rightShadow.transform.localScale = new Vector3( 1, _levelData.TileLayout.height, 1 );
-        rightShadow.transform.position = new Vector3( _levelData.TileLayout.width - 0.5f, SHADOW_Y_OFFSET,
-            _levelData.TileLayout.height / 2.0f );
+        rightShadow.transform.position = new Vector3( _levelData.TileLayout.width - HalfTileSize,
+            SHADOW_Y_OFFSET, _levelData.TileLayout.height / 2.0f );
         rightShadow.transform.parent = transform;
         rightShadow.transform.eulerAngles = new Vector3( 90, 180, 0 );
 
         // Create top map border shadow
         GameObject topShadow = Instantiate( ShadowObject );
         topShadow.transform.localScale = new Vector3( 1, _levelData.TileLayout.width, 1 );
-        topShadow.transform.position = new Vector3( _levelData.TileLayout.width / 2.0f, SHADOW_Y_OFFSET,
-            _levelData.TileLayout.height - 0.5f );
+        topShadow.transform.position = new Vector3( _levelData.TileLayout.width / 2.0f, 
+            SHADOW_Y_OFFSET, _levelData.TileLayout.height - HalfTileSize );
         topShadow.transform.parent = transform;
         topShadow.transform.eulerAngles = new Vector3( 90, 90, 0 );
 
         // Create bottom map border shadow
         GameObject bottomShadow = Instantiate( ShadowObject );
         bottomShadow.transform.localScale = new Vector3( 1, _levelData.TileLayout.width, 1 );
-        bottomShadow.transform.position = new Vector3( _levelData.TileLayout.width / 2.0f, SHADOW_Y_OFFSET,
-            0.5f );
+        bottomShadow.transform.position = new Vector3( _levelData.TileLayout.width / 2.0f, 
+            SHADOW_Y_OFFSET, HalfTileSize - 0.01f );
         bottomShadow.transform.parent = transform;
         bottomShadow.transform.eulerAngles = new Vector3( 90, -90, 0 );
     }
