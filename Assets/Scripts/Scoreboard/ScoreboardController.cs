@@ -84,12 +84,12 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             upClick: OnButtonClickUp );
 
         // Show the appropriate help text for the platform
-        if( HelperFunctions.IsRunningOnPS4() )
+        if( HelperFunctions.IsRunningOnDesktop() )
         {
             ScoreboardDesktop.SetActive( true );
             SubmissionDesktop.SetActive( true );
         }
-        else if( HelperFunctions.IsRunningOnDesktop() )
+        else if( HelperFunctions.IsRunningOnPS4() )
         {
             ScoreboardPS4.SetActive( true );
             SubmissionPS4.SetActive( true );
