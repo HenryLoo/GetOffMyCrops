@@ -151,8 +151,6 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
-
-        ReturnToMainMenu();
     }
 
     public void OnButtonClickDown()
@@ -166,8 +164,6 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
-
-        ReturnToMainMenu();
     }
 
     public void OnButtonClickLeft()
@@ -180,8 +176,6 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
-
-        ReturnToMainMenu();
     }
 
     public void OnButtonClickRight()
@@ -194,8 +188,6 @@ public class ScoreboardController : MonoBehaviour, IButtonAction
             SoundController.PlaySound( SoundType.UIClick, false );
             return;
         }
-
-        ReturnToMainMenu();
     }
 
     public void OnButtonClickAction()
