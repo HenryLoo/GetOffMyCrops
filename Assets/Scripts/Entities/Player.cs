@@ -16,9 +16,6 @@ public class Player : MonoBehaviour, IEntity
     // Current position on the TileMap
     private TileCoordinate _tilePos;
 
-    // Reference to the TileMap instance
-    private TileMap _tileMap;
-
     // Reference to the character animator
     private Animator _animator;
 
@@ -75,8 +72,7 @@ public class Player : MonoBehaviour, IEntity
     {
         _gameController = GameObject.Find( "GameController" )
             .GetComponent<GameController>();
-        _tileMap = GameObject.Find( "TileMap" ).GetComponent<TileMap>();
-        _tilePos = _tileMap.GetTileAtPosition( transform.position );
+        _tilePos = _gameController.TileMap.GetTileAtPosition( transform.position );
 
         _updateEveryFrame = UpdateEveryFrame;
 
@@ -133,7 +129,7 @@ public class Player : MonoBehaviour, IEntity
         if( LockingInput() ) return;
 
         int to = _tilePos.CoordX + dir;
-        if( to >= 0 && to < _tileMap.GetSizeX() )
+        if( to >= 0 && to < _gameController.TileMap.GetSizeX() )
         {
             _tilePos.CoordX = to;
             Move();
@@ -145,7 +141,7 @@ public class Player : MonoBehaviour, IEntity
         if( LockingInput() ) return;
 
         int to = _tilePos.CoordZ + dir;
-        if( to >= 0 && to < _tileMap.GetSizeZ() )
+        if( to >= 0 && to < _gameController.TileMap.GetSizeZ() )
         {
             _tilePos.CoordZ = to;
             Move();
@@ -156,7 +152,7 @@ public class Player : MonoBehaviour, IEntity
     // has started
     void Move()
     {
-        _moveTargetPos = _tileMap.GetPositionAtTile( _tilePos );
+        _moveTargetPos = _gameController.TileMap.GetPositionAtTile( _tilePos );
         _moveTargetPos.y = transform.position.y;
         _movingLock = true;
 
@@ -207,7 +203,7 @@ public class Player : MonoBehaviour, IEntity
         if( LockingInput() ) return;
 
         // If tile is plantable 
-        TileData.TileType type = _tileMap.GetTile( _tilePos );
+        TileData.TileType type = _gameController.TileMap.GetTile( _tilePos );
         switch( type )
         {
             case TileData.TileType.Plantable:
@@ -250,7 +246,7 @@ public class Player : MonoBehaviour, IEntity
     void Plant()
     {
         // Plant the seed
-        _tileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
+        _gameController.TileMap.SetTile( _tilePos, TileData.TileType.CropSeed );
         SoundController.PlaySound( SoundType.PlayerPlant );
     }
 
@@ -261,7 +257,7 @@ public class Player : MonoBehaviour, IEntity
     void Harvest()
     {
         // Harvest the mature crop and increment money
-        _tileMap.RemoveCropFromTile( _tilePos, _gameController, false );
+        _gameController.TileMap.RemoveCropFromTile( _tilePos, _gameController, false );
         int combo = _gameController.GetCombo();
         int totalSellPrice = CROP_SELL_PRICE + combo;
         _gameController.AddMoney( totalSellPrice );
