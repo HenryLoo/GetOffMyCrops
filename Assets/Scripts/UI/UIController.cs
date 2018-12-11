@@ -98,7 +98,10 @@ public class UIController : MonoBehaviour
     // Show the skill cooldown if there is any
     private void UpdateSkillIcon()
     {
-        float cooldown = GameController.TileMap.GetPlayer().GetScareCooldown();
+        Player player = GameController.TileMap.GetPlayer();
+        if( player == null ) return;
+
+        float cooldown = player.GetScareCooldown();
         bool isOnCooldown = cooldown > 0;
         SkillCooldown.enabled = isOnCooldown;
         SkillIcon.color = isOnCooldown ? FADED_COLOUR : Color.white;

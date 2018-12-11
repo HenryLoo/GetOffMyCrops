@@ -65,20 +65,24 @@ public class GameController : MonoBehaviour, IButtonAction
     // The combo count is reset if enemies eat a crop
     private int _combo = 0;
 
+    // Reference to the camera's game shader component
+    private GameShader _gameShader;
+
     void Awake()
     {
         _levelTimer = new GameTimer();
-
-        // Load the current level
-        _dataController = SaveDataController.GetInstance();
-        _currentLevelNum = _dataController.LoadData().CurrentLevel;
-        LoadLevel( _currentLevelNum );
+        _gameShader = Camera.GetComponent<GameShader>();
     }
 
     // Use this for initialization
     void Start()
     {
 		Debug.Log( "GameController.cs" );
+
+        // Load the current level
+        _dataController = SaveDataController.GetInstance();
+        _currentLevelNum = _dataController.LoadData().CurrentLevel;
+        LoadLevel( _currentLevelNum );
 
         // Stop any music being played
         SoundController.StopMusic();
@@ -160,6 +164,7 @@ public class GameController : MonoBehaviour, IButtonAction
         {
             _levelTimer.Update();
             TileMap.UpdateEveryFrame();
+            UpdateDayCycle();
 			_PollEndGame();
 
             // TODO: debug controls, remove this later
@@ -179,6 +184,12 @@ public class GameController : MonoBehaviour, IButtonAction
             GameInput.UpdateInput();
         }
 	}
+
+    private void UpdateDayCycle()
+    {
+        _gameShader.DayCycleMaterial.SetFloat( "_LevelProgress", 
+            _levelTimer.GetTicks() / Level.RemainingTime );
+    }
 
     public void LoadLevel( int levelNum )
     {
