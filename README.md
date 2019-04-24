@@ -1,4 +1,4 @@
-# GetOffMyCrops
+# Get Off My Crops!
 An arcade game about a farmer planting crops and defending them from pests. Made in Unity and designed for PC and PS4.
 The game was created for non-profit, educational purposes.
 
